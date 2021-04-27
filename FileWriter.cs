@@ -72,7 +72,7 @@ namespace FileDBReader
             xml.Load(path);
             XmlNodeList nodes = xml.FirstChild.ChildNodes;
 
-            BinaryWriter writer = new BinaryWriter(File.Create("exportTest.infotip"));
+            BinaryWriter writer = new BinaryWriter(File.Create(Path.ChangeExtension(path, "bin")));
             foreach (XmlElement element in nodes) {
                 writeNode(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
             }

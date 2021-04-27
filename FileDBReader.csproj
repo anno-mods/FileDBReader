@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -14,6 +14,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>TRACE;NETCOREAPP2_1</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Binary\SpanWriter.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="SharpZipLib" Version="1.2.0" />

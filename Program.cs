@@ -12,7 +12,7 @@ namespace FileDBReader {
             
        
         var writer = new FileWriter();
-            writer.Export("export.xml");
+            writer.Export("export-test.xml");
         }
 
         #endregion Methods
