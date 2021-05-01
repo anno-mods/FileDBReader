@@ -10,10 +10,12 @@ After you are done editing the decompressed and interpreted xml file, you have t
 
 How to use: 
 
+```
 decompress -f <inputfiles>
 compress -f <inputFiles> -o <outputFileExtension>
 interpret -f <inputFiles> -i <interpreterFile>
 toHex -f <inputFiles> -i interpreterFiles
+```
 
 
 Some notes about file formats:
@@ -23,7 +25,7 @@ Have fun making the map- and island editors.
 
 infotips are in filedb compression
 
-.bfg files used for global illumination are in filedb compression. 
+bfg files used for global illumination are in filedb compression. 
 
 
 
