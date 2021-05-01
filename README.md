@@ -2,7 +2,7 @@
 
 FileDB Unpacking done by @VeraAtVersus, based on filedb reverse engineering by LysannSchlegel
 
-A simple command line unpacker, repacker and interpreter for Anno 1800 ori filedb compression. 
+A simple command line unpacker, repacker and interpreter for Anno 1800 (and 2205?) filedb compression. 
 
 when decompressing, all data will be represented in hex strings which can be interpreted using an interpreter file. You may then change anything you want, you can also create xml patches using meow's xml tools to patch the xml files: https://github.com/xforce/anno1800-mod-loader/releases/tag/v0.7.12 which works exactly like the modloader.
 
