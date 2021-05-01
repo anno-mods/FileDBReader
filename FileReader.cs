@@ -8,6 +8,11 @@ using System.Xml.Linq;
 
 namespace FileDBReader {
 
+    /// <summary>
+    /// FileReader done by @VeraAtVersus
+    /// 
+    /// Converts a FileDB Compressed file to an xml representation with data represented in hex strings.
+    /// </summary>
   public class FileReader {
 
     #region Properties

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FileDBReader": {
+      "commandName": "Project",
+      "commandLineArgs": "interpret -f export.xml -i FileFormats/infotip.xml"
+    }
+  }
+}

@@ -5,60 +5,22 @@ using System.Text;
 using System.Xml;
 using System.IO;
 
+
+
 namespace FileDBReader
 {
 
-    //make a dictionary of tags 
-    //make a dictionary of attribs
 
-    //go through file node by node 
-    //foreach node: 
-
-    //if node name doesn't exist in tags:
-    //if node is empty 
-    //add to tags
-    //else 
-    //add to attribs
-
-
-    //if inner text not empty
-    //-- ATTRIBS GO HERE--
-    //write id of node
-    //write 80 
-
-    //write bytesize of content 
-    //write content 
-    //else 
-    //-- TAGS GO HERE--
-    //write id of node 
-    //write 00 
-
-    //write child nodes RECURSION
-
-
-    //write null 
-
-    //write tag count as 8 bit int
-    //foreach tag in dictionary
-    //write tag as nullterminated string 
-    //write tag id as 8 bit int
-    //write 00
-
-    //write attrib count as 8 bit int
-    //foreach attrib in dictionary
-    //write attrib id as nullterminated string
-    //write attrib id as 8 bit int 
-    //write 80 
-
-
-    //write offset of tag section 
+    /// <summary>
+    /// Converts an xml file with data represented in hex strings into filedb compression readable by Anno 1800. 
+    /// </summary>
     class FileWriter
     {
         public FileWriter() { 
         
         }
 
-        public void Export(String path) {
+        public void Export(String path, string outputFileFormat) {
 
             Dictionary<String, byte> Tags = new Dictionary<string, byte>();
             Dictionary<String, byte> Attribs = new Dictionary<string, byte>();
@@ -72,7 +34,7 @@ namespace FileDBReader
             xml.Load(path);
             XmlNodeList nodes = xml.FirstChild.ChildNodes;
 
-            BinaryWriter writer = new BinaryWriter(File.Create(Path.ChangeExtension(path, "bin")));
+            BinaryWriter writer = new BinaryWriter(File.Create(Path.ChangeExtension(path, outputFileFormat)));
             foreach (XmlElement element in nodes) {
                 writeNode(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
             }
@@ -211,7 +173,7 @@ namespace FileDBReader
             writer.Flush();
         }
 
-        //copied from https://stackoverflow.com/questions/321370/how-can-i-convert-a-hex-string-to-a-byte-array/321404 because why tf not
+        //copied from https://stackoverflow.com/questions/321370/how-can-i-convert-a-hex-string-to-a-byte-array/321404 because why not
         public static byte[] StringToByteArray(string hex)
         {
             return Enumerable.Range(0, hex.Length)
