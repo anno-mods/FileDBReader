@@ -14,7 +14,7 @@ How to use:
 decompress -f <inputfiles>
 compress -f <inputFiles> -o <outputFileExtension>
 interpret -f <inputFiles> -i <interpreterFile>
-toHex -f <inputFiles> -i interpreterFiles
+toHex -f <inputFiles> -i <interpreterFile>
 ```
 
 
