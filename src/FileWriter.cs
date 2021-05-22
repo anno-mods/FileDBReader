@@ -57,9 +57,14 @@ namespace FileDBReader
         public void Export(String path, String outputFileFormat)
         {
             var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
-
             XmlDocument doc = new XmlDocument();
             doc.Load(path);
+            Export(doc, stream);
+        }
+
+        public void Export(XmlDocument doc, String outputFileFormat, String path)
+        {
+            var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
             Export(doc, stream);
         }
 

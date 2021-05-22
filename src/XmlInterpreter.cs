@@ -28,7 +28,7 @@ namespace FileDBReader
             
         }
 
-        public void Interpret(String docPath, String InterpreterPath) 
+        public XmlDocument Interpret(String docPath, String InterpreterPath) 
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(docPath);
@@ -36,10 +36,10 @@ namespace FileDBReader
             XmlDocument interpreter = new XmlDocument();
             interpreter.Load(InterpreterPath);
 
-            Interpret(doc, interpreter, docPath);
+            return Interpret(doc, interpreter, docPath);
         }
 
-        public void Interpret(XmlDocument doc, XmlDocument interpreter, String docpath) 
+        public XmlDocument Interpret(XmlDocument doc, XmlDocument interpreter, String docpath) 
         {
             //default type
             XmlNode defaultAttrib = null;
@@ -87,9 +87,9 @@ namespace FileDBReader
                 var toFilter = doc.SelectNodes(xPath);
                 var defaults = HexHelper.ExceptNodelists(Base, toFilter);
                 ConvertNodeSet(defaults, defaultAttrib);
-            }   
-            
-            doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(docpath, "_i"), "xml"));
+            }
+
+            return doc;
         }
 
         //f* performance I won't write everything twice :) the cast should not take to long

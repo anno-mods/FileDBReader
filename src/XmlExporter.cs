@@ -17,17 +17,23 @@ namespace FileDBReader
             
         }
 
-        public void Export(String docpath, String interpreterPath) {
+        /// <summary>
+        /// Exports an xmldocument and returns the resulting xmldocument
+        /// </summary>
+        /// <param name="docpath">path of the input document</param>
+        /// <param name="interpreterPath">path of the interpreterfile</param>
+        /// <returns>the resulting document</returns>
+        public XmlDocument Export(String docpath, String interpreterPath) {
             XmlDocument doc = new XmlDocument();
             doc.Load(docpath);
 
             XmlDocument interpreter = new XmlDocument();
             interpreter.Load(interpreterPath);
 
-            Export(doc, interpreter, docpath);
+            return Export(doc, interpreter);
         }
 
-        public void Export(XmlDocument doc, XmlDocument interpreter, String docpath) {
+        public XmlDocument Export(XmlDocument doc, XmlDocument interpreter) {
             //default type
             XmlNode defaultAttrib = null;
             defaultAttrib = interpreter.SelectSingleNode("/Converts/Default");
@@ -91,7 +97,8 @@ namespace FileDBReader
                 }
             }
 
-            doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(docpath, "_e"), "xml"));
+            return doc;
+            //doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(docpath, "_e"), "xml"));
         }
 
         private void ConvertNodeSet(XmlNodeList matches, XmlNode ConverterInfo)
