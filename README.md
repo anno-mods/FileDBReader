@@ -6,9 +6,7 @@ A simple command line unpacker, repacker and interpreter for Anno 1800 (and 2205
 
 
 when decompressing, all data will be represented in hex strings which can be interpreted using an interpreter file. This is done by selecting XML Nodes using xpath. After you are done editing the decompressed and interpreted xml file, you have to convert it to he using the same interpreter and compress it again.
- >you can also create xml patches using meow's xml tools to patch the xml files and apply changes using [XML Tools](https://github.com/xforce/anno1800-mod-loader/releases/tag/v0.7.12) which works like the modloader.
-
-
+ >you can also create xml patches and apply changes using meow's [XML Tools](https://github.com/xforce/anno1800-mod-loader/releases/tag/v0.7.12) which works like the modloader.
 
 > be aware that these files can contain other filedb compressed files which you have to decompress while interpreting. 
 
@@ -24,6 +22,7 @@ toHex -f <inputFiles> -i <interpreterFile>
 included converters
 
 > infotip file ````(data/infotips/export.bin)````
+
 > island gamedata file ````(gamedata.data in a7m files)````
 
 # Sample interpreter file
