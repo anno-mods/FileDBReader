@@ -2,7 +2,7 @@
   "profiles": {
     "FileDBReader": {
       "commandName": "Project",
-      "commandLineArgs": "interpret -f gamedata_goodwill.xml -i FileFormats/Island_Gamedata.xml"
+      "commandLineArgs": "toHex -f gamedata_interpreted_test.xml -i FileFormats/Island_Gamedata.xml"
     }
   }
 }

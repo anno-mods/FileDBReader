@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Linq;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace FileDBReader
 {
@@ -25,7 +26,7 @@ namespace FileDBReader
                     Console.WriteLine("Hex String not in correct format: {0}", hexString);
                 }
             }
-            return encoding.GetString(bytes); // returns: "Hello world" for "48656C6C6F20776F726C64"
+            return encoding.GetString(bytes);
         }
 
         public static bool ToBool(String hexString)
@@ -89,53 +90,16 @@ namespace FileDBReader
             return Path.Combine(fDir, String.Concat(fName, suffix, fExt));
         }
 
-        //converts a hex string to a span of bytes
-        public static Span<byte> toByteSpan(String s) {
-            int size = sizeof(byte) * 2;
-            var bytes = new byte[s.Length / size];
-            Type t = typeof(byte);
-            for (var i = 0; i < bytes.Length; i++)
-            {
-                try
-                {
-                    bytes[i] = (byte)ConverterFunctions.ConversionRulesToSpan[t](s.Substring(i * size, size));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Hex String not in correct format: {0}", s);
-                }
-            }
-            return bytes.AsSpan();
-        }
-
-        public static Span<short> toShortSpan(String s) {
-            int size = sizeof(short) * 2;
-            var bytes = new short[s.Length / size];
-            Type t = typeof(short);
-            for (var i = 0; i < bytes.Length; i++)
-            {
-                try
-                {
-                    bytes[i] = (short)ConverterFunctions.ConversionRulesToSpan[t](s.Substring(i * size, size));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Hex String not in correct format: {0}", s);
-                }
-            }
-            return bytes.AsSpan();
-        }
-
-        public static Span<Int32> toIntSpan(String s)
+        public static Span<T> toSpan<T>(String s) where T : struct
         {
-            int size = sizeof(Int32) * 2;
-            var bytes = new Int32[s.Length / size];
-            Type t = typeof(Int32);
+            int size = Marshal.SizeOf(default(T)) * 2;
+            var bytes = new T[s.Length / size];
+            Type t = typeof(T);
             for (var i = 0; i < bytes.Length; i++)
             {
                 try
                 {
-                    bytes[i] = (Int32)ConverterFunctions.ConversionRulesToSpan[t](s.Substring(i * size, size));
+                    bytes[i] = (T)ConverterFunctions.ConversionRulesToObject[t](s.Substring(i * size, size));
                 }
                 catch (Exception e)
                 {
@@ -144,44 +108,6 @@ namespace FileDBReader
             }
             return bytes.AsSpan();
         }
-        public static Span<float> toFloatSpan(String s)
-        {
-            int size = sizeof(float) * 2;
-            var bytes = new float[s.Length / size];
-            Type t = typeof(float);
-            for (var i = 0; i < bytes.Length; i++)
-            {
-                try
-                {
-                    bytes[i] = (float)ConverterFunctions.ConversionRulesToSpan[t](s.Substring(i * size, size));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Hex String not in correct format: {0}", s);
-                }
-            }
-            return bytes.AsSpan();
-        }
-
-        public static Span<UInt16> toUInt16Span(String s)
-        {
-            int size = sizeof(UInt16) * 2;
-            var bytes = new UInt16[s.Length / size];
-            Type t = typeof(UInt16);
-            for (var i = 0; i < bytes.Length; i++)
-            {
-                try
-                {
-                    bytes[i] = (UInt16)ConverterFunctions.ConversionRulesToSpan[t](s.Substring(i * size, size));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Hex String not in correct format: {0}", s);
-                }
-            }
-            return bytes.AsSpan();
-        }
-
         public static byte[] StreamToByteArray(Stream s)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -190,6 +116,13 @@ namespace FileDBReader
                 s.CopyTo(ms);
                 return ms.ToArray();
             }
+        }
+
+        //using String.Join for performance optimization over for loops.
+        public static String Join<T>(String BinaryData) where T : struct
+        {
+            var span = HexHelper.toSpan<T>(BinaryData).ToArray();
+            return String.Join<T>(" ", span);
         }
 
     }

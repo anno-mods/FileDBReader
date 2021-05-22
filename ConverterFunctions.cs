@@ -37,7 +37,7 @@ namespace FileDBReader
                 { typeof (String),  (s, Encoding)   => Encoding.GetBytes(s)}
             };
 
-        public static Dictionary<Type, Func<string, object>> ConversionRulesToSpan = new Dictionary<Type, Func<string, object>>
+        public static Dictionary<Type, Func<string, object>> ConversionRulesToObject = new Dictionary<Type, Func<string, object>>
             {
                 { typeof(bool),   s => HexHelper.ToBool(s).ToString()},
                 { typeof(byte),   s => byte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
@@ -50,6 +50,19 @@ namespace FileDBReader
                 { typeof(ulong),  s => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
                 { typeof(float),  s => HexHelper.ToFloat(HexHelper.flip(s)) },
                 { typeof(String), s => HexHelper.FromHexString(s, new UnicodeEncoding()) }
+            };
+        public static Dictionary<Type, Func<String, String>> ListFunctionsInterpret = new Dictionary<Type, Func<String, String>>
+            {
+                { typeof(bool),   s => HexHelper.Join<bool>(s)},
+                { typeof(byte),   s => HexHelper.Join<byte>(s) },
+                { typeof(sbyte),  s => HexHelper.Join<sbyte>(s) },
+                { typeof(short),  s => HexHelper.Join<short>(s) },
+                { typeof(ushort), s => HexHelper.Join<ushort>(s) },
+                { typeof(int),    s => HexHelper.Join<int>(s) },
+                { typeof(uint),   s => HexHelper.Join<uint>(s) },
+                { typeof(long),   s => HexHelper.Join<long>(s) },
+                { typeof(ulong),  s => HexHelper.Join<ulong>(s) },
+                { typeof(float),  s => HexHelper.Join<float>(s) }
             };
     }
 }

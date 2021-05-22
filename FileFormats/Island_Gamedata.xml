@@ -5,33 +5,33 @@
     <Element Path="//AreaManagerData/None/Data" />
   </InternalCompression>
   <Converts>
-    <Convert Path =" //VegetationPropSetName" Type="String" Encoding="UTF-8" />
-    <Convert Path =" //GlobalAmbientName" Type="String" />
-    <Convert Path =" //HeightMap/HeightMap" Type="UInt16" Structure ="List" />
-    <Convert Path =" //val" Type="Byte" Structure ="List" />
-    <Convert Path =" //bits" Type="Byte" Structure ="List" />
-    <Convert Path =" //PlayableArea" Type="Int32" Structure ="List" />
-    <Convert Path =" //WorldSize" Type="Int32" Structure ="List" />
-    <Convert Path =" //m_AreaRect/None" Type="Int32" Structure ="List" />
-    <Convert Path =" //m_AreaPointGrid/None" Type="Int32" Structure ="List" />
-    <Convert Path =" //ID" Type="Int64" />
-    <Convert Path =" //Position" Type="Single" Structure="List" />
-    <Convert Path =" //Orientation" Type="Single" Structure="List" />
-    <Convert Path =" //TangentScale" Type="Single" />
-    <Convert Path =" //BezierPath/Path/Minimum" Type="Single" Structure="List"/>
-    <Convert Path =" //BezierPath/Path/Maximum" Type="Single" Structure="List"/>
-    <Convert Path =" //BezierPath/Path/BezierCurve/None/*" Type="Single" Structure="List"/>
-    <Convert Path =" //None[guid]/Direction" Type="Single"/>
-    <Convert Path =" //None[guid]/Mesh/Scale" Type="Single"/>
-    <Convert Path =" //Sequence/Name" Type="String" Encoding ="UTF-8"/>
-    <Convert Path =" //AllKeyframes/None/None/*[self::Value or self::TangentIn or self::TangentOut]" Type="Single"/>
-    <Convert Path =" //View/*" Type="Single" Structure="List"/>
-    <Convert Path =" //Projection/NearClip" Type="Single"/>
-    <Convert Path =" //BreakableFirstLastTangents" Type="Byte" Structure="List"/>
-    <Convert Path =" //HerdAreas/None/RandomPoint" Type="Int32" Structure="List"/>
-    <Convert Path =" //HerdAreas/None/DangerPoints/None" Type="Int32" Structure="List"/>
-    <Convert Path =" //BBox" Type="Int32" Structure="List"/>
-    <Convert Path =" //ObjectGroups/None[not(GameObjects)]" Type="String" Encoding="UTF-8"/>
-    <Convert Path =" //GameObjects/None" Type="Int32" Structure ="List"/>
+    <Convert Path ="//VegetationPropSetName" Type="String" Encoding="UTF-8" />
+    <Convert Path ="//GlobalAmbientName" Type="String" />
+    <Convert Path ="//HeightMap/HeightMap" Type="UInt16" Structure ="List" />
+    <Convert Path ="//val" Type="Byte" Structure ="List" />
+    <Convert Path ="//bits" Type="Byte" Structure ="List" />
+    <Convert Path ="//PlayableArea" Type="Int32" Structure ="List" />
+    <Convert Path ="//WorldSize" Type="Int32" Structure ="List" />
+    <Convert Path ="//m_AreaRect/None" Type="Int32" Structure ="List" />
+    <Convert Path ="//m_AreaPointGrid/None" Type="Int32" Structure ="List" />
+    <Convert Path ="//ID" Type="Int64" />
+    <Convert Path ="//Position" Type="Single" Structure="List" />
+    <Convert Path ="//Orientation" Type="Single" Structure="List" />
+    <Convert Path ="//TangentScale" Type="Single" />
+    <Convert Path ="//BezierPath/Path/Minimum" Type="Single" Structure="List"/>
+    <Convert Path ="//BezierPath/Path/Maximum" Type="Single" Structure="List"/>
+    <Convert Path ="//BezierPath/Path/BezierCurve/None/*" Type="Single" Structure="List"/>
+    <Convert Path ="//None[guid]/Direction" Type="Single"/>
+    <Convert Path ="//None[guid]/Mesh/Scale" Type="Single"/>
+    <Convert Path ="//Sequence/Name" Type="String" Encoding ="UTF-8"/>
+    <Convert Path ="//AllKeyframes/None/None/*[self::Value or self::TangentIn or self::TangentOut]" Type="Single"/>
+    <Convert Path ="//View/*" Type="Single" Structure="List"/>
+    <Convert Path ="//Projection/NearClip" Type="Single"/>
+    <Convert Path ="//BreakableFirstLastTangents" Type="Byte" Structure="List"/>
+    <Convert Path ="//HerdAreas/None/RandomPoint" Type="Int32" Structure="List"/>
+    <Convert Path ="//HerdAreas/None/DangerPoints/None" Type="Int32" Structure="List"/>
+    <Convert Path ="//BBox" Type="Int32" Structure="List"/>
+    <Convert Path ="//ObjectGroups/None[not(GameObjects)]" Type="String" Encoding="UTF-8"/>
+    <Convert Path ="//GameObjects/None" Type="Int32" Structure ="List"/>
   </Converts>
 </Converts>
