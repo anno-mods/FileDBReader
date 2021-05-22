@@ -1,6 +1,6 @@
 # FileDBReader
 
-FileDB Unpacking done by @VeraAtVersus, based on filedb reverse engineering by LysannSchlegel
+FileDB Unpacking done by @VeraAtVersus, based on filedb reverse engineering by @lysannschlegel
 
 A simple command line unpacker, repacker and interpreter for Anno 1800 (and 2205?) filedb compression. 
 
