@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml;
@@ -23,21 +22,7 @@ namespace FileDBReader
     /// </summary>
     class XmlInterpreter
     {
-        Dictionary<Type, Func<string, Encoding, String>> ConversionRules = new Dictionary<Type, Func<string, Encoding, String>>
-            {
-                { typeof(bool),   (s, Encoding) => HexHelper.ToBool(s).ToString()},
-                { typeof(byte),   (s, Encoding) => byte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(sbyte),  (s, Encoding) => sbyte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(short),  (s, Encoding) => short.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(ushort), (s, Encoding) => ushort.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(int),    (s, Encoding) => int.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(uint),   (s, Encoding) => uint.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(long),   (s, Encoding) => long.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(ulong),  (s, Encoding) => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(float),  (s, Encoding) => HexHelper.ToFloat(HexHelper.flip(s)).ToString() },
-                { typeof(String), (s, Encoding) => HexHelper.FromHexString(s, Encoding) }
-            };
-
+        
         public XmlInterpreter() {
             
         }
@@ -54,7 +39,32 @@ namespace FileDBReader
 
         public void Interpret(XmlDocument doc, XmlDocument interpreter, String docpath) {
             //default type
-            var defaultType = Type.GetType("System." + interpreter.SelectSingleNode("/Converts/Default").Attributes["Type"].Value);
+            Type defaultType = null;
+
+            var attrib = interpreter.SelectSingleNode("/Converts/Default").Attributes["Type"];
+            if (attrib != null) {
+                defaultType = Type.GetType("System." + attrib.Value);
+            }
+
+            //Convert internal FileDBs before conversion
+            var internalFileDBs = interpreter.SelectNodes("/Converts/InternalCompression/Element");
+            foreach (XmlNode n in internalFileDBs) {
+
+                var nodes = doc.SelectNodes(n.Attributes["Path"].Value);
+
+                foreach (XmlNode node in nodes) {
+                    var span = HexHelper.toByteSpan(node.InnerText);
+                    var filereader = new FileReader();
+                    var decompressed = filereader.ReadSpan(span);
+                    //add the decompressed document to the current documentConverterFunctions.ConversionRulesImport
+                    decompressed.Save("decompressed.xml");
+
+                    node.InnerText = "";
+                    node.AppendChild(doc.ReadNode(decompressed.Root.CreateReader()) as XmlElement);
+                }
+            }
+
+            //converts
             var converts = interpreter.SelectNodes("/Converts/Converts/Convert");
 
             foreach (XmlNode x in converts) {
@@ -81,17 +91,8 @@ namespace FileDBReader
                         {
                             case "List":
                                 String BinaryData = match.InnerText;
-
-                                //get size of target datatype.
-                                int bytesize = Marshal.SizeOf(type) * 2;
-                                var List = HexHelper.Split(BinaryData, bytesize);
-
-                                foreach (String s in List)
-                                {
-                                    //encoding gets ignored for int/float etc. in the conversion rules. 
-                                    String converted = ConversionRules[type](BinaryData, encoding);
-                                    match.InnerText = converted;
-                                }
+                                var result = InterpretAsList(BinaryData, type);
+                                match.InnerText = result;
                                 break;
                         }
                     }
@@ -100,44 +101,97 @@ namespace FileDBReader
                         String BinaryData = match.InnerText;
 
                         //encoding gets ignored for int/float etc. in the conversion rules. 
-                        String converted = ConversionRules[type](BinaryData, encoding);
+                        String converted = ConverterFunctions.ConversionRulesImport[type](BinaryData, encoding);
                         match.InnerText = converted;
                     }
                 }
             }
 
-            //get a combined path of all
-            String xPath = "";
-            bool isFirst = true;
-            foreach (XmlNode convert in converts)
-            {
-                if (!isFirst)
+            //DefaultType
+            if (defaultType != null) {
+                //get a combined path of all
+                String xPath = "";
+                bool isFirst = true;
+                foreach (XmlNode convert in converts)
                 {
+                    if (!isFirst)
+                    {
+                        xPath += " | ";
+                    }
+                    xPath += convert.Attributes["Path"].Value;
+                    isFirst = false;
+                }
+                foreach (XmlNode internalFileDB in internalFileDBs) {
                     xPath += " | ";
+                    xPath += internalFileDB.Attributes["Path"].Value;
                 }
-                xPath += convert.Attributes["Path"].Value;
-                isFirst = false;
-            }
-            //select all text not in combined path#
-            var Base = doc.SelectNodes("//*[text()]");
-            var toFilter = doc.SelectNodes(xPath);
+                //select all text not in combined path#
+                var Base = doc.SelectNodes("//*[text()]");
+                var toFilter = doc.SelectNodes(xPath);
 
-            var defaults = HexHelper.ExceptNodelists(Base, toFilter);
-            
-            //convert that to default type
-            foreach (XmlNode y in defaults)
-            {
-                Encoding encoding = new UnicodeEncoding();
-                try {
-                    String BinaryData = y.InnerText;
-                    String converted = ConversionRules[defaultType](BinaryData, encoding);
-                    y.InnerText = converted;
-                }
-                catch (Exception e) { 
+                var defaults = HexHelper.ExceptNodelists(Base, toFilter);
                 
+                //convert that to default type
+                foreach (XmlNode y in defaults)
+                {
+                    Encoding encoding = new UnicodeEncoding();
+                    try
+                    {
+                        String BinaryData = y.InnerText;
+                        String converted = ConverterFunctions.ConversionRulesImport[defaultType](BinaryData, encoding);
+                        y.InnerText = converted;
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                 }
-            }
+            }   
+            
             doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(docpath, "_i"), "xml"));
+        }
+
+        private String InterpretAsList(String BinaryData, Type type)
+        {
+            //get size of target datatype.
+            int bytesize = Marshal.SizeOf(type);
+
+            String s = "";
+            //performance optimizing supports lists of shorts and bytes atm
+            if (type == typeof(short))
+            {
+                var span = HexHelper.toShortSpan(BinaryData).ToArray();
+                s = String.Join<short>(" ", span);
+            }
+            else if (type == typeof(byte))
+            {
+                var span = HexHelper.toByteSpan(BinaryData).ToArray();
+                s = String.Join<byte>(" ", span);
+            }
+            else if (type == typeof(int))
+            {
+                var span = HexHelper.toIntSpan(BinaryData).ToArray();
+                s = String.Join<int>(" ", span);
+            }
+            else if (type == typeof(float))
+            {
+                var span = HexHelper.toFloatSpan(BinaryData).ToArray();
+                s = String.Join<float>(" ", span);
+            }
+            else if (type == typeof(UInt16))
+            {
+                var span = HexHelper.toUInt16Span(BinaryData).ToArray();
+                s = String.Join<UInt16>(" ", span);
+            }
+            else { 
+                //do it the old fashioned way if there is no performance optimizing
+            }
+
+            //assume maps are short spans for the moment :)
+
+            Console.WriteLine("Map complete");
+
+            return s;
         }
     }
 }

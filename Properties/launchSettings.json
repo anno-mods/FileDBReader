@@ -2,7 +2,7 @@
   "profiles": {
     "FileDBReader": {
       "commandName": "Project",
-      "commandLineArgs": "interpret -f export.xml -i FileFormats/infotip.xml"
+      "commandLineArgs": "interpret -f gamedata_goodwill.xml -i FileFormats/Island_Gamedata.xml"
     }
   }
 }

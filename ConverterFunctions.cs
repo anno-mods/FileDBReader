@@ -1,0 +1,55 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+
+namespace FileDBReader
+{
+    public static class ConverterFunctions
+    {
+        public static Dictionary<Type, Func<string, Encoding, String>> ConversionRulesImport = new Dictionary<Type, Func<string, Encoding, String>>
+            {
+                { typeof(bool),   (s, Encoding) => HexHelper.ToBool(s).ToString()},
+                { typeof(byte),   (s, Encoding) => byte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(sbyte),  (s, Encoding) => sbyte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(short),  (s, Encoding) => short.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(ushort), (s, Encoding) => ushort.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(int),    (s, Encoding) => int.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(uint),   (s, Encoding) => uint.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(long),   (s, Encoding) => long.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(ulong),  (s, Encoding) => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(float),  (s, Encoding) => HexHelper.ToFloat(HexHelper.flip(s)).ToString() },
+                { typeof(String), (s, Encoding) => HexHelper.FromHexString(s, Encoding) }
+            };
+
+        public static Dictionary<Type, Func<String, Encoding, byte[]>> ConversionRulesExport = new Dictionary<Type, Func<String, Encoding, byte[]>>
+            {
+                { typeof(bool),     (s, Encoding)   => BitConverter.GetBytes(bool.Parse(s))},
+                { typeof(byte),     (s, Encoding)   => BitConverter.GetBytes(byte.Parse(s))},
+                { typeof(sbyte),    (s, Encoding)   => BitConverter.GetBytes(sbyte.Parse(s))},
+                { typeof(short),    (s, Encoding)   => BitConverter.GetBytes(short.Parse(s))},
+                { typeof(ushort),   (s, Encoding)   => BitConverter.GetBytes(ushort.Parse(s))},
+                { typeof(int),      (s, Encoding)   => BitConverter.GetBytes((int.Parse(s)))},
+                { typeof(uint),     (s, Encoding)   => BitConverter.GetBytes((uint.Parse(s)))},
+                { typeof(long),     (s, Encoding)   => BitConverter.GetBytes((long.Parse(s)))},
+                { typeof(ulong),    (s, Encoding)   => BitConverter.GetBytes((ulong.Parse(s)))},
+                { typeof(float),    (s, Encoding)   => BitConverter.GetBytes(float.Parse(s))},
+                { typeof (String),  (s, Encoding)   => Encoding.GetBytes(s)}
+            };
+
+        public static Dictionary<Type, Func<string, object>> ConversionRulesToSpan = new Dictionary<Type, Func<string, object>>
+            {
+                { typeof(bool),   s => HexHelper.ToBool(s).ToString()},
+                { typeof(byte),   s => byte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(sbyte),  s => sbyte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(short),  s => short.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(ushort), s => ushort.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(int),    s => int.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(uint),   s => uint.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(long),   s => long.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(ulong),  s => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(float),  s => HexHelper.ToFloat(HexHelper.flip(s)) },
+                { typeof(String), s => HexHelper.FromHexString(s, new UnicodeEncoding()) }
+            };
+    }
+}

@@ -9,6 +9,7 @@
 -->
 <Converts>
   <Default Type ="Int32" />
+  <InternalCompression />
   <Converts>
     <Convert Path ="//Text" Type ="String" />
     <Convert Path ="//Condition" Type ="String" Encoding = "UTF-8"/>

@@ -20,7 +20,8 @@ namespace FileDBReader
         
         }
 
-        public void Export(String path, string outputFileFormat) {
+        //converts an xmlNode to fileDB Compression and returns the result as byte span
+        public Stream Export(XmlDocument xml, Stream stream) {
 
             Dictionary<String, byte> Tags = new Dictionary<string, byte>();
             Dictionary<String, byte> Attribs = new Dictionary<string, byte>();
@@ -30,12 +31,11 @@ namespace FileDBReader
             byte tagcount = 1;
             byte attribcount = 0;
 
-            XmlDocument xml = new XmlDocument();
-            xml.Load(path);
             XmlNodeList nodes = xml.FirstChild.ChildNodes;
 
-            BinaryWriter writer = new BinaryWriter(File.Create(Path.ChangeExtension(path, outputFileFormat)));
-            foreach (XmlElement element in nodes) {
+            BinaryWriter writer = new BinaryWriter(stream);
+            foreach (XmlElement element in nodes)
+            {
                 writeNode(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
             }
 
@@ -45,8 +45,22 @@ namespace FileDBReader
             writer.Flush();
 
             writeTagSection(ref Tags, ref Attribs, 0, ref writer);
+            return stream;
+        }
 
-            writer.Close();
+
+        /// <summary>
+        /// exports an xmlfile to filedb compression
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="outputFileFormat"></param>
+        public void Export(String path, String outputFileFormat)
+        {
+            var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(path);
+            Export(doc, stream);
         }
 
         //pass by reference to increment original values
