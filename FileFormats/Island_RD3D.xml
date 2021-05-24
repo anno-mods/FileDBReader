@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Converts>
-  <Default Type ="Int32" />
+  <Default Type="Int32" />
   <InternalCompression>
     <Element Path="//AreaManagerData/None/Data" />
   </InternalCompression>
   <Converts>
-    <Convert Path ="//GlobalAmbientName" Type ="String"/>
-    <Convert Path ="//PlayableArea" Type ="Int32" Structure="List"/>
-    <Convert Path ="//WorldSize" Type ="Int32" Structure="List"/>
-    <Convert Path ="//HeightMap/HeightMap" Type ="Int16" Structure="List"/>
-    <Convert Path ="//View/*" Type ="Single" Structure="List"/>
-    <Convert Path ="//val" Type ="Byte" Structure="List"/>
-    <Convert Path ="//block/mode" Type ="Boolean" Structure="List"/>
-    <Convert Path ="//bits" Type ="Byte" Structure="List"/>
-    <Convert Path ="//GameObjectIDCounter" Type ="Int64"/>
-    <Convert Path ="//NonGameObjectIDCounter" Type ="Int64"/>
-    <Convert Path ="//NearClip" Type ="Single"/>
+    <Convert Path ="//map" Type ="Int16" Structure ="List"/>
+    <Convert Path ="//FileNames/None" Type="String" Encoding="UTF-16" />
+    <Convert Path ="//Position" Type ="Int32" Structure="List" />
+    <Convert Path ="//Rotation" Type ="Single" Structure="List" />
+    <Convert Path ="//Color" Type ="Single" Structure="List" />
+    <Convert Path ="//Scale" Type ="Single" Structure="List" />
+    <Convert Path ="//bits" Type ="Int16" Structure="List" />
+    <Convert Path ="//MaterialSetFileName" Type ="String" Encoding="UTF-16" />
+    <Convert Path ="//MaterialIDs2" Type ="Int32" Structure="List" />
+    <Convert Path ="//MaterialAlphas2" Type ="Int32" Structure="List" />
+    <Convert Path ="//UnitScale" Type ="Single" />
   </Converts>
 </Converts>

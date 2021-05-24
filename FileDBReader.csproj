@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <None Update="FileFormats\infotip.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="FileFormats\Island_Gamedata.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
