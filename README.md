@@ -2,7 +2,7 @@
 
 FileDB Unpacking done by @VeraAtVersus, based on filedb reverse engineering by @lysannschlegel
 
-A simple command line unpacker, repacker and interpreter for Anno 1800 (and 2205?) filedb compression. 
+A simple command line unpacker, repacker and interpreter for Anno 1800 (and 2205?) filedb compression. Currently WIP.
 
 
 when decompressing, all data will be represented in hex strings which can be interpreted using an interpreter file. This is done by selecting XML Nodes using xpath. After you are done editing the decompressed and interpreted xml file, you have to convert it to he using the same interpreter and compress it again.
