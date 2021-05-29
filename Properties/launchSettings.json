@@ -1,7 +1,8 @@
 {
   "profiles": {
     "FileDBReader": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "decompress_interpret -f gamedata.data -i FileFormats/Island_Gamedata_f.xml"
     }
   }
 }

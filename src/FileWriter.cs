@@ -27,6 +27,8 @@ namespace FileDBReader
             Dictionary<String, byte> Attribs = new Dictionary<string, byte>();
 
             Tags.Add("None", 1);
+            //respect None Attrib that can happen from time to time
+            Attribs.Add("None", 0);
 
             byte tagcount = 1;
             byte attribcount = 0;
@@ -65,6 +67,12 @@ namespace FileDBReader
         public void Export(XmlDocument doc, String outputFileFormat, String path)
         {
             var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
+            Export(doc, stream);
+        }
+
+        public void Export(XmlDocument doc, String OutputFile)
+        {
+            var stream = File.Create(OutputFile);
             Export(doc, stream);
         }
 
@@ -179,11 +187,14 @@ namespace FileDBReader
             foreach (String s in Attribs.Keys)
             {
                 //WE DO NOT WANT STRING LENGTH THANKS
-                writer.Write(Encoding.UTF8.GetBytes(s));
-                byte i = Attribs[s];
-                writer.Write((byte)0);
-                writer.Write(i);
-                writer.Write((byte)128);
+                if (!s.Equals("None")) {
+                    writer.Write(Encoding.UTF8.GetBytes(s));
+                    byte i = Attribs[s];
+                    writer.Write((byte)0);
+                    writer.Write(i);
+                    writer.Write((byte)128);
+                }
+                
             }
             writer.Flush();
 

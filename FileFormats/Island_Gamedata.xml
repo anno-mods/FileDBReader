@@ -33,5 +33,19 @@
     <Convert Path ="//BBox" Type="Int32" Structure="List"/>
     <Convert Path ="//ObjectGroups/None[not(GameObjects)]" Type="String" Encoding="UTF-8"/>
     <Convert Path ="//GameObjects/None" Type="Int32" Structure ="List"/>
+
+    <Convert Path ="//DatasetCountGrid/val/None/counts/None/None" Type="Int8"/>
+    <Convert Path ="//ParticipantID" Type="Int16"/>
+    <Convert Path ="//DyeColorDetail" Type="Byte" Structure="List"/>
+    <Convert Path ="//Selection/Detected" Type="Int16" Structure="List"/>
+    <Convert Path ="//SequenceStartTime" Type="Int64"/>
+    <Convert Path ="//CurrentSequence" Type="Int32"/>
+    <Convert Path ="//GameObjectLabelMap" Type="String"/>
+    <Convert Path ="//ConfigFilename" Type="String" Encoding="UTF-8"/>
+    <Convert Path ="//RectSize" Type="Int32" Structure="List"/>
+    <Convert Path ="//LastWaystepPos" Type="Int32" Structure="List"/>
+    <Convert Path ="//LastPos" Type="Int32" Structure="List"/>
+    <Convert Path ="//LastTickPos" Type="Int32" Structure="List"/>
+    <Convert Path ="//AreaExtents" Type="Int32" Structure="List"/>
   </Converts>
 </Converts>

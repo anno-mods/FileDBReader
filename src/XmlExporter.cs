@@ -51,6 +51,7 @@ namespace FileDBReader
                 catch (Exception e)
                 {
                     Console.WriteLine("Path not correctly set lol");
+                    Console.WriteLine(x.Attributes["Path"].Value);
                 }
             }
 
@@ -78,12 +79,17 @@ namespace FileDBReader
                 var nodes = doc.SelectNodes(n.Attributes["Path"].Value);
                 foreach (XmlNode node in nodes)
                 {
+                    //get internal document
                     var contentNode = node.SelectSingleNode("./Content");
                     XmlDocument xmldoc = new XmlDocument();
                     XmlNode f = xmldoc.ImportNode(contentNode, true);
                     xmldoc.AppendChild(xmldoc.ImportNode(f, true));
+
+                    //compress the document
                     FileWriter fileWriter = new FileWriter();
                     var stream = fileWriter.Export(xmldoc, new MemoryStream());
+
+                    //get this stream to hex 
                     node.InnerText = ByteArrayToString(HexHelper.StreamToByteArray(stream));
 
                     //try to overwrite the bytesize since it's always exported the same way

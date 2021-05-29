@@ -25,6 +25,9 @@
     <None Update="FileFormats\infotip.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="FileFormats\internalfiledbtest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="FileFormats\Island_Gamedata.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

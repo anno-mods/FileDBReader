@@ -36,10 +36,10 @@ namespace FileDBReader
             XmlDocument interpreter = new XmlDocument();
             interpreter.Load(InterpreterPath);
 
-            return Interpret(doc, interpreter, docPath);
+            return Interpret(doc, interpreter);
         }
 
-        public XmlDocument Interpret(XmlDocument doc, XmlDocument interpreter, String docpath) 
+        public XmlDocument Interpret(XmlDocument doc, XmlDocument interpreter) 
         {
             //default type
             XmlNode defaultAttrib = null;

@@ -124,7 +124,7 @@ namespace FileDBReader {
                         foreach (String s in o.InputFiles) {
                             var interpreterDoc = new XmlDocument();
                             interpreterDoc.Load(o.Interpreter);
-                            var doc = interpreter.Interpret(reader.ReadFile(s), interpreterDoc, s);
+                            var doc = interpreter.Interpret(reader.ReadFile(s), interpreterDoc);
                             doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, "_d_i"), "xml"));
 
                         }

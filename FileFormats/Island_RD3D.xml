@@ -16,5 +16,6 @@
     <Convert Path ="//MaterialIDs2" Type ="Int32" Structure="List" />
     <Convert Path ="//MaterialAlphas2" Type ="Int32" Structure="List" />
     <Convert Path ="//UnitScale" Type ="Single" />
+    <Convert Path ="//UsingSplitImageHeightMaps" Type ="Boolean" />
   </Converts>
 </Converts>
