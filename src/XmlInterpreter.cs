@@ -52,10 +52,19 @@ namespace FileDBReader
                 var nodes = doc.SelectNodes(n.Attributes["Path"].Value);
                 foreach (XmlNode node in nodes) {
                     var span = HexHelper.toSpan<byte>(node.InnerText);
+
+                    
+
+
                     var filereader = new FileReader();
                     var decompressed = filereader.ReadSpan(span);
                     node.InnerText = "";
-                    node.AppendChild(doc.ReadNode(decompressed.Root.CreateReader()) as XmlElement);
+                    node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
+
+                    //write the current decompressed internal filedb to a file
+                    //String path = Path.Combine("tests", "lists", DateTime.Now.ToString("HH-mm-ss-ff") + "_" + node.Name + ".bin");
+                    //using FileStream fs = File.Create(path);
+                    //fs.Write(span);
                 }
             }
 
@@ -145,12 +154,32 @@ namespace FileDBReader
             try
             {
                 String BinaryData = n.InnerText;
+
+                //make a bytesize check
+                int ExpectedBytesize = 0;
+                int StringSize = BinaryData.Length;
+
+                if (type != typeof(String))
+                {
+                    ExpectedBytesize = Marshal.SizeOf(type);
+                    if (type == typeof(Boolean)) {
+                        if (StringSize != 2) { 
+                            Console.WriteLine("Wrong Bytesize at {0}", n.Name);
+                        }
+                    }
+                    else if (ExpectedBytesize != (StringSize / 2))
+                    {
+                        Console.WriteLine("Wrong Bytesize at {0}", n.Name);
+                    }
+                }
+                
                 String s = ConverterFunctions.ConversionRulesImport[type](BinaryData, e);
                 n.InnerText = s;
             }
             catch (Exception ex) {
                 Console.WriteLine("an Error occured: " + n.InnerText);
                 Console.WriteLine(ex.Message);
+                Console.WriteLine("at: {0}", n.Name);
             }
 }
     }

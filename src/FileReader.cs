@@ -7,23 +7,24 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace FileDBReader {
+namespace FileDBReader
+{
 
     /// <summary>
-    /// FileReader done by @VeraAtVersus
+    /// FileReader done by VeraAtVersus
     /// 
     /// Converts a FileDB Compressed file to an xml representation with data represented in hex strings.
     /// </summary>
-  public class FileReader {
+    public class FileReader
+    {
+        #region Properties
 
-    #region Properties
-
-    public Dictionary<ushort, string> Tags { get; set; } = new Dictionary<ushort, string>();
+        public Dictionary<ushort, string> Tags { get; set; } = new Dictionary<ushort, string>();
 
         #endregion Properties
 
         #region Methods
-        public XDocument ReadSpan(Span<byte> SpanToRead)
+        public XmlDocument ReadSpan(Span<byte> SpanToRead)
         {
             //Init
             Tags.Clear();
@@ -36,18 +37,9 @@ namespace FileDBReader {
             XElement currentNode = null;
 
             var Filereader = new SpanReader(SpanToRead);
-
-            //Check Compression
-            if (Filereader.ReadInt16() == -9608)
-            {
-                Filereader = new SpanReader(DecompressSpan(Filereader.Span));
-            }
-
             //Set Position from The Tags Section
             var TagsOff = Filereader.Position = Convert.ToInt32(MemoryMarshal.Read<UInt32>(Filereader.Span[^4..]));
 
-
-            //this fails for the internal filedb???
             //Read Tags
             ExtractTags(ref Filereader, Tags);
             //Read Attributes
@@ -97,58 +89,60 @@ namespace FileDBReader {
                             nodesReader.Position += length;
                         }
 
-
                         attribute = new XElement(tag, content);
                         AddToCurrentNode(document, currentNode, attribute);
                     }
                 }
             }
+            return ToXmlDocument(document);
+        }
+
+        public XmlDocument ReadFile(string path)
+        {
+            Span<byte> Span = File.ReadAllBytes(path).AsSpan();
+            var document = ReadSpan(Span);
             return document;
         }
 
-        public XmlDocument ReadFile(string path) {
-            Span<byte> Span = File.ReadAllBytes(path).AsSpan();
-            var document = ReadSpan(Span);
-
+        private XmlDocument ToXmlDocument(XDocument doc)
+        {
             var xml = new XmlDocument();
-            using (var xmlReader = document.CreateReader())
+            using (var xmlReader = doc.CreateReader())
             {
                 xml.Load(xmlReader);
                 return xml;
             }
+
         }
 
-    private static void ExtractTags(ref SpanReader reader, Dictionary<ushort, string> dictionary) {
-      var count = reader.ReadInt32Bit7();
-      for (var i = 0; i < count; i++) {
-        reader.ReadString0(out var name);
-        reader.ReadUInt16(out var id);
+        private static void ExtractTags(ref SpanReader reader, Dictionary<ushort, string> dictionary)
+        {
+            var count = reader.ReadInt32Bit7();
+            for (var i = 0; i < count; i++)
+            {
+                reader.ReadString0(out var name);
+                reader.ReadUInt16(out var id);
 
-        //Xml Space in Name Fix
-        dictionary.Add(id, name.Replace(" ", "_"));
-      }
+                //Xml Space in Name Fix
+                //dictionary.Add(id, name.Replace(" ", "_"));
+
+                //This upper fix will break recompression. we will have to think of something better in the future. :/
+                dictionary.Add(id, name);
+            }
+        }
+
+        private static void AddToCurrentNode(XDocument document, XElement currentNode, XElement node)
+        {
+            //if nothing 
+            if (currentNode == null)
+            {
+                //var newnode = new XElement("Base");
+                //document.Root.Add(newnode);
+                currentNode = document.Root;
+            }
+            currentNode.Add(node);
+        }
+
+        #endregion Methods
     }
-
-    private static void AddToCurrentNode(XDocument document, XElement currentNode, XElement node) {
-      //if nothing 
-      if (currentNode == null) {
-        //var newnode = new XElement("Base");
-        //document.Root.Add(newnode);
-        currentNode = document.Root;
-      }
-      currentNode.Add(node);
-    }
-    public byte[] DecompressSpan(ReadOnlySpan<byte> bytesToDecompress) {
-      using var memStream = new MemoryStream();
-      memStream.Write(bytesToDecompress);
-      using var decompressionStream = new InflaterInputStream(memStream);
-      using var decompressedFileStream = new MemoryStream();
-      memStream.Position = 0;
-      decompressionStream.CopyTo(decompressedFileStream);
-
-      return decompressedFileStream.ToArray();
-    }
-
-    #endregion Methods
-  }
 }

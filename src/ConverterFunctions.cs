@@ -25,14 +25,14 @@ namespace FileDBReader
         public static Dictionary<Type, Func<String, Encoding, byte[]>> ConversionRulesExport = new Dictionary<Type, Func<String, Encoding, byte[]>>
             {
                 { typeof(bool),     (s, Encoding)   => BitConverter.GetBytes(bool.Parse(s))},
-                { typeof(byte),     (s, Encoding)   => BitConverter.GetBytes(byte.Parse(s))},
+                { typeof(byte),     (s, Encoding)   => new byte[] { byte.Parse(s) }},
                 { typeof(sbyte),    (s, Encoding)   => BitConverter.GetBytes(sbyte.Parse(s))},
                 { typeof(short),    (s, Encoding)   => BitConverter.GetBytes(short.Parse(s))},
                 { typeof(ushort),   (s, Encoding)   => BitConverter.GetBytes(ushort.Parse(s))},
-                { typeof(int),      (s, Encoding)   => BitConverter.GetBytes((int.Parse(s)))},
-                { typeof(uint),     (s, Encoding)   => BitConverter.GetBytes((uint.Parse(s)))},
-                { typeof(long),     (s, Encoding)   => BitConverter.GetBytes((long.Parse(s)))},
-                { typeof(ulong),    (s, Encoding)   => BitConverter.GetBytes((ulong.Parse(s)))},
+                { typeof(int),      (s, Encoding)   => BitConverter.GetBytes(int.Parse(s))},
+                { typeof(uint),     (s, Encoding)   => BitConverter.GetBytes(uint.Parse(s))},
+                { typeof(long),     (s, Encoding)   => BitConverter.GetBytes(long.Parse(s))},
+                { typeof(ulong),    (s, Encoding)   => BitConverter.GetBytes(ulong.Parse(s))},
                 { typeof(float),    (s, Encoding)   => BitConverter.GetBytes(float.Parse(s))},
                 { typeof (String),  (s, Encoding)   => Encoding.GetBytes(s)}
             };

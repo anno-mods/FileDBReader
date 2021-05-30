@@ -10,7 +10,6 @@ using System.IO;
 namespace FileDBReader
 {
 
-
     /// <summary>
     /// Converts an xml file with data represented in hex strings into filedb compression readable by Anno 1800. 
     /// </summary>
@@ -20,7 +19,27 @@ namespace FileDBReader
         
         }
 
-        //converts an xmlNode to fileDB Compression and returns the result as byte span
+        public Stream Export(String path, String outputFileFormat)
+        {
+            var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
+            XmlDocument doc = new XmlDocument();
+            doc.Load(path);
+            return Export(doc, stream);
+        }
+
+        public Stream Export(XmlDocument doc, String outputFileFormat, String path)
+        {
+            var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
+            return Export(doc, stream);
+        }
+
+        public Stream Export(XmlDocument doc, String OutputFile)
+        {
+            var stream = File.Create(OutputFile);
+            return Export(doc, stream);
+        }
+
+        //converts an xmlNode to fileDB Compression and returns the result as stream
         public Stream Export(XmlDocument xml, Stream stream) {
 
             Dictionary<String, byte> Tags = new Dictionary<string, byte>();
@@ -47,6 +66,13 @@ namespace FileDBReader
             writer.Flush();
 
             writeTagSection(ref Tags, ref Attribs, 0, ref writer);
+
+            //write the current decompressed internal filedb to a file
+            //String path = Path.Combine("tests", "lists", DateTime.Now.ToString("HH-mm-ss-ff") + "_" + xml.DocumentElement.FirstChild.Name + ".bin");
+            //var fileStream = File.Create(path);
+            //stream.Seek(0, SeekOrigin.Begin);
+            //stream.CopyTo(fileStream);
+            //fileStream.Close();
             return stream;
         }
 
@@ -56,30 +82,11 @@ namespace FileDBReader
         /// </summary>
         /// <param name="path"></param>
         /// <param name="outputFileFormat"></param>
-        public void Export(String path, String outputFileFormat)
-        {
-            var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
-            Export(doc, stream);
-        }
-
-        public void Export(XmlDocument doc, String outputFileFormat, String path)
-        {
-            var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
-            Export(doc, stream);
-        }
-
-        public void Export(XmlDocument doc, String OutputFile)
-        {
-            var stream = File.Create(OutputFile);
-            Export(doc, stream);
-        }
+        
 
         //pass by reference to increment original values
         public void writeNode(XmlNode e, ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, ref byte tagcount, ref byte attribcount, ref BinaryWriter writer) 
         {
-
             //if this does not contain text
             //is a tag
             var FirstChild = e.FirstChild;
@@ -97,9 +104,7 @@ namespace FileDBReader
                 //write id
                 //write 00
                 writer.Write(id);
-                byte b = 0;
-                writer.Write(b);
-
+                writer.Write((byte)0);
 
                 //write childnodes
                 foreach (XmlNode element in e.ChildNodes)
@@ -126,8 +131,7 @@ namespace FileDBReader
                 //write id
                 //write 80 
                 writer.Write(id);
-                byte b = 128;
-                writer.Write(b);
+                writer.Write((byte)128);
 
                 //write bytesize of content 
                 //write content 
@@ -142,29 +146,12 @@ namespace FileDBReader
                 }
                 writer.Write((byte)v);
 
-
                 writer.Write(bytes);
                 writer.Flush();
             }
         }
 
         public void writeTagSection(ref Dictionary <String, byte> Tags, ref Dictionary<String, byte> Attribs, int offset, ref BinaryWriter writer) {
-            //write tag count as 8 bit int
-            //foreach tag in dictionary
-            //write tag as nullterminated string 
-            //write tag id as 8 bit int
-            //write 00
-
-
-
-            //write attrib count as 8 bit int
-            //foreach attrib in dictionary
-            //write attrib id as nullterminated string
-            //write attrib id as 8 bit int 
-            //write 80 
-
-            //write offset
-
             var TagSectionOffset = (int)writer.BaseStream.Position;
 
             //Tags
@@ -183,7 +170,8 @@ namespace FileDBReader
             writer.Flush();
 
             //Attribs
-            writer.Write((byte)Attribs.Count);
+            //make sure the empty none tag is rekt
+            writer.Write((byte)Attribs.Count -1);
             foreach (String s in Attribs.Keys)
             {
                 //WE DO NOT WANT STRING LENGTH THANKS
