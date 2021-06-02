@@ -54,7 +54,7 @@ namespace FileDBReader
                 count++;
                 if ((count & 1000) == 1000)
                 {
-                    Console.WriteLine($"{nodesReader.Position} - {nodesReader.Length - nodesReader.Position}");
+                    //Console.WriteLine($"{nodesReader.Position} - {nodesReader.Length - nodesReader.Position}");
                 }
 
                 //Get Next ID

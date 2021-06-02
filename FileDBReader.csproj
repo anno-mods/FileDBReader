@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="FileFormats\tmc.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="FileFormats\ctt.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -46,14 +49,26 @@
     <None Update="tests\filedb\gamedata.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\filedb\gamedata_og.data">
+    <None Update="tests\innerfiledb\gamedata_og.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\filedb\original.bin">
+    <None Update="tests\innerfiledb\original.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\filedb\recompressed.bin">
+    <None Update="tests\innerfiledb\recompressed.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="tests\island\0x0.tmc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="tests\island\4x3.tmc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="tests\island\gamedata.data">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="tests\island\rd3d.data">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="tests\lists\gamedata.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

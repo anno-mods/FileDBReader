@@ -6,7 +6,7 @@
   <Default Type ="Int32" />
   <InternalCompression />
   <Converts>
-    <Convert Path ="//Downsampled/map" Type ="Int16" Structure ="List"/>
+    <Convert Path ="//Downsampled/map" Type ="UInt16" Structure ="List"/>
     <Convert Path ="//Data/map" Type ="Byte" Structure ="List"/>
 	  <Convert Path ="//ScaleFactor" Type ="Single" />
   </Converts>

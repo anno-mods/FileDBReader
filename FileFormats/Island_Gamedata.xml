@@ -16,7 +16,7 @@
     <Convert Path ="//WorldSize" Type="Int32" Structure ="List" />
     <Convert Path ="//m_AreaRect/None" Type="Int32" Structure ="List" />
     <Convert Path ="//m_AreaPointGrid/None" Type="Int32" Structure ="List" />
-    <Convert Path ="//ID" Type="Int64" />
+    <Convert Path ="//None[guid]/ID" Type="Int64" />
     <Convert Path ="//Position" Type="Single" Structure="List" />
     <Convert Path ="//Orientation" Type="Single" Structure="List" />
     <Convert Path ="//TangentScale" Type="Single" />
@@ -26,10 +26,11 @@
     <Convert Path ="//None[guid]/Direction" Type="Single"/>
     <Convert Path ="//None[guid]/Mesh/Scale" Type="Single"/>
     <Convert Path ="//Sequence/Name" Type="String" Encoding ="UTF-8"/>
-    <Convert Path ="//AllKeyframes/None/None/*[self::Value or self::TangentIn or self::TangentOut]" Type="Single"/>
+    <Convert Path ="//AllKeyframes/None/None/Value" Type="Single"/>
     <Convert Path ="//View/*" Type="Single" Structure="List"/>
     <Convert Path ="//Projection/NearClip" Type="Single"/>
     <Convert Path ="//BreakableFirstLastTangents" Type="Byte" Structure="List"/>
+    <Convert Path ="//SameWeightFirstLastTangents" Type="Byte" Structure="List"/>
     <Convert Path ="//HerdAreas/None/RandomPoint" Type="Int32" Structure="List"/>
     <Convert Path ="//HerdAreas/None/DangerPoints/None" Type="Int32" Structure="List"/>
     <Convert Path ="//BBox" Type="Int32" Structure="List"/>
@@ -63,5 +64,14 @@
     <Convert Path ="//Mesh/SequenceData/CurrentSequenceStartTime" Type="Int64"/>
     <Convert Path ="//GameObjectIDCounter" Type="Int64"/>
     <Convert Path ="//NonGameObjectIDCounter" Type="Int64"/>
+
+
+    <Convert Path ="//ManualTangentMode" Type="Boolean"/>
+    <Convert Path ="//Interpolation" Type="Boolean"/>
+    <Convert Path ="//StoredSelections/None/value/id" Type="Int16"/>
+
+    <Convert Path ="//AllKeyframes/None/None/TangentIn" Type="Single" Structure ="List"/>
+    <Convert Path ="//AllKeyframes/None/None/TangentOut" Type="Single" Structure ="List"/>
+    <Convert Path ="//Cam/KeyframeTypeVisibility/None" Type="Boolean"/>
   </Converts>
 </Converts>

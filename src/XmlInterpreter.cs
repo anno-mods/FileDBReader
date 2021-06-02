@@ -169,7 +169,7 @@ namespace FileDBReader
                     }
                     else if (ExpectedBytesize != (StringSize / 2))
                     {
-                        Console.WriteLine("Wrong Bytesize at {0}", n.Name);
+                        Console.WriteLine("Wrong Bytesize at {0}, Interpreter says: {1}, Found in File: {2}", n.Name, ExpectedBytesize, StringSize/2);
                     }
                 }
                 
