@@ -35,7 +35,7 @@
     <Convert Path ="//HerdAreas/None/DangerPoints/None" Type="Int32" Structure="List"/>
     <Convert Path ="//BBox" Type="Int32" Structure="List"/>
     <Convert Path ="//ObjectGroups/None[not(GameObjects)]" Type="String" Encoding="UTF-8"/>
-    <Convert Path ="//GameObjects/None" Type="Int32" Structure ="List"/>
+    <Convert Path ="//GameObjects/None" Type="Int64"/>
 
     <Convert Path ="//DatasetCountGrid/val/None/counts/None/None" Type="Byte"/>
     <Convert Path ="//ParticipantID/id" Type="Int16"/>
@@ -43,7 +43,6 @@
     <Convert Path ="//Selection/Detected" Type="Int16" Structure="List"/>
     <Convert Path ="//SequenceStartTime" Type="Int64"/>
     <Convert Path ="//CurrentSequence" Type="Int32"/>
-    <Convert Path ="//GameObjectLabelMap" Type="String"/>
     <Convert Path ="//ConfigFilename" Type="String" Encoding="UTF-8"/>
     <Convert Path ="//RectSize" Type="Int32" Structure="List"/>
     <Convert Path ="//LastWaystepPos" Type="Int32" Structure="List"/>
@@ -65,9 +64,12 @@
     <Convert Path ="//GameObjectIDCounter" Type="Int64"/>
     <Convert Path ="//NonGameObjectIDCounter" Type="Int64"/>
 
+    <Convert Path ="//GameObjectLabelMap/None[position() mod 2 = 1]" Type="String" Encoding="UTF-8"/>
+    <Convert Path ="//GameObjectLabelMap/None[position() mod 2 = 0]" Type="String"/>
+
 
     <Convert Path ="//ManualTangentMode" Type="Boolean"/>
-    <Convert Path ="//Interpolation" Type="Boolean"/>
+    <Convert Path ="//Interpolation" Type="Byte"/>
     <Convert Path ="//StoredSelections/None/value/id" Type="Int16"/>
 
     <Convert Path ="//AllKeyframes/None/None/TangentIn" Type="Single" Structure ="List"/>

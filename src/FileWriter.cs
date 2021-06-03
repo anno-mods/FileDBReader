@@ -171,7 +171,7 @@ namespace FileDBReader
 
             //Attribs
             //make sure the empty none tag is rekt
-            writer.Write((byte)Attribs.Count -1);
+            writer.Write((byte)(Attribs.Count -1));
             foreach (String s in Attribs.Keys)
             {
                 //WE DO NOT WANT STRING LENGTH THANKS
