@@ -86,8 +86,6 @@ Island files consist of
 - an .a7me file that is in xml. 
 - a .ctt file that contains normalmaps in multiple resolutions. This one is a zlib compressed filedb file. (compression level 1) 
 
-You may also be interested in this [presentation by BlueByte which explains terrain rendering for Anno 2205:](https://www.dropbox.com/s/g2tzqrbf54coudb/Anno2205_Terrain_Rendering_germanPDF.pdf?dl=0#) 
-
 # Map Templates 
 
 Map Template files consist of
