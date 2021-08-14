@@ -31,6 +31,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FileFormatDoc\**" />
+    <EmbeddedResource Remove="FileFormatDoc\**" />
+    <None Remove="FileFormatDoc\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
   </ItemGroup>
@@ -97,6 +103,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="tests\zlib\0x1.ctt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="tests\zlib\data.a7s">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

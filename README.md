@@ -36,6 +36,14 @@ included converters
 
 > infotip file ````(data/infotips/export.bin)````
 
+> Island Gamedata 
+
+> Island Rd3d 
+
+> Maptemplate 
+
+> a7minfo
+
 # Sample interpreter file
 
 ```xml
@@ -68,6 +76,8 @@ Convert Args
 - RDA archives (can be accessed using [RDA explorer by Lysann Schlegel](https://github.com/lysannschlegel/RDAExplorer))
 
 # Island files
+
+For a detailed explaination, have a look at the [Wiki](https://github.com/anno-mods/FileDBReader/wiki/How-Island-Files-work)
 
 Island files consist of
 - an rda v2.2 archive containing two gamedata.data and rd3d.data that are both in filedb compression.

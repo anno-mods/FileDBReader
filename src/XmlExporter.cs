@@ -1,4 +1,5 @@
 ﻿using FileDBReader;
+using FileDBReader.src;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,10 +49,9 @@ namespace FileDBReader
                     var Nodes = doc.SelectNodes(Path);
                     ConvertNodeSet(Nodes, x);
                 }
-                catch (Exception e)
+                catch (InvalidConversionException e)
                 {
-                    Console.WriteLine("Path not correctly set lol");
-                    Console.WriteLine(x.Attributes["Path"].Value);
+                    Console.WriteLine("Path causes conversion errors: {0} \n NodeName: {1} \n Text to Convert: {2}, Target Type: {3}", x.Attributes["Path"].Value, e.NodeName, e.ContentToConvert, e.TargetType);
                 }
             }
 
@@ -145,14 +145,28 @@ namespace FileDBReader
             for (int i = 0; i < arr.Length; i++)
             {
                 String s = arr[i];
-                sb.Append(ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
+                try
+                {
+                    sb.Append(ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidConversionException(type, n.Name, "List Value");
+                }
             }
             n.InnerText = sb.ToString();
         }
 
         private void ExportSingleNode(XmlNode n, Type type, Encoding e) {
             String Text = n.InnerText;
-            byte[] converted = ConverterFunctions.ConversionRulesExport[type](Text, e);
+            byte[] converted; 
+            try {
+                converted = ConverterFunctions.ConversionRulesExport[type](Text, e);
+            }
+            catch (Exception ex) 
+            {
+                throw new InvalidConversionException(type, n.Name, n.InnerText);
+            }
             String hex = ByteArrayToString(converted);
             n.InnerText = hex;
         }

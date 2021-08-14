@@ -87,7 +87,6 @@ namespace FileDBReader {
                             var doc = reader.ReadFile(s);
                             doc.Save(Path.ChangeExtension(s, "xml"));
                         }
-                        Console.ReadKey();
                         return 0;
                     },
                     (CompressOptions o) =>
@@ -101,7 +100,6 @@ namespace FileDBReader {
                         }
                         foreach (String s in o.InputFiles)
                             writer.Export(s, ext);
-                        Console.ReadKey();
                         return 0;
                     },
                     (InterpretOptions o) =>
@@ -111,7 +109,6 @@ namespace FileDBReader {
                             var doc = interpreter.Interpret(s, o.Interpreter);
                             doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, "_interpreted"), "xml"));
                         }
-                        Console.ReadKey();
                         return 0;
                     },
                     (toHexOptions o) =>
@@ -121,8 +118,6 @@ namespace FileDBReader {
                             doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, "_exported"), "xml"));
 
                         }
-
-                        Console.ReadKey();
                         return 0; 
                     },
                     (Decompress_Interpret_Options o) =>
@@ -134,7 +129,6 @@ namespace FileDBReader {
                             doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, "_d_i"), "xml"));
 
                         }
-                        Console.ReadKey();
                         return 0;
                     },
                     (Recompress_Export_Options o) =>
@@ -155,7 +149,6 @@ namespace FileDBReader {
                             writer.Export(exporter.Export(s, o.Interpreter), o.OutputFileExtension, s);
 
                         }
-                        Console.ReadKey();
                         return 0;
                     },
                     e => 1

@@ -22,7 +22,7 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            IslandTestGoodwill();
+            zlibTest();
         }
 
         public static void ListTest() {
@@ -177,10 +177,10 @@ namespace FileDBReader
         public static void zlibTest() {
             const String DIRECTORY_NAME = "zlib";
 
-            FileStream fs = File.OpenRead(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "0x1.ctt"));
+            FileStream fs = File.OpenRead(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "data.a7s"));
 
             //Ubisoft uses 8 magic bytes at the start
-            var doc = reader.ReadSpan(zlib.Decompress(fs, 8));
+            var doc = reader.ReadSpan(zlib.Decompress(fs, 0));
             doc.Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "decompressed.xml"));
 
             var Stream = writer.Export(doc, ".bin");
