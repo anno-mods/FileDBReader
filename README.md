@@ -56,6 +56,15 @@ included converters
         <Convert Path ="//VegetationPropSetName" Type="String" Encoding="UTF-8" />
         <Convert Path ="//GlobalAmbientName" Type="String" />
         <Convert Path ="//HeightMap/HeightMap" Type="UInt16" Structure ="List" />
+
+        <Convert Path="//MapTemplate/TemplateElement/Element/Size" Type="Int16" UseEnum ="True">
+            <!-- This Enum will map the converted value 0 to Small, 1 to Medium and 2 to Large-->
+            <Enum>
+                <Entry Value ="0" Name ="Small" />
+                <Entry Value ="1" Name ="Medium" />
+                <Entry Value ="2" Name ="Large" />
+            </Enum>
+        </Convert>
     </Converts>
 </Converts>
 ```
@@ -67,6 +76,7 @@ Convert Args
 - Path: Xpath that selects nodes to be converted. 
 - Type: primitive as it occurs in [.NET system](https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/builtin-types/built-in-types)
 - Encoding: Encoding as in [.NET encoding](https://docs.microsoft.com/de-de/dotnet/api/system.text.encoding?view=net-5.0)
+- UseEnum: Boolean Value that specifies wether values of the conversion should be mapped to the a specified enum. This only works on single nodes.
 
 > the same can be used for Default. 
 
