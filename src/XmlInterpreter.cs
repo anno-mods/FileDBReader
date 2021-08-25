@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBReader.src;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -52,9 +53,6 @@ namespace FileDBReader
                 var nodes = doc.SelectNodes(n.Attributes["Path"].Value);
                 foreach (XmlNode node in nodes) {
                     var span = HexHelper.toSpan<byte>(node.InnerText);
-
-                    
-
 
                     var filereader = new FileReader();
                     var decompressed = filereader.ReadSpan(span);
@@ -121,6 +119,26 @@ namespace FileDBReader
             if (ConverterInfo.Attributes["Structure"] != null)
                 Structure = ConverterInfo.Attributes["Structure"].Value;
 
+            //get if it should use Enum
+            bool UseEnumValueReplacements = false;
+            RuntimeEnum Enum = new RuntimeEnum();
+            if (ConverterInfo.Attributes["UseEnum"] != null && ConverterInfo.Attributes["UseEnum"].Value.Equals("True")) 
+            {
+                UseEnumValueReplacements = true;
+                var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
+
+                foreach (XmlNode EnumEntry in EnumEntries) 
+                {
+                    try
+                    {
+                        Enum.AddValue(EnumEntry.Attributes["Value"].Value, EnumEntry.Attributes["Name"].Value);
+                    }
+                    catch (XmlException e) {
+                        Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
+                    }
+                }
+            }
+
             foreach (XmlNode match in matches)
             {
                 switch (Structure)
@@ -129,7 +147,7 @@ namespace FileDBReader
                         InterpretAsList(match, type);
                         break;
                     case "Default":
-                        InterpretSingleNode(match, type, encoding);
+                        InterpretSingleNode(match, type, encoding, UseEnumValueReplacements, Enum);
                         break;
                 }
             }
@@ -149,7 +167,7 @@ namespace FileDBReader
             
         }
 
-        private void InterpretSingleNode(XmlNode n, Type type, Encoding e)
+        private void InterpretSingleNode(XmlNode n, Type type, Encoding e, bool UseEnumValueReplacements, RuntimeEnum Enum)
         {
             try
             {
@@ -174,6 +192,11 @@ namespace FileDBReader
                 }
                 
                 String s = ConverterFunctions.ConversionRulesImport[type](BinaryData, e);
+
+                if (UseEnumValueReplacements) {
+                    s = Enum.GetValue(s);
+                }
+
                 n.InnerText = s;
             }
             catch (Exception ex) {

@@ -125,6 +125,28 @@ namespace FileDBReader
             if (ConverterInfo.Attributes["Structure"] != null)
                 Structure = ConverterInfo.Attributes["Structure"].Value;
 
+            //getEnum
+            bool UseEnumValueReplacements = false;
+            RuntimeEnum Enum = new RuntimeEnum();
+            if (ConverterInfo.Attributes["UseEnum"] != null && ConverterInfo.Attributes["UseEnum"].Value.Equals("True"))
+            {
+                UseEnumValueReplacements = true;
+                var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
+
+                foreach (XmlNode EnumEntry in EnumEntries)
+                {
+                    try
+                    {
+                        //This is switched so Name serves as Key and ID as Value
+                        Enum.AddValue(EnumEntry.Attributes["Name"].Value, EnumEntry.Attributes["Value"].Value);
+                    }
+                    catch (XmlException e)
+                    {
+                        Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
+                    }
+                }
+            }
+
             foreach (XmlNode node in matches) {
                 switch (Structure)
                 {
@@ -132,38 +154,59 @@ namespace FileDBReader
                         exportAsList(node, type, encoding);
                         break;
                     case "Default":
-                        ExportSingleNode(node, type, encoding);
+                        ExportSingleNode(node, type, encoding, UseEnumValueReplacements, Enum);
                         break;
                 }
             }
         }
 
         private void exportAsList(XmlNode n, Type type, Encoding e) {
-            //use stringbuilder and for loop for performance reasons
-            String[] arr = n.InnerText.Split(" ");
-            StringBuilder sb = new StringBuilder("");
-            for (int i = 0; i < arr.Length; i++)
+            //don't do anything with empty nodes
+            if (!n.InnerText.Equals("")) 
             {
-                String s = arr[i];
-                try
+                String[] arr = n.InnerText.Split(" ");
+                if (!arr[0].Equals(""))
                 {
-                    sb.Append(ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidConversionException(type, n.Name, "List Value");
+                    //use stringbuilder and for loop for performance reasons
+                    StringBuilder sb = new StringBuilder("");
+                    for (int i = 0; i < arr.Length; i++)
+                    {
+                        String s = arr[i];
+                        try
+                        {
+                            sb.Append(ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new InvalidConversionException(type, n.Name, "List Value");
+                        }
+                    }
+                    n.InnerText = sb.ToString();
                 }
             }
-            n.InnerText = sb.ToString();
+
+            
+            
         }
 
-        private void ExportSingleNode(XmlNode n, Type type, Encoding e) {
-            String Text = n.InnerText;
-            byte[] converted; 
-            try {
+        private void ExportSingleNode(XmlNode n, Type type, Encoding e, bool UseEnumValueReplacements, RuntimeEnum Enum) {
+            String Text;
+
+            if (UseEnumValueReplacements)
+            {
+                Text = Enum.GetValue(n.InnerText);
+            }
+            else 
+            {
+                Text = n.InnerText;
+            }
+
+            byte[] converted;
+            try
+            {
                 converted = ConverterFunctions.ConversionRulesExport[type](Text, e);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new InvalidConversionException(type, n.Name, n.InnerText);
             }

@@ -22,7 +22,35 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            zlibTest();
+            A7TINFOTest();
+        }
+
+        public static void A7TINFOTest() 
+        {
+            String DIRECTORY_NAME = "a7tinfo";
+            String INTERPRETER_FILE = Path.Combine(FILEFORMAT_DIRECTORY_NAME, "a7tinfo.xml");
+            String TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "moderate_atoll_ll_01.a7tinfo");
+            String DECOMPRESSED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "moderate_c_01_decompressed.xml");
+            String INTERPRETED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "moderate_c_01.xml");
+            String TOHEX_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "moderate_c_01_recompressed.xml");
+            String EXPORTED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "moderate_c_01_convertex.a7tinfo");
+
+            //decompress gamedata.data
+            var interpreterDoc = new XmlDocument();
+            interpreterDoc.Load(INTERPRETER_FILE);
+
+            //decompress
+            var decompressed = reader.ReadFile(TESTFILE);//interpret
+            decompressed.Save(DECOMPRESSED_TESTFILE);
+            var interpreted = interpreter.Interpret(decompressed, interpreterDoc);
+            interpreted.Save(INTERPRETED_TESTFILE);
+
+            //to hex 
+            var Hexed = exporter.Export(interpreted, interpreterDoc);
+            Hexed.Save(TOHEX_TESTFILE);
+
+            //back to gamedata 
+            writer.Export(Hexed, EXPORTED_TESTFILE);
         }
 
         public static void ListTest() {
