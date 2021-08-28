@@ -16,7 +16,14 @@ namespace FileDBReader.src
 
         public void AddValue(String Key, String Value) 
         {
-            Enum.Add(Key, Value);
+            try
+            {
+                Enum.Add(Key, Value);
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine("Duplicate item in an enum: {0} <-> {1}. Please make sure that both are unique.", Key, Value);
+            }
         }
 
         public String GetValue(String Key)
@@ -30,6 +37,11 @@ namespace FileDBReader.src
                 Console.WriteLine("An Enum did not contain a Value for the Key: {0}", Key);
                 throw new Exception();
             }
+        }
+
+        public bool IsEmpty() 
+        {
+            return (Enum.Count() == 0);
         }
     }
 }

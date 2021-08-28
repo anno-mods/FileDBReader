@@ -25,9 +25,9 @@
 
             Still a mistery...
         -->
-    <Convert Path="//MapTemplate/TemplateElement/Element/Config/Type/id" Type="Int16" UseEnum ="True">
+    <Convert Path="//MapTemplate/TemplateElement/Element/Config/Type/id" Type="Int16" >
       <Enum>
-        <Entry Value ="0" Name ="Normal" />
+        <Entry Value ="0" Name ="Normal"/>
         <Entry Value ="1" Name ="Starter" />
         <Entry Value ="3" Name ="Decoration" />
         <Entry Value ="4" Name ="Pirate" />
@@ -60,14 +60,14 @@
         <Entry Value ="2" Name ="Decoration" />
         <Entry Value ="3" Name ="ThirdParty" />
         <Entry Value ="4" Name ="PirateIsland" />
-        <Entry Value ="5" Name ="Glacier" />
+        <Entry Value ="5" Name ="Cliff" />
       </Enum>
     </Convert>
     <!--
             ID 0 - Normal
             ID 1 - Hard
         -->
-    <Convert Path="//MapTemplate/TemplateElement/Element/RandomIslandConfig/value/Difficulty/id" Type="Int16" UseEnum ="True">
+    <Convert Path="//MapTemplate/TemplateElement/Element/RandomIslandConfig/value/Difficulty/id" Type="Int16" >
       <Enum>
         <Entry Value ="0" Name ="Normal" />
         <Entry Value ="1" Name ="Hard" />
@@ -86,7 +86,7 @@
             Size 1 - Medium
             Size 2 - Large
         -->
-    <Convert Path="//MapTemplate/TemplateElement/Element/Size" Type="Int16" UseEnum ="True">
+    <Convert Path="//MapTemplate/TemplateElement/Element/Size" Type="Int16" >
       <Enum>
         <Entry Value ="0" Name ="Small" />
         <Entry Value ="1" Name ="Medium" />

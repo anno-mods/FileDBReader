@@ -126,23 +126,25 @@ namespace FileDBReader
                 Structure = ConverterInfo.Attributes["Structure"].Value;
 
             //getEnum
-            bool UseEnumValueReplacements = false;
+            var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
             RuntimeEnum Enum = new RuntimeEnum();
-            if (ConverterInfo.Attributes["UseEnum"] != null && ConverterInfo.Attributes["UseEnum"].Value.Equals("True"))
-            {
-                UseEnumValueReplacements = true;
-                var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
-
+            if (EnumEntries != null) {
                 foreach (XmlNode EnumEntry in EnumEntries)
                 {
                     try
                     {
-                        //This is switched so Name serves as Key and ID as Value
-                        Enum.AddValue(EnumEntry.Attributes["Name"].Value, EnumEntry.Attributes["Value"].Value);
+                        var Value = EnumEntry.Attributes["Value"];
+                        var Name = EnumEntry.Attributes["Name"];
+                        if (Value != null && Name != null)
+                        {
+                            Enum.AddValue(Name.Value, Value.Value);
+                        }
+                        else {
+                            Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
+                        }
                     }
-                    catch (XmlException e)
+                    catch (NullReferenceException ex)
                     {
-                        Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
                     }
                 }
             }
@@ -154,7 +156,7 @@ namespace FileDBReader
                         exportAsList(node, type, encoding);
                         break;
                     case "Default":
-                        ExportSingleNode(node, type, encoding, UseEnumValueReplacements, Enum);
+                        ExportSingleNode(node, type, encoding, Enum);
                         break;
                 }
             }
@@ -189,10 +191,10 @@ namespace FileDBReader
             
         }
 
-        private void ExportSingleNode(XmlNode n, Type type, Encoding e, bool UseEnumValueReplacements, RuntimeEnum Enum) {
+        private void ExportSingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum) {
             String Text;
 
-            if (UseEnumValueReplacements)
+            if (!Enum.IsEmpty())
             {
                 Text = Enum.GetValue(n.InnerText);
             }

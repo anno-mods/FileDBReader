@@ -55,7 +55,7 @@ namespace FileDBReader
                     var span = HexHelper.toSpan<byte>(node.InnerText);
 
                     var filereader = new FileReader();
-                    var decompressed = filereader.ReadSpan(span);
+                    var decompressed = filereader.ReadSpan(span, 1);
                     node.InnerText = "";
                     node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
 
@@ -120,21 +120,27 @@ namespace FileDBReader
                 Structure = ConverterInfo.Attributes["Structure"].Value;
 
             //get if it should use Enum
-            bool UseEnumValueReplacements = false;
-            RuntimeEnum Enum = new RuntimeEnum();
-            if (ConverterInfo.Attributes["UseEnum"] != null && ConverterInfo.Attributes["UseEnum"].Value.Equals("True")) 
-            {
-                UseEnumValueReplacements = true;
-                var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
 
-                foreach (XmlNode EnumEntry in EnumEntries) 
+            RuntimeEnum Enum = new RuntimeEnum();
+            var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
+
+            if (EnumEntries != null) {
+                foreach (XmlNode EnumEntry in EnumEntries)
                 {
                     try
                     {
-                        Enum.AddValue(EnumEntry.Attributes["Value"].Value, EnumEntry.Attributes["Name"].Value);
+                        var Value = EnumEntry.Attributes["Value"];
+                        var Name = EnumEntry.Attributes["Name"];
+                        if (Value != null && Name != null) {
+                            Enum.AddValue(Value.Value, Name.Value);
+                        }
+                        else
+                        {
+                            Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
+                        }
                     }
-                    catch (XmlException e) {
-                        Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
+                    catch (NullReferenceException ex )
+                    {
                     }
                 }
             }
@@ -147,7 +153,7 @@ namespace FileDBReader
                         InterpretAsList(match, type);
                         break;
                     case "Default":
-                        InterpretSingleNode(match, type, encoding, UseEnumValueReplacements, Enum);
+                        InterpretSingleNode(match, type, encoding, Enum);
                         break;
                 }
             }
@@ -167,7 +173,7 @@ namespace FileDBReader
             
         }
 
-        private void InterpretSingleNode(XmlNode n, Type type, Encoding e, bool UseEnumValueReplacements, RuntimeEnum Enum)
+        private void InterpretSingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum)
         {
             try
             {
@@ -193,7 +199,7 @@ namespace FileDBReader
                 
                 String s = ConverterFunctions.ConversionRulesImport[type](BinaryData, e);
 
-                if (UseEnumValueReplacements) {
+                if (!Enum.IsEmpty()) {
                     s = Enum.GetValue(s);
                 }
 

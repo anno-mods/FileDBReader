@@ -81,6 +81,9 @@
     <None Update="tests\goodwill\gamedata_og.data">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="tests\infotip\export.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="tests\innerfiledb\gamedata_og.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
