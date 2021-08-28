@@ -288,7 +288,7 @@ namespace FileDBReader
             Console.WriteLine("Used FileDBCompression Version: {0}", FileVersion);
             Console.WriteLine("FILEDB FILES FILESIZE\nOriginal: {0}, Converted: {1}. Filesize Equality:{2}", OriginalInfo.Length, ReexportedInfo.Length, OriginalInfo.Length == ReexportedInfo.Length);
             //This check will probably give a false if there is internal compression!
-            Console.WriteLine("XML FILES FILESIZE\n Decompressed: {0}, Recompressed: {1}. File Hash Equality: {2}", OriginalInfo.Length, ReexportedInfo.Length, OriginalInfo.Length == ReexportedInfo.Length);
+            Console.WriteLine("XML FILES FILESIZE\n Decompressed: {0}, Recompressed: {1}. Filesize Equality: {2}", OriginalInfo.Length, ReexportedInfo.Length, OriginalInfo.Length == ReexportedInfo.Length);
 
             Console.WriteLine("File Test Done");
             Console.WriteLine("--------------------------------------------------");
