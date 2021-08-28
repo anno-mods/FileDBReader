@@ -78,6 +78,12 @@ namespace FileDBReader {
             [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
             public int CompressionVersion { get; set; }
         }
+        [Verb("check_fileversion", HelpText = "Check the compression version of a file.")]
+        class FileCheck_Options
+        {
+            [Option('f', "file", Required = true, HelpText = "input files")]
+            public IEnumerable<String> InputFiles { get; set; }
+        }
         #endregion
 
         #region Methods
@@ -95,7 +101,7 @@ namespace FileDBReader {
                         
                         foreach (String s in o.InputFiles) 
                         {
-                            var doc = reader.ReadFile(s, o.CompressionVersion);
+                            var doc = reader.ReadFile(s);
                             doc.Save(Path.ChangeExtension(s, "xml"));
                         }
                         return 0;
@@ -136,7 +142,7 @@ namespace FileDBReader {
                         foreach (String s in o.InputFiles) {
                             var interpreterDoc = new XmlDocument();
                             interpreterDoc.Load(o.Interpreter);
-                            var doc = interpreter.Interpret(reader.ReadFile(s, o.CompressionVersion), interpreterDoc);
+                            var doc = interpreter.Interpret(reader.ReadFile(s), interpreterDoc);
                             doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, "_d_i"), "xml"));
 
                         }
@@ -162,6 +168,16 @@ namespace FileDBReader {
                         }
                         return 0;
                     },
+                    (FileCheck_Options o) =>
+                    {
+                        foreach (String s in o.InputFiles)
+                        {
+                            Console.WriteLine("{0} uses Compression Version {1}",s, reader.CheckFileVersion(s));
+                        }
+
+                        return 0;
+                     }
+                    ,
                     e => 1
                 ) ;
         }

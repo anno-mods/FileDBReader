@@ -23,7 +23,7 @@ namespace FileDBReader
         #endregion Properties
 
         #region TopLevelMethods
-        public XmlDocument ReadSpan(Span<byte> SpanToRead, int FileVersion)
+        public XmlDocument ReadSpan(Span<byte> SpanToRead)
         {
             //Init
             var document = new XDocument();
@@ -35,6 +35,19 @@ namespace FileDBReader
             //Set Position from The Tags Section
 
             int TagsOff = 0;
+
+            int FileVersion; 
+            //File Version check 
+            if ((MemoryMarshal.Read<Int64>(Filereader.Span[^8..]) == (Int64)(-8589934584)))
+            {
+                FileVersion = 2;
+            }
+            else {
+                FileVersion = 1;
+            }
+            Console.WriteLine("Autodetected FileVersion: {0}", FileVersion);
+
+
             switch (FileVersion)
             {
                 //FileVersion 1
@@ -55,10 +68,10 @@ namespace FileDBReader
             }
         }
 
-        public XmlDocument ReadFile(string path, int FileVersion)
+        public XmlDocument ReadFile(string path)
         {
             Span<byte> Span = File.ReadAllBytes(path).AsSpan();
-            var document = ReadSpan(Span, FileVersion);
+            var document = ReadSpan(Span);
             return document;
         }
 
@@ -299,6 +312,19 @@ namespace FileDBReader
             }
 
             return dictionary;
+        }
+
+        public int CheckFileVersion(String path) 
+        {
+            Span<byte> Span = File.ReadAllBytes(path).AsSpan();
+            var Filereader = new SpanReader(Span);
+            if ((MemoryMarshal.Read<Int64>(Filereader.Span[^8..]) == (Int64)(-8589934584)))
+            {
+                return 2;
+            }
+            else {
+                return 1;
+            }
         }
         #endregion
     }

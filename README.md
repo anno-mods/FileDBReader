@@ -22,14 +22,14 @@ Be aware that filedb compressed files can contain other filedb compressed files 
 
 # How to use
 
-
 ```
-decompress -f <inputfiles>
-compress -f <inputFiles> -o <outputFileExtension>
+decompress -f <inputfiles> -c <CompressionVersion>
+compress -f <inputFiles> -o <outputFileExtension> -c <CompressionVersion>
 interpret -f <inputFiles> -i <interpreterFile>
 toHex -f <inputFiles> -i <interpreterFile>
-decompress_interpret -f <inputfiles> -i <interpreterFile>
-recompress_export -f <inputfiles> -i <interpreterFile> -o <outputFileExtension>
+decompress_interpret -f <inputfiles> -i <interpreterFile> -c <CompressionVersion>
+recompress_export -f <inputfiles> -i <interpreterFile> -o <outputFileExtension> -c <CompressionVersion>
+check_fileversion -f <inputfiles>
 ```
 
 included converters
@@ -44,13 +44,21 @@ included converters
 
 > a7minfo
 
+# Compression Versions
+
+There are two versions of this compression
+ 
+> Version 1 is what you find in files up to Anno 1800, GU 12 (31.08.2021)
+
+> Version 2 is used for new or updated files after this date. 
+
 # Sample interpreter file
 
 ```xml
 <Converts>
     <Default Type ="Int32" />
     <InternalCompression>
-        <Element Path="//AreaManagerData/None/Data" />
+        <Element Path="//AreaManagerData/None/Data" CompressionVersion = "2"/>
     </InternalCompression>
     <Converts>
         <Convert Path ="//VegetationPropSetName" Type="String" Encoding="UTF-8" />
@@ -71,6 +79,7 @@ included converters
 
 Internal Compression Args
 - Path: Path that contains the filedb file
+- CompressionVersion: Compression Version of the inner file
 
 Convert Args
 - Path: Xpath that selects nodes to be converted. 

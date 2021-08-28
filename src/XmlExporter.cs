@@ -88,8 +88,19 @@ namespace FileDBReader
                     //compress the document
                     FileWriter fileWriter = new FileWriter();
 
-                    //todo File Version
-                    var stream = fileWriter.Export(xmldoc, new MemoryStream(), 1);
+                    int FileVersion = 1;
+                    //get File Version of internal compression
+                    var VersionNode = n.Attributes["CompressionVersion"];
+                    if (!(VersionNode == null))
+                    {
+                        FileVersion = Int32.Parse(VersionNode.Value);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Your interpreter should specify a version for internal FileDBs. For this conversion, 1 was auto-chosen. Make sure your versions match up!");
+                    }
+
+                    var stream = fileWriter.Export(xmldoc, new MemoryStream(), 2);
 
                     //get this stream to hex 
                     node.InnerText = ByteArrayToString(HexHelper.StreamToByteArray(stream));

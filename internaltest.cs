@@ -25,7 +25,6 @@ namespace FileDBReader
         {
             InfotipTestNewFileVersion();
             A7TINFOTest();
-            IslandTestRd3d();
             IslandTestTMC();
         }
 
@@ -73,9 +72,9 @@ namespace FileDBReader
             GamedataInterpreter.Load(INTERPRETER_GAMEDATA);
 
             //decompress interpret and save gamedata.data
-            var doc = reader.ReadFile(GAMEDATA_FILE, 1);
+            var doc = reader.ReadFile(GAMEDATA_FILE);
             doc.Save(GAMEDATA_READ_PATH);
-            var interpreted_gamedata = interpreter.Interpret(reader.ReadFile(GAMEDATA_FILE, 1), GamedataInterpreter);
+            var interpreted_gamedata = interpreter.Interpret(reader.ReadFile(GAMEDATA_FILE), GamedataInterpreter);
             interpreted_gamedata.Save(GAMEDATA_INTERPRETED_PATH);
 
             var exported = exporter.Export(interpreted_gamedata, GamedataInterpreter);
@@ -112,7 +111,7 @@ namespace FileDBReader
             FileStream fs = File.OpenRead(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "0x1.ctt"));
 
             //Ubisoft uses 8 magic bytes at the start
-            var doc = interpreter.Interpret(reader.ReadSpan(zlib.Decompress(fs, 8), 1), interpreterDoc);
+            var doc = interpreter.Interpret(reader.ReadSpan(zlib.Decompress(fs, 8)), interpreterDoc);
             doc.Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "interpreted.xml"));
 
         }
@@ -127,7 +126,7 @@ namespace FileDBReader
             FileStream fs = File.OpenRead(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "data.a7s"));
 
             //Ubisoft uses 8 magic bytes at the start
-            var doc = reader.ReadSpan(zlib.Decompress(fs, 0), 1);
+            var doc = reader.ReadSpan(zlib.Decompress(fs, 0));
             doc.Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "decompressed.xml"));
 
             var Stream = writer.Export(doc, ".bin", 1);
@@ -141,8 +140,8 @@ namespace FileDBReader
             const String DIRECTORY_NAME = "filedb";
 
             var reader = new FileReader();
-            reader.ReadFile(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "original.bin"), 1).Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "original.xml"));
-            reader.ReadFile(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "recompressed.bin"), 1).Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "recompressed.xml") );
+            reader.ReadFile(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "original.bin")).Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "original.xml"));
+            reader.ReadFile(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "recompressed.bin")).Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "recompressed.xml") );
         }
 
         /// <summary>
@@ -165,7 +164,7 @@ namespace FileDBReader
             interpreterDoc.Load(INTERPRETER_FILE);
 
             //decompress
-            var decompressed = reader.ReadFile(TESTFILE, 1);
+            var decompressed = reader.ReadFile(TESTFILE);
             decompressed.Save(DECOMPRESSED_TESTFILE);
 
             //interpret
@@ -226,7 +225,7 @@ namespace FileDBReader
             interpreterDoc.Load(INTERPRETER_FILE);
 
             //decompress
-            var decompressed = reader.ReadFile(TESTFILE, FileVersion);//interpret
+            var decompressed = reader.ReadFile(TESTFILE);//interpret
             decompressed.Save(DECOMPRESSED_TESTFILE);
             var interpreted = interpreter.Interpret(decompressed, interpreterDoc);
             interpreted.Save(INTERPRETED_TESTFILE);
@@ -245,9 +244,7 @@ namespace FileDBReader
             var ReexportedInfo = new FileInfo(EXPORTED_TESTFILE);
 
             Console.WriteLine("File Test: {0}", TESTFILE_NAME);
-            Console.WriteLine("Used FileDBCompression Version: {0}", FileVersion);
-            if (FileVersion == 2)
-                Console.WriteLine("VERSION 2 IS CURRENTLY IN DEVELOPMENT.");
+            Console.WriteLine("Used FileDBCompression Version for re-export: {0}", FileVersion);
             Console.WriteLine("FILEDB FILES FILESIZE\nOriginal: {0}, Converted: {1}. Filesize Equality:{2}", OriginalInfo.Length, ReexportedInfo.Length, OriginalInfo.Length == ReexportedInfo.Length);
             //This check will probably give a false if there is internal compression!
             Console.WriteLine("XML FILES FILESIZE\n Decompressed: {0}, Recompressed: {1}. Filesize Equality: {2}", DecompressedInfo.Length, RehexedInfo.Length, DecompressedInfo.Length == RehexedInfo.Length);
