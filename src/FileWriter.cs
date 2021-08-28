@@ -15,32 +15,32 @@ namespace FileDBReader
     /// </summary>
     class FileWriter
     {
-        public FileWriter() { 
-        
+        public FileWriter() {
+
         }
 
-        public Stream Export(String path, String outputFileFormat)
+        public Stream Export(String path, String outputFileFormat, int FileVersion)
         {
             var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
             XmlDocument doc = new XmlDocument();
             doc.Load(path);
-            return Export(doc, stream);
+            return Export(doc, stream, FileVersion);
         }
 
-        public Stream Export(XmlDocument doc, String outputFileFormat, String path)
+        public Stream Export(XmlDocument doc, String outputFileFormat, String path, int FileVersion)
         {
             var stream = File.Create(Path.ChangeExtension(path, outputFileFormat));
-            return Export(doc, stream);
+            return Export(doc, stream, FileVersion);
         }
 
-        public Stream Export(XmlDocument doc, String OutputFile)
+        public Stream Export(XmlDocument doc, String OutputFile, int FileVersion)
         {
             var stream = File.Create(OutputFile);
-            return Export(doc, stream);
+            return Export(doc, stream, FileVersion);
         }
 
         //converts an xmlNode to fileDB Compression and returns the result as stream
-        public Stream Export(XmlDocument xml, Stream stream) {
+        public Stream Export(XmlDocument xml, Stream stream, int FileVersion) {
 
             Dictionary<String, byte> Tags = new Dictionary<string, byte>();
             Dictionary<String, byte> Attribs = new Dictionary<string, byte>();
@@ -57,7 +57,16 @@ namespace FileDBReader
             BinaryWriter writer = new BinaryWriter(stream);
             foreach (XmlElement element in nodes)
             {
-                writeNode(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
+                switch (FileVersion)
+                {
+                    case 1:
+
+                        writeNode(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
+                        break;
+                    case 2:
+                        writeNode_FileVersion2(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
+                        break;
+                }
             }
 
             //nullterminate data section
@@ -65,7 +74,26 @@ namespace FileDBReader
             writer.Write(nullchar);
             writer.Flush();
 
-            writeTagSection(ref Tags, ref Attribs, 0, ref writer);
+            switch (FileVersion)
+            {
+                case 1:
+                    writeTagSection(ref Tags, ref Attribs, 0, ref writer);
+                    break;
+                case 2:
+                    //before the tag section, fill the other section to a multiple of 8 bytes.
+                    var streamSize = (int)writer.BaseStream.Position;
+                    if (streamSize % 8 != 0)
+                    {
+                        int bytesToAdd = (8 - (streamSize % 8));
+                        for (var i = 0; i < bytesToAdd; i++)
+                        {
+                            writer.Write((byte)0);
+                        }
+                    }
+                    //write the text section
+                    writeTagSection_FileVersion2(ref Tags, ref Attribs, 0, ref writer);
+                    break;
+            }
 
             //write the current decompressed internal filedb to a file
             //String path = Path.Combine("tests", "lists", DateTime.Now.ToString("HH-mm-ss-ff") + "_" + xml.DocumentElement.FirstChild.Name + ".bin");
@@ -82,10 +110,8 @@ namespace FileDBReader
         /// </summary>
         /// <param name="path"></param>
         /// <param name="outputFileFormat"></param>
-        
-
         //pass by reference to increment original values
-        public void writeNode(XmlNode e, ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, ref byte tagcount, ref byte attribcount, ref BinaryWriter writer) 
+        public void writeNode(XmlNode e, ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, ref byte tagcount, ref byte attribcount, ref BinaryWriter writer)
         {
             //if this does not contain text
             //is a tag
@@ -151,12 +177,12 @@ namespace FileDBReader
             }
         }
 
-        public void writeTagSection(ref Dictionary <String, byte> Tags, ref Dictionary<String, byte> Attribs, int offset, ref BinaryWriter writer) {
+        public void writeTagSection(ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, int offset, ref BinaryWriter writer) {
             var TagSectionOffset = (int)writer.BaseStream.Position;
 
             //Tags
             //make sure the empty none tag is rekt
-            writer.Write((byte)(Tags.Count -1));
+            writer.Write((byte)(Tags.Count - 1));
             foreach (String s in Tags.Keys) {
                 //WE DO NOT WANT STRING LENGTH THANKS
                 if (!s.Equals("None")) {
@@ -171,7 +197,7 @@ namespace FileDBReader
 
             //Attribs
             //make sure the empty none tag is rekt
-            writer.Write((byte)(Attribs.Count -1));
+            writer.Write((byte)(Attribs.Count - 1));
             foreach (String s in Attribs.Keys)
             {
                 //WE DO NOT WANT STRING LENGTH THANKS
@@ -182,12 +208,139 @@ namespace FileDBReader
                     writer.Write(i);
                     writer.Write((byte)128);
                 }
-                
+
             }
             writer.Flush();
 
             //Bytesize offset
             writer.Write(TagSectionOffset);
+            writer.Flush();
+        }
+
+        //pass by reference to increment original values
+        public void writeNode_FileVersion2(XmlNode e, ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, ref byte tagcount, ref byte attribcount, ref BinaryWriter writer)
+        {
+            //if this does not contain text
+            //is a tag
+            var FirstChild = e.FirstChild;
+            if (!(FirstChild != null && FirstChild.NodeType == XmlNodeType.Text))
+            {
+                //if key doesn't exist, add it
+                if (!Tags.ContainsKey(e.Name))
+                {
+                    Tags.Add(e.Name, (byte)(tagcount + 1));
+                    tagcount++;
+                }
+
+
+                //write Int32 Bytesize (in case of tags: 0)
+                //write Int32 ID
+                Int32 bytesize = 0;
+                writer.Write(bytesize);
+
+                //because we made a precheck this HAS to exist, no more checks needed.
+                var id = Tags[e.Name];
+                //write the id
+                writer.Write((Int32)id);
+
+                //write childnodes
+                foreach (XmlNode element in e.ChildNodes)
+                {
+                    writeNode_FileVersion2(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
+                }
+
+                //nullterminate tag - 4 bytes bytesize, 4 bytes 0, is equal to 8 bytes 0.
+                Int64 nullchar = 0;
+                writer.Write(nullchar);
+                writer.Flush();
+            }
+            //else
+            //e is an attribute
+            else
+            {
+                //if key doesn't exist, add it
+                if (!Attribs.ContainsKey(e.Name))
+                {
+                    Attribs.Add(e.Name, (byte)(attribcount + 1));
+                    attribcount++;
+                }
+
+                //write bytesize of content 
+                //write attrib id
+                //write content 
+                var bytes = StringToByteArray(e.InnerText);
+
+                int bytesize = bytes.Length;
+                writer.Write(bytesize);
+
+                var id = Attribs[e.Name];
+                //write id
+                //write 80 
+                //write fill for 4 bytes
+                writer.Write(id);
+                writer.Write((byte)128);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+
+                writer.Write(bytes);
+
+                //fill bytes to get full 8 byte blocks.
+                if (bytesize % 8 != 0)
+                {
+                    int bytesToAdd = (8 - (bytesize % 8));
+                    for (var i = 0; i < bytesToAdd; i++)
+                    {
+                        writer.Write((byte)0);
+                    }
+                }
+
+                writer.Flush();
+            }
+        }
+
+        public void writeTagSection_FileVersion2(ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, int offset, ref BinaryWriter writer)
+        {
+            var TagSectionOffset = (int)writer.BaseStream.Position;
+
+            writeDictionary_FileVersion2(Tags, ref writer, (byte)0);
+            //three bytes to fill at the end, lazy but works
+
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+
+            var AttribSectionOffset = (int)writer.BaseStream.Position;
+
+            writeDictionary_FileVersion2(Attribs, ref writer, (byte)128);
+            writer.Write((Int32)0);
+
+            //Bytesize offset
+            writer.Write(TagSectionOffset);
+            writer.Write(AttribSectionOffset);
+
+            writer.Write((Int32)8);
+            writer.Write((Int32)(-2));
+            writer.Flush();
+        }
+
+        public void writeDictionary_FileVersion2(Dictionary<String, byte> Tags, ref BinaryWriter writer, byte separator)
+        {
+            Tags.Remove("None");
+            writer.Write((Int32)(Tags.Count));
+
+            //write ids
+            foreach (string s in Tags.Keys)
+            {
+                byte i = Tags[s];
+                writer.Write(i);
+                writer.Write(separator);
+            }
+            //write names divided with zeroes
+            foreach (string s in Tags.Keys)
+            {
+                writer.Write(Encoding.UTF8.GetBytes(s));
+                writer.Write((byte)0);
+            }
             writer.Flush();
         }
 

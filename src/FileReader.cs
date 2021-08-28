@@ -138,37 +138,29 @@ namespace FileDBReader
             return ToXmlDocument(document);
         }
 
-        private static Dictionary<ushort, string> ReadTagsSection_FileVersion1(ref SpanReader reader, int TagSectionOffset)
+        private Dictionary<ushort, string> ReadTagsSection_FileVersion1(ref SpanReader reader, int TagSectionOffset) 
         {
             reader.Position = TagSectionOffset;
+            var Tags = ReadDictionary_FileVersion1(ref reader);
+            var Attribs = ReadDictionary_FileVersion1(ref reader);
+            var result = Tags.Concat(Attribs).ToDictionary(x => x.Key, y => y.Value);
+
+            result.Add(1, "None");
+            result.Add(32768, "None");
+
+            return result;
+        }
+
+        private Dictionary<ushort, string> ReadDictionary_FileVersion1(ref SpanReader reader)
+        {
             Dictionary<ushort, string> dictionary = new Dictionary<ushort, string>();
-
-            dictionary.Add(1, "None");
-            dictionary.Add(32768, "None");
-
-            var TagCount = reader.ReadInt32Bit7();
-            for (var i = 0; i < TagCount; i++)
-            {
-                reader.ReadString0(out var name);
-                reader.ReadUInt16(out var id);
-
-                //Xml Space in Name Fix
-                //dictionary.Add(id, name.Replace(" ", "_"));
-
-                //This upper fix will break recompression. we will have to think of something better in the future. :/
-                dictionary.Add(id, name);
-            }
-
-            var AttribCount = reader.ReadInt32Bit7();
-            for (var i = 0; i < AttribCount; i++)
+            var Count = reader.ReadInt32Bit7();
+            for (var i = 0; i < Count; i++)
             {
                 reader.ReadString0(out var name);
                 reader.ReadUInt16(out var id);
                 dictionary.Add(id, name);
-
-                //see above
             }
-
             return dictionary;
         }
         #endregion

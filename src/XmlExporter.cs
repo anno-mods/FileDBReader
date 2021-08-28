@@ -87,7 +87,9 @@ namespace FileDBReader
 
                     //compress the document
                     FileWriter fileWriter = new FileWriter();
-                    var stream = fileWriter.Export(xmldoc, new MemoryStream());
+
+                    //todo File Version
+                    var stream = fileWriter.Export(xmldoc, new MemoryStream(), 1);
 
                     //get this stream to hex 
                     node.InnerText = ByteArrayToString(HexHelper.StreamToByteArray(stream));

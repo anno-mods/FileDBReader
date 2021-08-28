@@ -99,7 +99,7 @@ namespace FileDBReader {
                             ext = ".filedb";
                         }
                         foreach (String s in o.InputFiles)
-                            writer.Export(s, ext);
+                            writer.Export(s, ext, 1);
                         return 0;
                     },
                     (InterpretOptions o) =>
@@ -146,7 +146,7 @@ namespace FileDBReader {
                         {
                             var interpreterDoc = new XmlDocument();
                             interpreterDoc.Load(o.Interpreter);
-                            writer.Export(exporter.Export(s, o.Interpreter), o.OutputFileExtension, s);
+                            writer.Export(exporter.Export(s, o.Interpreter), o.OutputFileExtension, s, 1);
 
                         }
                         return 0;

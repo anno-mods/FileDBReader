@@ -170,7 +170,7 @@ namespace FileDBReader
             var doc = reader.ReadSpan(zlib.Decompress(fs, 0), 1);
             doc.Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "decompressed.xml"));
 
-            var Stream = writer.Export(doc, ".bin");
+            var Stream = writer.Export(doc, ".bin", 1);
             File.WriteAllBytes(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "shittycompress.ctt"), zlib.Compress(Stream, 1));
         }
 
@@ -217,7 +217,7 @@ namespace FileDBReader
             Hexed.Save(TOHEX_TESTFILE);
 
             //back to gamedata 
-            writer.Export(Hexed, EXPORTED_TESTFILE);
+            writer.Export(Hexed, EXPORTED_TESTFILE, 1);
         }
 
 
@@ -276,7 +276,7 @@ namespace FileDBReader
             Hexed.Save(TOHEX_TESTFILE);
 
             //back to gamedata 
-            writer.Export(Hexed, EXPORTED_TESTFILE);
+            writer.Export(Hexed, EXPORTED_TESTFILE, FileVersion);
 
             var OriginalInfo = new FileInfo(TESTFILE);
             var DecompressedInfo = new FileInfo(DECOMPRESSED_TESTFILE);
@@ -286,9 +286,11 @@ namespace FileDBReader
 
             Console.WriteLine("File Test: {0}", TESTFILE_NAME);
             Console.WriteLine("Used FileDBCompression Version: {0}", FileVersion);
+            if (FileVersion == 2)
+                Console.WriteLine("VERSION 2 IS CURRENTLY IN DEVELOPMENT.");
             Console.WriteLine("FILEDB FILES FILESIZE\nOriginal: {0}, Converted: {1}. Filesize Equality:{2}", OriginalInfo.Length, ReexportedInfo.Length, OriginalInfo.Length == ReexportedInfo.Length);
             //This check will probably give a false if there is internal compression!
-            Console.WriteLine("XML FILES FILESIZE\n Decompressed: {0}, Recompressed: {1}. Filesize Equality: {2}", OriginalInfo.Length, ReexportedInfo.Length, OriginalInfo.Length == ReexportedInfo.Length);
+            Console.WriteLine("XML FILES FILESIZE\n Decompressed: {0}, Recompressed: {1}. Filesize Equality: {2}", DecompressedInfo.Length, RehexedInfo.Length, DecompressedInfo.Length == RehexedInfo.Length);
 
             Console.WriteLine("File Test Done");
             Console.WriteLine("--------------------------------------------------");
