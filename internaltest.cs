@@ -25,9 +25,11 @@ namespace FileDBReader
         {
             InfotipTestNewFileVersion();
             A7TINFOTest();
+            IslandTestRd3d();
+            IslandTestTMC();
         }
 
-        //Generic Test (TestDirectoryName, InterpreterFileName, TestfileFilename)
+        //Generic Test (TestDirectoryName, InterpreterFileName, TestfileFilename, FileVersion)
 
         public static void InfotipTestNewFileVersion()
         {
@@ -84,59 +86,17 @@ namespace FileDBReader
         }
 
         private static void IslandTestGamedata() {
-            //test directory
-            String DIRECTORY_NAME = "island";
-            //interpreter file path
-            String INTERPRETER_GAMEDATA = Path.Combine(FILEFORMAT_DIRECTORY_NAME, "Island_Gamedata.xml");
-            //input file path
-            String GAMEDATA_FILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "gamedata.data");
-            //output file path
-            String GAMEDATA_INTERPRETED_PATH = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "Island_Gamedata_interpreted.xml");
-            //create interpreter document
-            var GamedataInterpreter = new XmlDocument();
-            GamedataInterpreter.Load(INTERPRETER_GAMEDATA);
-
-            //decompress interpret and save gamedata.data
-            var interpreted_gamedata = interpreter.Interpret(reader.ReadFile(GAMEDATA_FILE, 1), GamedataInterpreter);
-            interpreted_gamedata.Save(GAMEDATA_INTERPRETED_PATH);
+            GenericTest("island", "Island_Gamedata.xml", "gamedata.data", 1);
         }
 
         private static void IslandTestTMC() 
         {
-            //test directory
-            String DIRECTORY_NAME = "island";
-            //interpreter file path
-            String INTERPRETER_GAMEDATA = Path.Combine(FILEFORMAT_DIRECTORY_NAME, "tmc.xml");
-            //input file path
-            String GAMEDATA_FILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "0x0.tmc");
-            //output file path
-            String GAMEDATA_INTERPRETED_PATH = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "0x0.xml");
-            //create interpreter document
-            var GamedataInterpreter = new XmlDocument();
-            GamedataInterpreter.Load(INTERPRETER_GAMEDATA);
-
-            //decompress interpret and save gamedata.data
-            var interpreted_gamedata = interpreter.Interpret(reader.ReadFile(GAMEDATA_FILE, 1), GamedataInterpreter);
-            interpreted_gamedata.Save(GAMEDATA_INTERPRETED_PATH);
+            GenericTest("island", "tmc.xml", "0x0.tmc", 1);
         }
 
         private static void IslandTestRd3d()
         {
-            //test directory
-            String DIRECTORY_NAME = "island";
-            //interpreter file path
-            String INTERPRETER_RD3D = Path.Combine(FILEFORMAT_DIRECTORY_NAME, "Island_Rd3d.xml");
-            //input file path
-            String RD3D_FILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "rd3d.data");
-            //output file path
-            String RD3D_INTERPRETED_PATH = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "Island_Rd3d_interpreted.xml");
-            //create interpreter document
-            var GamedataInterpreter = new XmlDocument();
-            GamedataInterpreter.Load(INTERPRETER_RD3D);
-
-            //decompress interpret and save the resulting document
-            var interpreted_gamedata = interpreter.Interpret(reader.ReadFile(RD3D_FILE, 1), GamedataInterpreter);
-            interpreted_gamedata.Save(RD3D_INTERPRETED_PATH);
+            GenericTest("island", "Island_Rd3d.xml", "rd3d.data", 1);
         }
 
         /// <summary>

@@ -54,8 +54,21 @@ namespace FileDBReader
                 foreach (XmlNode node in nodes) {
                     var span = HexHelper.toSpan<byte>(node.InnerText);
 
+                    int FileVersion = 1; 
+                    //get File Version of internal compression
+                    var VersionNode = n.Attributes["CompressionVersion"];
+                    if (!(VersionNode == null))
+                    {
+                        FileVersion = Int32.Parse(VersionNode.Value);
+                    }
+                    else 
+                    {
+                        Console.WriteLine("Your interpreter should specify a version for internal FileDBs. For this conversion, the version was auto-chosen as 1. this could lead to serious errors.");
+                    }
+
+
                     var filereader = new FileReader();
-                    var decompressed = filereader.ReadSpan(span, 1);
+                    var decompressed = filereader.ReadSpan(span, FileVersion);
                     node.InnerText = "";
                     node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
 

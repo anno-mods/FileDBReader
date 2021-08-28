@@ -2,7 +2,7 @@
 <Converts>
   <Default Type ="Int32" />
   <InternalCompression>
-    <Element Path="//AreaManagerData/None/Data" />
+    <Element Path="//AreaManagerData/None/Data" CompressionVersion ="1"/>
   </InternalCompression>
   <Converts>
     <Convert Path ="//VegetationPropSetName" Type="String" Encoding="UTF-8" />

@@ -60,8 +60,7 @@ namespace FileDBReader
                 switch (FileVersion)
                 {
                     case 1:
-
-                        writeNode(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
+                        writeNode_FileVersion1(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
                         break;
                     case 2:
                         writeNode_FileVersion2(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
@@ -77,7 +76,7 @@ namespace FileDBReader
             switch (FileVersion)
             {
                 case 1:
-                    writeTagSection(ref Tags, ref Attribs, 0, ref writer);
+                    writeTagSection_FileVersion1(ref Tags, ref Attribs, 0, ref writer);
                     break;
                 case 2:
                     //before the tag section, fill the other section to a multiple of 8 bytes.
@@ -105,13 +104,15 @@ namespace FileDBReader
         }
 
 
+        #region FileVersion1
+
         /// <summary>
         /// exports an xmlfile to filedb compression
         /// </summary>
         /// <param name="path"></param>
         /// <param name="outputFileFormat"></param>
         //pass by reference to increment original values
-        public void writeNode(XmlNode e, ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, ref byte tagcount, ref byte attribcount, ref BinaryWriter writer)
+        public void writeNode_FileVersion1(XmlNode e, ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, ref byte tagcount, ref byte attribcount, ref BinaryWriter writer)
         {
             //if this does not contain text
             //is a tag
@@ -135,7 +136,7 @@ namespace FileDBReader
                 //write childnodes
                 foreach (XmlNode element in e.ChildNodes)
                 {
-                    writeNode(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
+                    writeNode_FileVersion1(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
                 }
                 //nullterminate tag
                 Int16 nullchar = 0;
@@ -177,45 +178,39 @@ namespace FileDBReader
             }
         }
 
-        public void writeTagSection(ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, int offset, ref BinaryWriter writer) {
+        public void writeTagSection_FileVersion1(ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, int offset, ref BinaryWriter writer) {
             var TagSectionOffset = (int)writer.BaseStream.Position;
 
             //Tags
-            //make sure the empty none tag is rekt
-            writer.Write((byte)(Tags.Count - 1));
-            foreach (String s in Tags.Keys) {
-                //WE DO NOT WANT STRING LENGTH THANKS
-                if (!s.Equals("None")) {
-                    writer.Write(Encoding.UTF8.GetBytes(s));
-                    byte i = Tags[s];
-                    writer.Write((byte)0);
-                    writer.Write(i);
-                    writer.Write((byte)0);
-                }
-            }
-            writer.Flush();
+            writeDictionary_FileVersion1(ref Tags, offset, ref writer, (byte)0);
 
             //Attribs
-            //make sure the empty none tag is rekt
-            writer.Write((byte)(Attribs.Count - 1));
-            foreach (String s in Attribs.Keys)
-            {
-                //WE DO NOT WANT STRING LENGTH THANKS
-                if (!s.Equals("None")) {
-                    writer.Write(Encoding.UTF8.GetBytes(s));
-                    byte i = Attribs[s];
-                    writer.Write((byte)0);
-                    writer.Write(i);
-                    writer.Write((byte)128);
-                }
-
-            }
-            writer.Flush();
+            writeDictionary_FileVersion1(ref Attribs, offset, ref writer, (byte)128);
 
             //Bytesize offset
             writer.Write(TagSectionOffset);
             writer.Flush();
         }
+
+        public void writeDictionary_FileVersion1(ref Dictionary<String, byte> Tags,int offset, ref BinaryWriter writer, byte IDseparator)
+        {
+            Tags.Remove("None");
+            writer.Write((byte)(Tags.Count));
+
+            foreach (String s in Tags.Keys)
+            {
+                writer.Write(Encoding.UTF8.GetBytes(s));
+                byte i = Tags[s];
+                writer.Write((byte)0);
+                writer.Write(i);
+                writer.Write(IDseparator);
+            }
+            writer.Flush();
+        }
+
+        #endregion
+
+        #region FileVersion2
 
         //pass by reference to increment original values
         public void writeNode_FileVersion2(XmlNode e, ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, ref byte tagcount, ref byte attribcount, ref BinaryWriter writer)
@@ -235,8 +230,7 @@ namespace FileDBReader
 
                 //write Int32 Bytesize (in case of tags: 0)
                 //write Int32 ID
-                Int32 bytesize = 0;
-                writer.Write(bytesize);
+                writer.Write(0);
 
                 //because we made a precheck this HAS to exist, no more checks needed.
                 var id = Tags[e.Name];
@@ -249,7 +243,7 @@ namespace FileDBReader
                     writeNode_FileVersion2(element, ref Tags, ref Attribs, ref tagcount, ref attribcount, ref writer);
                 }
 
-                //nullterminate tag - 4 bytes bytesize, 4 bytes 0, is equal to 8 bytes 0.
+                //nullterminate tag - 4 bytes bytesize, 4 bytes ID: 0, is equal to 8 bytes 0.
                 Int64 nullchar = 0;
                 writer.Write(nullchar);
                 writer.Flush();
@@ -276,11 +270,10 @@ namespace FileDBReader
                 var id = Attribs[e.Name];
                 //write id
                 //write 80 
-                //write fill for 4 bytes
+                //fill to four bytes
                 writer.Write(id);
                 writer.Write((byte)128);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
+                writer.Write((short)0);
 
                 writer.Write(bytes);
 
@@ -303,11 +296,11 @@ namespace FileDBReader
             var TagSectionOffset = (int)writer.BaseStream.Position;
 
             writeDictionary_FileVersion2(Tags, ref writer, (byte)0);
-            //three bytes to fill at the end, lazy but works
 
-            writer.Write((byte)0);
-            writer.Write((byte)0);
-            writer.Write((byte)0);
+            //three bytes to fill at the end
+            for (int i = 0; i < 3; i++) {
+                writer.Write((byte)0);
+            }
 
             var AttribSectionOffset = (int)writer.BaseStream.Position;
 
@@ -343,6 +336,8 @@ namespace FileDBReader
             }
             writer.Flush();
         }
+
+        #endregion
 
         //copied from https://stackoverflow.com/questions/321370/how-can-i-convert-a-hex-string-to-a-byte-array/321404 because why not
         public static byte[] StringToByteArray(string hex)

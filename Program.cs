@@ -15,6 +15,8 @@ namespace FileDBReader {
         {
             [Option('f', "file", Required = true, HelpText = "input files to be decompressed.")]
             public IEnumerable<String> InputFiles { get; set; }
+            [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
+            public int CompressionVersion { get; set; }
         }
 
         [Verb("compress", HelpText = "Recompress an xml file to filedb. Requires data to be represented as hex strings")]
@@ -25,6 +27,8 @@ namespace FileDBReader {
 
             [Option('o', "outputFileExtension", Required = false, HelpText = "file Format of the output file")]
             public String OutputFileExtension{ get; set; }
+            [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
+            public int CompressionVersion { get; set; }
         }
 
         [Verb("interpret", HelpText = "Interpret an xml file that uses hex strings as texts. An interpreter file is needed")]
@@ -55,6 +59,9 @@ namespace FileDBReader {
 
             [Option('i', "interpreter", Required = true, HelpText = "Interpreter file")]
             public String Interpreter { get; set; }
+
+            [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
+            public int CompressionVersion { get; set; }
         }
         [Verb("recompress_export", HelpText = "reimport an xml file to filedb. An interpreter file is needed")]
         class Recompress_Export_Options
@@ -67,6 +74,9 @@ namespace FileDBReader {
 
             [Option('o', "outputFileExtension", Required = false, HelpText = "file Format of the output file")]
             public String OutputFileExtension { get; set; }
+
+            [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
+            public int CompressionVersion { get; set; }
         }
         #endregion
 
@@ -82,9 +92,10 @@ namespace FileDBReader {
             CommandLine.Parser.Default.ParseArguments<DecompressOptions, CompressOptions, InterpretOptions, toHexOptions, Decompress_Interpret_Options, Recompress_Export_Options>(args).MapResult(
                     (DecompressOptions o) =>
                     {
+                        
                         foreach (String s in o.InputFiles) 
                         {
-                            var doc = reader.ReadFile(s, 1);
+                            var doc = reader.ReadFile(s, o.CompressionVersion);
                             doc.Save(Path.ChangeExtension(s, "xml"));
                         }
                         return 0;
@@ -99,7 +110,7 @@ namespace FileDBReader {
                             ext = ".filedb";
                         }
                         foreach (String s in o.InputFiles)
-                            writer.Export(s, ext, 1);
+                            writer.Export(s, ext, o.CompressionVersion);
                         return 0;
                     },
                     (InterpretOptions o) =>
@@ -125,7 +136,7 @@ namespace FileDBReader {
                         foreach (String s in o.InputFiles) {
                             var interpreterDoc = new XmlDocument();
                             interpreterDoc.Load(o.Interpreter);
-                            var doc = interpreter.Interpret(reader.ReadFile(s, 1), interpreterDoc);
+                            var doc = interpreter.Interpret(reader.ReadFile(s, o.CompressionVersion), interpreterDoc);
                             doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, "_d_i"), "xml"));
 
                         }
@@ -146,7 +157,7 @@ namespace FileDBReader {
                         {
                             var interpreterDoc = new XmlDocument();
                             interpreterDoc.Load(o.Interpreter);
-                            writer.Export(exporter.Export(s, o.Interpreter), o.OutputFileExtension, s, 1);
+                            writer.Export(exporter.Export(s, o.Interpreter), o.OutputFileExtension, s, o.CompressionVersion);
 
                         }
                         return 0;
