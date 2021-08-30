@@ -23,9 +23,7 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            InfotipTestNewFileVersion();
-            A7TINFOTest();
-            IslandTestTMC();
+            MapGamedataTest();
         }
 
         //Generic Test (TestDirectoryName, InterpreterFileName, TestfileFilename, FileVersion)
@@ -96,6 +94,11 @@ namespace FileDBReader
         private static void IslandTestRd3d()
         {
             GenericTest("island", "Island_Rd3d.xml", "rd3d.data", 1);
+        }
+
+        private static void MapGamedataTest()
+        {
+            GenericTest("maps", "maptemplate.xml", "gamedata.data", 1);
         }
 
         /// <summary>

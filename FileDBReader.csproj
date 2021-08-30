@@ -66,7 +66,7 @@
     <None Update="FileFormats\Island_RD3D.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="FileFormats\maptemplate.xml">
+    <None Update="FileFormats\map_Gamedata.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="tests\a7tinfo\moderate_atoll_ll_01.a7tinfo">
@@ -113,6 +113,9 @@
     </None>
     <None Update="tests\ctt\0x1.ctt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="tests\maps\gamedata.data">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="tests\zlib\0x1.ctt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

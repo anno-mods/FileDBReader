@@ -100,7 +100,7 @@ namespace FileDBReader
                         Console.WriteLine("Your interpreter should specify a version for internal FileDBs. For this conversion, 1 was auto-chosen. Make sure your versions match up!");
                     }
 
-                    var stream = fileWriter.Export(xmldoc, new MemoryStream(), 2);
+                    var stream = fileWriter.Export(xmldoc, new MemoryStream(), FileVersion);
 
                     //get this stream to hex 
                     node.InnerText = ByteArrayToString(HexHelper.StreamToByteArray(stream));
@@ -169,7 +169,14 @@ namespace FileDBReader
                         exportAsList(node, type, encoding);
                         break;
                     case "Default":
-                        ExportSingleNode(node, type, encoding, Enum);
+                        try
+                        {
+                            ExportSingleNode(node, type, encoding, Enum);
+                        }
+                        catch (InvalidConversionException e)
+                        {
+                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
+                        }
                         break;
                 }
             }
