@@ -34,23 +34,22 @@ check_fileversion -f <inputfiles>
 
 included converters
 
-> infotip file ````(data/infotips/export.bin)````
-
-> Island Gamedata 
-
-> Island Rd3d 
-
-> Maptemplate 
-
-> a7minfo
+- infotip file ````(data/infotips/export.bin)````
+- Island Gamedata 
+- Island Rd3d 
+- Map Gamedata
+- a7minfo
+- a7tinfo
 
 # Compression Versions
 
 There are two versions of this compression
  
-> Version 1 is what you find in files up to Anno 1800, GU 12 (31.08.2021)
+- Version 1 is what you find in files up to Anno 1800, GU 12 (31.08.2021)
 
-> Version 2 is used for new or updated files after this date. 
+- Version 2 is used for new or updated files after this date. 
+
+> The compressor can autodetect versions while decompressing. Alternativly, you can use the check_fileversion verb.
 
 # Sample interpreter file
 
@@ -85,7 +84,6 @@ Convert Args
 - Path: Xpath that selects nodes to be converted. 
 - Type: primitive as it occurs in [.NET system](https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/builtin-types/built-in-types)
 - Encoding: Encoding as in [.NET encoding](https://docs.microsoft.com/de-de/dotnet/api/system.text.encoding?view=net-5.0)
-- UseEnum: Boolean Value that specifies wether values of the conversion should be mapped to the a specified enum. This only works on single nodes.
 
 > the same can be used for Default. 
 
