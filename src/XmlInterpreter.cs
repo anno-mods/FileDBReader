@@ -152,10 +152,22 @@ namespace FileDBReader
                 switch (Structure)
                 {
                     case "List":
-                        InterpretAsList(match, type);
+                        try {
+                            InterpretAsList(match, type);
+                        }
+                        catch (InvalidConversionException e)
+                        {
+                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
+                        }
                         break;
                     case "Default":
-                        InterpretSingleNode(match, type, encoding, Enum);
+                        try {
+                            InterpretSingleNode(match, type, encoding, Enum);
+                        }
+                        catch (InvalidConversionException e)
+                        {
+                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
+                        }
                         break;
                 }
             }
@@ -169,8 +181,7 @@ namespace FileDBReader
                 n.InnerText = s;
             }
             catch (Exception ex) {
-                Console.WriteLine("an Error occured: " + n.InnerText);
-                Console.WriteLine(ex.Message);
+                throw new InvalidConversionException(type, n.Name, "List Value");
             }
             
         }
@@ -207,11 +218,10 @@ namespace FileDBReader
 
                 n.InnerText = s;
             }
-            catch (Exception ex) {
-                Console.WriteLine("an Error occured: " + n.InnerText);
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("at: {0}", n.Name);
+            catch (Exception ex)
+            { 
+                throw new InvalidConversionException(type, n.Name, "List Value");
             }
-}
+        }
     }
 }

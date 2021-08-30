@@ -166,7 +166,14 @@ namespace FileDBReader
                 switch (Structure)
                 {
                     case "List":
-                        exportAsList(node, type, encoding);
+                        try
+                        {
+                            exportAsList(node, type, encoding);
+                        }
+                        catch (InvalidConversionException e)
+                        {
+                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
+                        }
                         break;
                     case "Default":
                         try

@@ -98,7 +98,7 @@ namespace FileDBReader
 
         private static void MapGamedataTest()
         {
-            GenericTest("maps", "maptemplate.xml", "gamedata.data", 1);
+            GenericTest("maps", "map_Gamedata.xml", "gamedata.data", 1);
         }
 
         /// <summary>
