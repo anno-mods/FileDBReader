@@ -120,6 +120,10 @@ namespace FileDBReader
             String Structure = "Default";
             if (ConverterInfo.Attributes["Structure"] != null)
                 Structure = ConverterInfo.Attributes["Structure"].Value;
+            //get Cdata
+            bool IsCdataNode = false;
+            if (ConverterInfo.Attributes["IsCdataNode"] != null)
+                IsCdataNode = true;
 
             //get if it should use Enum
 
@@ -153,7 +157,7 @@ namespace FileDBReader
                 {
                     case "List":
                         try {
-                            InterpretAsList(match, type);
+                            InterpretAsList(match, type, IsCdataNode);
                         }
                         catch (InvalidConversionException e)
                         {
@@ -162,7 +166,7 @@ namespace FileDBReader
                         break;
                     case "Default":
                         try {
-                            InterpretSingleNode(match, type, encoding, Enum);
+                            InterpretSingleNode(match, type, encoding, Enum, IsCdataNode);
                         }
                         catch (InvalidConversionException e)
                         {
@@ -173,24 +177,36 @@ namespace FileDBReader
             }
         }
 
-        private void InterpretAsList(XmlNode n, Type type)
-        {
-            try {
-                String BinaryData = n.InnerText;
-                String s = ConverterFunctions.ListFunctionsInterpret[type](BinaryData);
-                n.InnerText = s;
-            }
-            catch (Exception ex) {
-                throw new InvalidConversionException(type, n.Name, "List Value");
-            }
-            
-        }
-
-        private void InterpretSingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum)
+        private void InterpretAsList(XmlNode n, Type type, bool FilterCDATA)
         {
             try
             {
                 String BinaryData = n.InnerText;
+                //filter out CDATA
+                if (BinaryData != "" && FilterCDATA) BinaryData = BinaryData.Substring(6, BinaryData.Length - 7);
+
+                String s = ConverterFunctions.ListFunctionsInterpret[type](BinaryData);
+                if (BinaryData != "" && FilterCDATA) s = "CDATA[" + s + "]";
+                n.InnerText = s;
+            }
+            catch (ArgumentOutOfRangeException ex) 
+            {
+                Console.WriteLine("broken CDATA section.");
+                throw new InvalidConversionException(type, n.Name, "List Value");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidConversionException(type, n.Name, "List Value");
+            }
+        }
+
+        private void InterpretSingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum, bool FilterCDATA)
+        {
+            try
+            {
+                String BinaryData = n.InnerText;
+                //filter out CDATA from the string
+                if (BinaryData != "" && FilterCDATA) BinaryData = BinaryData.Substring(6, BinaryData.Length - 7);
 
                 //make a bytesize check
                 int ExpectedBytesize = 0;
@@ -215,7 +231,8 @@ namespace FileDBReader
                 if (!Enum.IsEmpty()) {
                     s = Enum.GetValue(s);
                 }
-
+                //readd cdata to the string
+                if (BinaryData != "" && FilterCDATA) s = "CDATA[" + s + "]";
                 n.InnerText = s;
             }
             catch (Exception ex)

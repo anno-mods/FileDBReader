@@ -1,4 +1,5 @@
-﻿using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+﻿using FileDBReader.src;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using Syroot.BinaryData.Memory;
 using System;
 using System.Collections.Generic;
@@ -97,6 +98,24 @@ namespace FileDBReader
             currentNode.Add(node);
         }
 
+        public static Dictionary<ushort, string> RenameTagsInDictionary(Dictionary<ushort, string> InputDictionary, Dictionary<string, string> ReplaceWith)
+        {
+            //here we need to validate that there are no duplicate values in ReplaceWith!!!!
+            var duplicateValues = InputDictionary.GroupBy(x => x.Value).Where(x => x.Count() > 1);
+            if (duplicateValues != null)
+            {
+                throw new DuplicateValueException();
+            }
+
+            foreach (var pair in InputDictionary)
+            {
+                if (ReplaceWith.ContainsKey(pair.Value))
+                {
+                    InputDictionary[pair.Key] = ReplaceWith[pair.Value];
+                }
+            }
+            return InputDictionary;
+        }
         #endregion Methods
 
         #region FileVersion 1
@@ -176,6 +195,7 @@ namespace FileDBReader
             }
             return dictionary;
         }
+
         #endregion
 
         #region FileVersion 2

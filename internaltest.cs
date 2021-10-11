@@ -1,6 +1,7 @@
 ﻿using FileDBReader.src;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -15,18 +16,67 @@ namespace FileDBReader
         static String TEST_DIRECTORY_NAME = "tests";
         static String FILEFORMAT_DIRECTORY_NAME = "FileFormats";
 
+        //FileDB
         static FileReader reader = new FileReader();
         static XmlExporter exporter = new XmlExporter();
         static FileWriter writer = new FileWriter();
         static XmlInterpreter interpreter = new XmlInterpreter();
         static ZlibFunctions zlib = new ZlibFunctions();
 
+        //Fc Files
+        static FcFileHelper FcFileHelper = new FcFileHelper(); 
+
         public static void Main(String[] args)
         {
-            MapGamedataTest();
+            FcFileDevTest_WorldMap();
+        }
+        #region GenericTestInstancesFcFile
+
+        public static void FcFileDevTest_Residence()
+        {
+            FcFile_GenericTest("fcFiles", "FcFile.xml", "residence_tier02_estate01.fc");
         }
 
-        //Generic Test (TestDirectoryName, InterpreterFileName, TestfileFilename, FileVersion)
+        public static void FcFileDevTest_WorldMap()
+        {
+            FcFile_GenericTest("fcFiles", "FcFile.xml", "world_map_01.fc");
+        }
+        #endregion
+
+        #region GenericTestInstancesFileDB
+
+        //Generic Test(TestDirectoryName, InterpreterFileName, TestfileFilename, FileVersion)
+
+        /// <summary>
+        /// Test for the two island interpreters
+        /// </summary>
+        public static void IslandTest()
+        {
+            IslandTestGamedata();
+            IslandTestRd3d();
+            IslandTestTMC();
+        }
+
+        private static void IslandTestGamedata()
+        {
+            GenericTest("island", "Island_Gamedata.xml", "gamedata.data", 1);
+        }
+
+        private static void IslandTestTMC()
+        {
+            GenericTest("island", "tmc.xml", "0x0.tmc", 1);
+        }
+
+        private static void IslandTestRd3d()
+        {
+            GenericTest("island", "Island_Rd3d.xml", "rd3d.data", 1);
+        }
+
+        private static void MapGamedataTest()
+        {
+            GenericTest("maps", "map_Gamedata.xml", "gamedata.data", 1);
+        }
+
 
         public static void InfotipTestNewFileVersion()
         {
@@ -35,7 +85,7 @@ namespace FileDBReader
 
         public static void A7TINFOTest()
         {
-            GenericTest("a7tinfo", "a7tinfo.xml", "moderate_atoll_ll_01.a7tinfo", 1 );
+            GenericTest("a7tinfo", "a7tinfo.xml", "moderate_atoll_ll_01.a7tinfo", 1);
         }
 
         public static void ListTest()
@@ -43,15 +93,9 @@ namespace FileDBReader
             GenericTest("lists", "Island_Gamedata.xml", "gamedata_og.data", 1);
         }
 
-        /// <summary>
-        /// Test for the two island interpreters
-        /// </summary>
-        public static void IslandTest() {
-            IslandTestGamedata();
-            IslandTestRd3d();
-            IslandTestTMC();
-        }
+        #endregion
 
+        #region FileDBTests
 
         private static void IslandTestGoodwill()
         {
@@ -77,28 +121,6 @@ namespace FileDBReader
 
             var exported = exporter.Export(interpreted_gamedata, GamedataInterpreter);
             exported.Save(GAMEDATA_EXPORTED_PATH);
-
-
-
-        }
-
-        private static void IslandTestGamedata() {
-            GenericTest("island", "Island_Gamedata.xml", "gamedata.data", 1);
-        }
-
-        private static void IslandTestTMC() 
-        {
-            GenericTest("island", "tmc.xml", "0x0.tmc", 1);
-        }
-
-        private static void IslandTestRd3d()
-        {
-            GenericTest("island", "Island_Rd3d.xml", "rd3d.data", 1);
-        }
-
-        private static void MapGamedataTest()
-        {
-            GenericTest("maps", "map_Gamedata.xml", "gamedata.data", 1);
         }
 
         /// <summary>
@@ -182,37 +204,6 @@ namespace FileDBReader
             writer.Export(Hexed, EXPORTED_TESTFILE, 1);
         }
 
-
-        public static bool FilesAreEqual(FileInfo first, FileInfo second)
-        {
-            const int BYTES_TO_READ = sizeof(Int64);
-
-            if (first.Length != second.Length)
-                return false;
-
-            if (string.Equals(first.FullName, second.FullName, StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            int iterations = (int)Math.Ceiling((double)first.Length / BYTES_TO_READ);
-
-            using (FileStream fs1 = first.OpenRead())
-            using (FileStream fs2 = second.OpenRead())
-            {
-                byte[] one = new byte[BYTES_TO_READ];
-                byte[] two = new byte[BYTES_TO_READ];
-
-                for (int i = 0; i < iterations; i++)
-                {
-                    fs1.Read(one, 0, BYTES_TO_READ);
-                    fs2.Read(two, 0, BYTES_TO_READ);
-
-                    if (BitConverter.ToInt64(one, 0) != BitConverter.ToInt64(two, 0))
-                        return false;
-                }
-            }
-
-            return true;
-        }
         public static void GenericTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME, int FileVersion)
         {
             String INTERPRETER_FILE = Path.Combine(FILEFORMAT_DIRECTORY_NAME, INTERPREFER_FILE_NAME);
@@ -220,8 +211,8 @@ namespace FileDBReader
 
             String DECOMPRESSED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_decompressed.xml");
             String INTERPRETED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_interpreted.xml");
-            String TOHEX_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_recompressed.xml");
-            String EXPORTED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_converted" + Path.GetExtension(TESTFILE_NAME));
+            String TOHEX_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_reinterpreted.xml");
+            String EXPORTED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_recompressed" + Path.GetExtension(TESTFILE_NAME));
 
             //decompress gamedata.data
             var interpreterDoc = new XmlDocument();
@@ -255,6 +246,105 @@ namespace FileDBReader
             Console.WriteLine("File Test Done");
             Console.WriteLine("--------------------------------------------------");
         }
+        #endregion
+
+        #region FCTests
+
+        public static void FcFile_GenericTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME)
+        {
+           
+            String TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME);
+
+            String CDATAREAD_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_CdataRead.xml");
+            String INTERPRETED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_interpreted.xml");
+            String REINTERPRETED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_reinterpreted.xml");
+            String CDATAWRITTEN_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_CdataWritten" + Path.GetExtension(TESTFILE_NAME));
+
+            
+            
+            String INTERPRETER_FILE = Path.Combine(FILEFORMAT_DIRECTORY_NAME, INTERPREFER_FILE_NAME);
+            var interpreterDoc = new XmlDocument();
+            interpreterDoc.Load(INTERPRETER_FILE);
+            
+
+            //read
+            var Read = FcFileHelper.ReadFcFile(TESTFILE);
+            var Interpreted = interpreter.Interpret(Read, interpreterDoc);
+            Interpreted.Save(INTERPRETED_TESTFILE);
+
+            ShowFileWithDefaultProgram(INTERPRETED_TESTFILE);
+
+            try
+            {
+                var OriginalInfo = new FileInfo(TESTFILE);
+                var DecompressedInfo = new FileInfo(CDATAREAD_TESTFILE);
+                var InterpretedInfo = new FileInfo(INTERPRETED_TESTFILE);
+                var RehexedInfo = new FileInfo(REINTERPRETED_TESTFILE);
+                var ReexportedInfo = new FileInfo(CDATAWRITTEN_TESTFILE);
+
+                Console.WriteLine("File Test: {0}", TESTFILE_NAME);
+                Console.WriteLine("FC FILES FILESIZE\nOriginal: {0}, Converted: {1}. Filesize Equality:{2}", OriginalInfo.Length, ReexportedInfo.Length, OriginalInfo.Length == ReexportedInfo.Length);
+                //This check will probably give a false if there is internal compression!
+                Console.WriteLine("XML FILES FILESIZE\n Cdata Read: {0}, Cdata Rewritten: {1}. Filesize Equality: {2}", DecompressedInfo.Length, RehexedInfo.Length, DecompressedInfo.Length == RehexedInfo.Length);
+
+                Console.WriteLine("File Test Done");
+                Console.WriteLine("--------------------------------------------------");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Currently undergoing maintenance, please fuck off");
+            }
+            
+        }
+        #endregion
+
+        #region UniversalMethods
+        private static void ShowFileWithDefaultProgram(FileStream f)
+        {
+            ShowFileWithDefaultProgram(f.Name);
+        }
+
+        private static void ShowFileWithDefaultProgram(String Filename)
+        {
+            Process fileopener = new Process();
+
+            fileopener.StartInfo.FileName = "explorer";
+            fileopener.StartInfo.Arguments = "\"" + Filename + "\"";
+            fileopener.Start();
+            //remember to change this to a using syntax once we change to c# 8.0+ later 
+            fileopener.Close();
+        }
+
+        public static bool FilesAreEqual(FileInfo first, FileInfo second)
+        {
+            const int BYTES_TO_READ = sizeof(Int64);
+
+            if (first.Length != second.Length)
+                return false;
+
+            if (string.Equals(first.FullName, second.FullName, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            int iterations = (int)Math.Ceiling((double)first.Length / BYTES_TO_READ);
+
+            using (FileStream fs1 = first.OpenRead())
+            using (FileStream fs2 = second.OpenRead())
+            {
+                byte[] one = new byte[BYTES_TO_READ];
+                byte[] two = new byte[BYTES_TO_READ];
+
+                for (int i = 0; i < iterations; i++)
+                {
+                    fs1.Read(one, 0, BYTES_TO_READ);
+                    fs2.Read(two, 0, BYTES_TO_READ);
+
+                    if (BitConverter.ToInt64(one, 0) != BitConverter.ToInt64(two, 0))
+                        return false;
+                }
+            }
+
+            return true;
+        }
 
         private static byte[] GetFileHash(String FileName)
         {
@@ -266,6 +356,8 @@ namespace FileDBReader
                 }
             }
         }
+
+        #endregion
     }
     
 }

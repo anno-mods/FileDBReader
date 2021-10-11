@@ -137,6 +137,10 @@ namespace FileDBReader
             String Structure = "Default";
             if (ConverterInfo.Attributes["Structure"] != null)
                 Structure = ConverterInfo.Attributes["Structure"].Value;
+            //get Cdata
+            bool IsCdataNode = false;
+            if (ConverterInfo.Attributes["IsCdataNode"] != null)
+                IsCdataNode = true;
 
             //getEnum
             var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");

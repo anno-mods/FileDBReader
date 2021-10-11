@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+  Interpreter for Fc Files
+-->
+<Converts>
+  <InternalCompression />
+  <Converts>
+    <Convert Path ="//GuidVariationList" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//m_SequenceIds" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//DummyGroup" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//ValidSequenceIDs" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//ApproximationMapping" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+  </Converts>
+</Converts>

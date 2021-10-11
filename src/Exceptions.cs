@@ -33,5 +33,20 @@ namespace FileDBReader.src
             NodeName = Node;
             TargetType = Target;
         }
+
+    }
+
+    class DuplicateValueException : Exception
+    {
+        public DuplicateValueException()
+        { }
+
+        public DuplicateValueException(string message)
+        : base(message)
+        { }
+
+        public DuplicateValueException(string message, Exception inner)
+            : base(message, inner)
+        { }
     }
 }

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <StartupObject>FileDBReader.Program</StartupObject>
+    <StartupObject>FileDBReader.internaltest</StartupObject>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
@@ -45,6 +45,9 @@
     <None Update="FileFormats\a7tinfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="FileFormats\FcFile.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="FileFormats\tmc.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -73,6 +76,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="tests\a7tinfo\moderate_c_01.a7tinfo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="tests\fcFiles\residence_tier02_estate01.fc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="tests\fcFiles\world_map_01.fc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="tests\filedb\gamedata.data">
