@@ -118,6 +118,15 @@ namespace FileDBReader
             }
         }
 
+        //copied from https://stackoverflow.com/questions/321370/how-can-i-convert-a-hex-string-to-a-byte-array/321404 because why not
+        public static byte[] StringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
+        }
+
         //using String.Join for performance optimization over for loops.
         public static String Join<T>(String BinaryData) where T : struct
         {

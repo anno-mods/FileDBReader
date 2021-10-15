@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+  Interpreter for Anno 2070 Fc Files
+-->
+<Converts>
+  <InternalCompression />
+  <Converts>
+    <Convert Path ="//GuidVariationList" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//m_SequenceIds" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//DummyGroup" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//ValidSequenceIDs" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//Position" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//Extents" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+    <Convert Path ="//i" Type ="Int32" Structure ="List" IsCdataNode ="1"/>
+  </Converts>
+</Converts>

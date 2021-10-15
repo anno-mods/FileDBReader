@@ -28,18 +28,20 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            FcFileDevTest_WorldMap();
-        }
-        #region GenericTestInstancesFcFile
-
-        public static void FcFileDevTest_Residence()
-        {
-            FcFile_GenericTest("fcFiles", "FcFile.xml", "residence_tier02_estate01.fc");
+            FcFile_GenericTest("residence_tier02_estate01.fc");
         }
 
-        public static void FcFileDevTest_WorldMap()
+        #region GenericTestFcFile
+
+        public static void FcFileDevTest()
         {
-            FcFile_GenericTest("fcFiles", "FcFile.xml", "world_map_01.fc");
+
+            FcFile_GenericTest("residence_tier02_estate01.fc");
+            FcFile_GenericTest("world_map_01.fc");
+            FcFile_GenericTest("food_07.fc");
+            FcFile_GenericTest("mining_08.fc");
+            FcFile_GenericTest("workshop_06.fc");
+            FcFile_GenericTest("electricity_01.fc");
         }
         #endregion
 
@@ -250,6 +252,10 @@ namespace FileDBReader
 
         #region FCTests
 
+        public static void FcFile_GenericTest(String TESTFILE_NAME)
+        {
+            FcFile_GenericTest("fcFiles", "FcFile.xml", TESTFILE_NAME);
+        }
         public static void FcFile_GenericTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME)
         {
            
@@ -269,10 +275,23 @@ namespace FileDBReader
 
             //read
             var Read = FcFileHelper.ReadFcFile(TESTFILE);
+            Read.Save(CDATAREAD_TESTFILE);
+
             var Interpreted = interpreter.Interpret(Read, interpreterDoc);
             Interpreted.Save(INTERPRETED_TESTFILE);
 
-            ShowFileWithDefaultProgram(INTERPRETED_TESTFILE);
+            var Reinterpreted = exporter.Export(Interpreted, interpreterDoc);
+            Reinterpreted.Save(REINTERPRETED_TESTFILE);
+
+            var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(Reinterpreted), ConversionMode.Write);
+            Save(Written, CDATAWRITTEN_TESTFILE);
+
+            //save 
+            var stream = FcFileHelper.ConvertFile(File.OpenRead(TESTFILE), ConversionMode.Read);
+            var outstream = FcFileHelper.ConvertFile(stream, ConversionMode.Write);
+            
+
+            ShowFileWithDefaultProgram(CDATAWRITTEN_TESTFILE);
 
             try
             {
@@ -342,7 +361,6 @@ namespace FileDBReader
                         return false;
                 }
             }
-
             return true;
         }
 
@@ -355,6 +373,14 @@ namespace FileDBReader
                     return md5.ComputeHash(stream);
                 }
             }
+        }
+
+        private static void Save(Stream Stream, String Filename)
+        {
+            var fs = File.Create(Filename);
+            Stream.Position = 0;
+            Stream.CopyTo(fs);
+            fs.Close();
         }
 
         #endregion

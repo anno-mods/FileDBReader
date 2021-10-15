@@ -172,7 +172,7 @@ namespace FileDBReader
                     case "List":
                         try
                         {
-                            exportAsList(node, type, encoding);
+                            exportAsList(node, type, encoding, IsCdataNode);
                         }
                         catch (InvalidConversionException e)
                         {
@@ -182,7 +182,7 @@ namespace FileDBReader
                     case "Default":
                         try
                         {
-                            ExportSingleNode(node, type, encoding, Enum);
+                            ExportSingleNode(node, type, encoding, Enum, IsCdataNode);
                         }
                         catch (InvalidConversionException e)
                         {
@@ -193,11 +193,14 @@ namespace FileDBReader
             }
         }
 
-        private void exportAsList(XmlNode n, Type type, Encoding e) {
+        private void exportAsList(XmlNode n, Type type, Encoding e, bool RespectCdata) {
             //don't do anything with empty nodes
             if (!n.InnerText.Equals("")) 
             {
-                String[] arr = n.InnerText.Split(" ");
+                String text = n.InnerText;
+                if (RespectCdata)
+                    text = text.Substring(6, text.Length - 7);
+                String[] arr = text.Split(" ");
                 if (!arr[0].Equals(""))
                 {
                     //use stringbuilder and for loop for performance reasons
@@ -214,7 +217,10 @@ namespace FileDBReader
                             throw new InvalidConversionException(type, n.Name, "List Value");
                         }
                     }
-                    n.InnerText = sb.ToString();
+                    String result = sb.ToString();
+                    if (RespectCdata)
+                        result = "CDATA[" + result + "]";
+                    n.InnerText = result;
                 }
             }
 
@@ -222,7 +228,7 @@ namespace FileDBReader
             
         }
 
-        private void ExportSingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum) {
+        private void ExportSingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum, bool RespectCdata) {
             String Text;
 
             if (!Enum.IsEmpty())
@@ -234,6 +240,9 @@ namespace FileDBReader
                 Text = n.InnerText;
             }
 
+            if (RespectCdata)
+                Text = Text.Substring(6, Text.Length - 7);
+
             byte[] converted;
             try
             {
@@ -244,6 +253,10 @@ namespace FileDBReader
                 throw new InvalidConversionException(type, n.Name, n.InnerText);
             }
             String hex = ByteArrayToString(converted);
+
+            if (RespectCdata) 
+                hex = "CDATA[" + hex + "]";
+
             n.InnerText = hex;
         }
 

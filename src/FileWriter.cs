@@ -162,7 +162,7 @@ namespace FileDBReader
 
                 //write bytesize of content 
                 //write content 
-                var bytes = StringToByteArray(e.InnerText);
+                var bytes = HexHelper.StringToByteArray(e.InnerText);
 
                 //write as 7 bit encoded integer - copied from BinaryReader where it is a protected method
                 uint v = (uint)bytes.Length;   // support negative numbers
@@ -262,7 +262,7 @@ namespace FileDBReader
                 //write bytesize of content 
                 //write attrib id
                 //write content 
-                var bytes = StringToByteArray(e.InnerText);
+                var bytes = HexHelper.StringToByteArray(e.InnerText);
 
                 int bytesize = bytes.Length;
                 writer.Write(bytesize);
@@ -339,14 +339,7 @@ namespace FileDBReader
 
         #endregion
 
-        //copied from https://stackoverflow.com/questions/321370/how-can-i-convert-a-hex-string-to-a-byte-array/321404 because why not
-        public static byte[] StringToByteArray(string hex)
-        {
-            return Enumerable.Range(0, hex.Length)
-                             .Where(x => x % 2 == 0)
-                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
-                             .ToArray();
-        }
+        
 
     }
     
