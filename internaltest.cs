@@ -28,7 +28,7 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            FcFile_GenericTest("residence_tier02_estate01.fc");
+            RenamedTagsTest();
         }
 
         #region GenericTestFcFile
@@ -95,6 +95,15 @@ namespace FileDBReader
             GenericTest("lists", "Island_Gamedata.xml", "gamedata_og.data", 1);
         }
 
+        public static void RenamedTagsTest()
+        {
+            Dictionary<string, string> Renames = new Dictionary<string, string>();
+            Renames.Add("Delayed Construction", "DelayedConstruction");
+            InvalidTagNameHelper.ReplaceOperations = Renames; 
+            GenericTest("RenamedTags", "Island_Gamedata.xml", "gamedata.data", 1);
+            InvalidTagNameHelper.Reset(); 
+        }
+
         #endregion
 
         #region FileDBTests
@@ -140,7 +149,6 @@ namespace FileDBReader
             //Ubisoft uses 8 magic bytes at the start
             var doc = interpreter.Interpret(reader.ReadSpan(zlib.Decompress(fs, 8)), interpreterDoc);
             doc.Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "interpreted.xml"));
-
         }
 
         /// <summary>
@@ -252,6 +260,11 @@ namespace FileDBReader
 
         #region FCTests
 
+        public static void ClosingFileTest()
+        {
+            FcFile_GenericTest("fcFiles", "FcFile.xml", "cannon_ball_small_01.rdp");
+        }
+
         public static void FcFile_GenericTest(String TESTFILE_NAME)
         {
             FcFile_GenericTest("fcFiles", "FcFile.xml", TESTFILE_NAME);
@@ -271,7 +284,6 @@ namespace FileDBReader
             String INTERPRETER_FILE = Path.Combine(FILEFORMAT_DIRECTORY_NAME, INTERPREFER_FILE_NAME);
             var interpreterDoc = new XmlDocument();
             interpreterDoc.Load(INTERPRETER_FILE);
-            
 
             //read
             var Read = FcFileHelper.ReadFcFile(TESTFILE);
@@ -313,7 +325,6 @@ namespace FileDBReader
             {
                 Console.WriteLine("Currently undergoing maintenance, please fuck off");
             }
-            
         }
         #endregion
 

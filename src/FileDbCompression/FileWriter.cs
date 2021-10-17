@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.IO;
-
-
+using FileDBReader.src;
 
 namespace FileDBReader
 {
@@ -73,6 +72,14 @@ namespace FileDBReader
             writer.Write(nullchar);
             writer.Flush();
 
+            //Replace Values in Tags and Attribs if we need to
+            if (InvalidTagNameHelper.ReplaceOperations != null)
+            {
+                //second arg bool reverse needs to be true as we want to do the reverse operation of the initial replacement.
+                Tags = InvalidTagNameHelper.RenameKeysInDictionary<byte>(Tags, true);
+                Attribs = InvalidTagNameHelper.RenameKeysInDictionary<byte>(Attribs, true);
+            }
+
             switch (FileVersion)
             {
                 case 1:
@@ -94,12 +101,6 @@ namespace FileDBReader
                     break;
             }
 
-            //write the current decompressed internal filedb to a file
-            //String path = Path.Combine("tests", "lists", DateTime.Now.ToString("HH-mm-ss-ff") + "_" + xml.DocumentElement.FirstChild.Name + ".bin");
-            //var fileStream = File.Create(path);
-            //stream.Seek(0, SeekOrigin.Begin);
-            //stream.CopyTo(fileStream);
-            //fileStream.Close();
             return stream;
         }
 
@@ -199,7 +200,8 @@ namespace FileDBReader
 
             foreach (String s in Tags.Keys)
             {
-                writer.Write(Encoding.UTF8.GetBytes(s));
+                var TagName = s;
+                writer.Write(Encoding.UTF8.GetBytes(TagName));
                 byte i = Tags[s];
                 writer.Write((byte)0);
                 writer.Write(i);
@@ -331,7 +333,8 @@ namespace FileDBReader
             //write names divided with zeroes
             foreach (string s in Tags.Keys)
             {
-                writer.Write(Encoding.UTF8.GetBytes(s));
+                var TagName = s; 
+                writer.Write(Encoding.UTF8.GetBytes(TagName));
                 writer.Write((byte)0);
             }
             writer.Flush();
@@ -339,7 +342,7 @@ namespace FileDBReader
 
         #endregion
 
-        
+
 
     }
     

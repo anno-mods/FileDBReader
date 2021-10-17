@@ -23,14 +23,14 @@ Be aware that filedb compressed files can contain other filedb compressed files 
 # How to use
 
 ```
-decompress -f <inputfiles> -c <CompressionVersion>
-compress -f <inputFiles> -o <outputFileExtension> -c <CompressionVersion>
+decompress -f <inputfiles> -c <CompressionVersion> -i <interpreterFile>
+compress -f <inputFiles> -o <outputFileExtension> -c <CompressionVersion> -i <interpreterFile>
 interpret -f <inputFiles> -i <interpreterFile>
 toHex -f <inputFiles> -i <interpreterFile>
-decompress_interpret -f <inputfiles> -i <interpreterFile> -c <CompressionVersion>
-recompress_export -f <inputfiles> -i <interpreterFile> -o <outputFileExtension> -c <CompressionVersion>
 check_fileversion -f <inputfiles>
 ```
+
+> Note that i is optional on decompress and compress verbs. If provided, it will directly go from compressed to interpreted / from interpreted to recompressed.
 
 included converters
 

@@ -48,25 +48,38 @@ namespace FileDBReader
             }
             Console.WriteLine("Autodetected FileVersion: {0}", FileVersion);
 
-
+            XmlDocument result; 
             switch (FileVersion)
             {
                 //FileVersion 1
                 case 1:
                     TagsOff = Filereader.Position = Convert.ToInt32(MemoryMarshal.Read<UInt32>(Filereader.Span[^4..]));
                     var Tags = ReadTagsSection_FileVersion1(ref Filereader, TagsOff);
+
+                    //replace tag names if needed
+                    if (InvalidTagNameHelper.ReplaceOperations != null)
+                        InvalidTagNameHelper.RenameValuesInDictionary<ushort>(Tags, false);
+
                     var nodesReader = Filereader[..TagsOff];
-                    return ReadNodeSection_FileVersion1(ref nodesReader, ref currentNode, ref document, Tags);
+                    result = ReadNodeSection_FileVersion1(ref nodesReader, ref currentNode, ref document, Tags);
+                    break;
                 //FileVersion 2
                 case 2:
                     TagsOff = Filereader.Position = Convert.ToInt32(MemoryMarshal.Read<UInt32>(Filereader.Span[^16..]));
                     int AttribsOff = Filereader.Position = Convert.ToInt32(MemoryMarshal.Read<UInt32>(Filereader.Span[^12..]));
                     var TagsV2 = ReadTagsSection_FileVersion2(ref Filereader, TagsOff, AttribsOff);
+
+                    //replace tag names if needed
+                    if (InvalidTagNameHelper.ReplaceOperations != null)
+                        InvalidTagNameHelper.RenameValuesInDictionary<int>(TagsV2, false);
+
                     var nodesReaderV2 = Filereader[..TagsOff];
-                    return ReadNodeSection_FileVersion2(ref nodesReaderV2, ref currentNode, ref document, TagsV2);
+                    result = ReadNodeSection_FileVersion2(ref nodesReaderV2, ref currentNode, ref document, TagsV2);
+                    break; 
                 default:
                     throw new ArgumentException(String.Format("Invalid Compression Version! Only 1 and 2 are supported"));
             }
+            return result; 
         }
 
         public XmlDocument ReadFile(string path)
@@ -86,7 +99,7 @@ namespace FileDBReader
             }
         }
 
-        private static void AddToCurrentNode(XDocument document, XElement currentNode, XElement node)
+        private void AddToCurrentNode(XDocument document, XElement currentNode, XElement node)
         {
             //if nothing 
             if (currentNode == null)
@@ -98,24 +111,6 @@ namespace FileDBReader
             currentNode.Add(node);
         }
 
-        public static Dictionary<ushort, string> RenameTagsInDictionary(Dictionary<ushort, string> InputDictionary, Dictionary<string, string> ReplaceWith)
-        {
-            //here we need to validate that there are no duplicate values in ReplaceWith!!!!
-            var duplicateValues = InputDictionary.GroupBy(x => x.Value).Where(x => x.Count() > 1);
-            if (duplicateValues != null)
-            {
-                throw new DuplicateValueException();
-            }
-
-            foreach (var pair in InputDictionary)
-            {
-                if (ReplaceWith.ContainsKey(pair.Value))
-                {
-                    InputDictionary[pair.Key] = ReplaceWith[pair.Value];
-                }
-            }
-            return InputDictionary;
-        }
         #endregion Methods
 
         #region FileVersion 1
@@ -294,7 +289,7 @@ namespace FileDBReader
             0xFE FF FF FF (-2 als Int32)
          */
 
-        private static Dictionary<int, String> ReadTagsSection_FileVersion2(ref SpanReader reader, int TagSectionOffset, int AttribSectionOffset)
+        private Dictionary<int, String> ReadTagsSection_FileVersion2(ref SpanReader reader, int TagSectionOffset, int AttribSectionOffset)
         {
             var Tags = ReadDictionary_FileVersion2(ref reader, TagSectionOffset);
             var Attribs = ReadDictionary_FileVersion2(ref reader, AttribSectionOffset);
@@ -306,7 +301,7 @@ namespace FileDBReader
             return result;
         }
 
-        private static Dictionary<int, string> ReadDictionary_FileVersion2(ref SpanReader reader, int SectionOffset)
+        private Dictionary<int, string> ReadDictionary_FileVersion2(ref SpanReader reader, int SectionOffset)
         {
             reader.Position = SectionOffset;
             Dictionary<int, string> dictionary = new Dictionary<int, string>();
@@ -330,7 +325,6 @@ namespace FileDBReader
                 //dictionary.Add(id, name.Replace(" ", "_"));
                 //This upper fix will break recompression. we will have to think of something better in the future. :/
             }
-
             return dictionary;
         }
 
@@ -346,6 +340,7 @@ namespace FileDBReader
                 return 1;
             }
         }
+
         #endregion
     }
 }

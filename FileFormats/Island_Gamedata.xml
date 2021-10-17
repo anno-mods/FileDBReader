@@ -48,7 +48,10 @@
     <Convert Path ="//LastWaystepPos" Type="Int32" Structure="List"/>
     <Convert Path ="//LastPos" Type="Int32" Structure="List"/>
     <Convert Path ="//LastTickPos" Type="Int32" Structure="List"/>
-    <Convert Path ="//AreaExtents" Type="Int32" Structure="List"/>
+    <Convert Path ="//AreaExtents" Type="Single" Structure="List"/>
+    <Convert Path ="//BasePosition" Type="Single" Structure="List"/>
+    <Convert Path ="//BaseRotation" Type="Single"/>
+    <Convert Path ="//HasElectricity" Type="Boolean"/>
   
     <Convert Path ="//VarMapData/SparseEnabled" Type="Boolean"/>
     <Convert Path ="//VarMapData/block/mode" Type="Boolean"/>
@@ -63,6 +66,12 @@
     <Convert Path ="//Mesh/SequenceData/CurrentSequenceStartTime" Type="Int64"/>
     <Convert Path ="//GameObjectIDCounter" Type="Int64"/>
     <Convert Path ="//NonGameObjectIDCounter" Type="Int64"/>
+    <Convert Path ="//ObjectID" Type="Int64"/>
+    <Convert Path ="//LoadingHarbourID" Type="Int64"/>
+    <Convert Path ="//OldUnitID" Type="Int64"/>
+    <Convert Path ="//PreventDriftBack" Type="Boolean"/>
+    <Convert Path ="//OptimalAngleWS" Type="Single"/>
+    <Convert Path ="//OptimalDistanceWS" Type="Single"/>
 
     <Convert Path ="//GameObjectLabelMap/None[position() mod 2 = 1]" Type="String" Encoding="UTF-8"/>
     <Convert Path ="//GameObjectLabelMap/None[position() mod 2 = 0]" Type="String"/>

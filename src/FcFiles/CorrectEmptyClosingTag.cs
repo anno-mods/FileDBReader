@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace FileDBReader
 {
+    /// <summary>
+    /// Manages a stack of tag names in the xml document and returns the name an empty closing tag refers to.
+    /// </summary>
     class CorrectEmptyClosingTag
     {
         private string CurrentTag = "";

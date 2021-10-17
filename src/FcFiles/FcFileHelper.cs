@@ -20,15 +20,15 @@ namespace FileDBReader
         /// Value conversion happens with the usual XmlInterpreter/XmlExporters. 
         /// </summary>
         /// 
-        readonly private String ContentNodeOpen = "<Content>";
-        readonly private String ContentNodeClose = "</Content>";
+        readonly private static String ContentNodeOpen = "<Content>";
+        readonly private static String ContentNodeClose = "</Content>";
+        readonly private static String CdataOpener = "CDATA[";
 
         public FcFileHelper()
         {
 
         }
 
-        static readonly String CdataOpener = "CDATA[";
 
         public XmlDocument ReadFcFile(String Filename)
         {
@@ -101,7 +101,7 @@ namespace FileDBReader
                         HexToBinary(ref reader, ref writer);
                 }
                 // Files like .rdp use short close </> which are not valid XML.
-                else if (correctClose.IsClosing())
+                else if (correctClose.IsClosing() && mode == ConversionMode.Read)
                 {
                     writer.Write(correctClose.GetCorrection());
                     writer.Write(CurrentChar);
