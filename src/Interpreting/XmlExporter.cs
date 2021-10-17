@@ -255,7 +255,7 @@ namespace FileDBReader
             String hex = ByteArrayToString(converted);
 
             if (RespectCdata) 
-                hex = "CDATA[" + hex + "]";
+                hex = "CDATA[" + ByteArrayToString(BitConverter.GetBytes(hex.Length/2))+ hex + "]";
 
             n.InnerText = hex;
         }
