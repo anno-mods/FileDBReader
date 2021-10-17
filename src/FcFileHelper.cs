@@ -84,11 +84,13 @@ namespace FileDBReader
             }
 
             //basically take the stream, find all cdata sections and write a new stream that is a valid xml document.
+            CorrectEmptyClosingTag correctClose = new CorrectEmptyClosingTag();
             while (fs.Position < fs.Length)
             {
                 //advance stream position
                 CurrentChar = reader.ReadChar();
                 LastSixChars = Advance(LastSixChars, CurrentChar);
+                correctClose.Advance(CurrentChar);
 
                 //CDATA section found.
                 if (LastSixChars.Equals(CdataOpener))
@@ -97,6 +99,13 @@ namespace FileDBReader
                         BinaryToHex(ref reader, ref writer);
                     else if (mode == ConversionMode.Write)
                         HexToBinary(ref reader, ref writer);
+                }
+                // Files like .rdp use short close </> which are not valid XML.
+                else if (correctClose.IsClosing())
+                {
+                    writer.Write(correctClose.GetCorrection());
+                    writer.Write(CurrentChar);
+                    writer.Flush();
                 }
                 else
                 {
