@@ -79,7 +79,6 @@ namespace FileDBReader
             GenericTest("maps", "map_Gamedata.xml", "gamedata.data", 1);
         }
 
-
         public static void InfotipTestNewFileVersion()
         {
             GenericTest("infotip", "infotip.xml", "export.bin", 2);
@@ -336,13 +335,12 @@ namespace FileDBReader
 
         private static void ShowFileWithDefaultProgram(String Filename)
         {
-            Process fileopener = new Process();
-
-            fileopener.StartInfo.FileName = "explorer";
-            fileopener.StartInfo.Arguments = "\"" + Filename + "\"";
-            fileopener.Start();
-            //remember to change this to a using syntax once we change to c# 8.0+ later 
-            fileopener.Close();
+            using (Process fileopener = new Process())
+            {
+                fileopener.StartInfo.FileName = "explorer";
+                fileopener.StartInfo.Arguments = "\"" + Filename + "\"";
+                fileopener.Start();
+            }
         }
 
         public static bool FilesAreEqual(FileInfo first, FileInfo second)
