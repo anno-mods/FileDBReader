@@ -37,8 +37,6 @@ namespace FileDBReader.src
         public int Decompress(IEnumerable<String> InputFiles, String Interpreter)
         {
             int returncode = 0;
-            var interpreterDoc = new XmlDocument();
-            interpreterDoc.Load(Interpreter);
             foreach (String s in InputFiles)
             {
                 var result = reader.ReadFile(s);
@@ -46,8 +44,9 @@ namespace FileDBReader.src
                 {
                     try
                     {
+                        var interpreterDoc = new XmlDocument();
+                        interpreterDoc.Load(Interpreter);
                         result = interpreter.Interpret(result, interpreterDoc);
-                        result.Save(Path.ChangeExtension(s, "xml"));
                     }
                     catch (IOException ex)
                     {
@@ -55,6 +54,7 @@ namespace FileDBReader.src
                         returncode = -1;
                     }
                 }
+                result.Save(Path.ChangeExtension(s, "xml"));
             }
             return returncode;
         }

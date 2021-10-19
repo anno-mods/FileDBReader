@@ -1,7 +1,8 @@
 {
   "profiles": {
     "FileDBReader": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "decompress -f ./tests/a7tinfo/moderate_c_01.a7tinfo"
     }
   }
 }

@@ -15,7 +15,8 @@ namespace FileDBReader {
         {
             [Option('f', "file", Required = true, HelpText = "Required. Input files to be decompressed.")]
             public IEnumerable<String> InputFiles { get; set; }
-            [Option('c', "CompressionVersion", Required = true, HelpText = "Optional. File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
+
+            [Option('c', "CompressionVersion", Required = false, HelpText = "Optional. File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
             public int CompressionVersion { get; set; }
 
             //optional interpreter file. If provided, it will directly interpret the decompressed file. 
