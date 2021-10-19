@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace FileDBReader.src
@@ -8,21 +9,21 @@ namespace FileDBReader.src
     public class FileDBCompressorFunctions
     {
         //file formats and names
-        static readonly String DefaultFileFormat = "filedb";
-        static readonly String InterpretedFileSuffix = "_interpreted";
-        static readonly String ReinterpretedFileSuffix = "_exported";
-        static readonly String FcImportedFileSuffix = "_fcimport";
-        static readonly String FcExportedFileSuffix = "_fcexport";
+        private static readonly String DefaultFileFormat = "filedb";
+        private static readonly String InterpretedFileSuffix = "_interpreted";
+        private static readonly String ReinterpretedFileSuffix = "_exported";
+        private static readonly String FcImportedFileSuffix = "_fcimport";
+        private static readonly String FcExportedFileSuffix = "_fcexport";
 
         //error message
-        static readonly String IOErrorMessage = "File Path wrong, File in use or does not exist.";
+        private static readonly String IOErrorMessage = "File Path wrong, File in use or does not exist.";
 
         //tools
-        FileReader reader;
-        XmlExporter exporter;
-        FileWriter writer;
-        XmlInterpreter interpreter;
-        FcFileHelper FcFileHelper; 
+        private FileReader reader;
+        private XmlExporter exporter;
+        private FileWriter writer;
+        private XmlInterpreter interpreter;
+        private FcFileHelper FcFileHelper; 
 
         public FileDBCompressorFunctions()
         {
@@ -35,25 +36,27 @@ namespace FileDBReader.src
 
         public int Decompress(IEnumerable<String> InputFiles, String Interpreter)
         {
-            int returncode = 0; 
+            int returncode = 0;
+            var interpreterDoc = new XmlDocument();
+            interpreterDoc.Load(Interpreter);
             foreach (String s in InputFiles)
             {
-                var result = reader.ReadFile(s);
-                if (Interpreter != null)
-                {
-                    try
+                Task.Run(() => {
+                    var result = reader.ReadFile(s);
+                    if (Interpreter != null)
                     {
-                        var interpreterDoc = new XmlDocument();
-                        interpreterDoc.Load(Interpreter);
-                        result = interpreter.Interpret(result, interpreterDoc);
+                        try
+                        {
+                            result = interpreter.Interpret(result, interpreterDoc);
+                            result.Save(Path.ChangeExtension(s, "xml"));
+                        }
+                        catch (IOException ex)
+                        {
+                            Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
+                            returncode = -1;
+                        }
                     }
-                    catch (IOException ex)
-                    {
-                        Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                        returncode = -1;
-                    }
-                }
-                result.Save(Path.ChangeExtension(s, "xml"));
+                } );
             }
             return returncode;
         }
@@ -71,23 +74,25 @@ namespace FileDBReader.src
             //convert all input files
             foreach (String s in InputFiles)
             {
-                if (Interpreter != null)
-                {
-                    try
+                Task.Run( () => {
+                    if (Interpreter != null)
                     {
-                        var result = exporter.Export(s, Interpreter);
-                        writer.Export(result, ext, s, CompressionVersion);
+                        try
+                        {
+                            var result = exporter.Export(s, Interpreter);
+                            writer.Export(result, ext, s, CompressionVersion);
+                        }
+                        catch (IOException ex)
+                        {
+                            Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
+                            returncode = -1;
+                        }
                     }
-                    catch (IOException ex)
+                    else
                     {
-                        Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                        returncode = -1;
+                        writer.Export(s, ext, CompressionVersion);
                     }
-                }
-                else
-                {
-                    writer.Export(s, ext, CompressionVersion);
-                }
+                } );
             }
             return returncode;
         }
@@ -97,16 +102,18 @@ namespace FileDBReader.src
             int returncode = 0; 
             foreach (String s in InputFiles)
             {
-                try
-                {
-                    var doc = interpreter.Interpret(s, Interpreter);
-                    doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, InterpretedFileSuffix), "xml"));
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                    returncode = -1;
-                }
+                Task.Run( () => {
+                    try
+                    {
+                        var doc = interpreter.Interpret(s, Interpreter);
+                        doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, InterpretedFileSuffix), "xml"));
+                    }
+                    catch (IOException ex)
+                    {
+                        Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
+                        returncode = -1;
+                    }
+                } );
             }
             return returncode;
         }
@@ -116,16 +123,19 @@ namespace FileDBReader.src
             int returncode = 0; 
             foreach (String s in InputFiles)
             {
-                try
+                Task.Run(() =>
                 {
-                    var doc = exporter.Export(s, Interpreter);
-                    doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, ReinterpretedFileSuffix), "xml"));
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                    returncode = -1; 
-                }
+                    try
+                    {
+                        var doc = exporter.Export(s, Interpreter);
+                        doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, ReinterpretedFileSuffix), "xml"));
+                    }
+                    catch (IOException ex)
+                    {
+                        Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
+                        returncode = -1;
+                    }
+                });
             }
             return returncode;
         }
@@ -135,15 +145,17 @@ namespace FileDBReader.src
             int returncode = 0; 
             foreach (String s in InputFiles)
             {
-                try
-                {
-                    Console.WriteLine("{0} uses Compression Version {1}", s, reader.CheckFileVersion(s));
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                    returncode = -1; 
-                }
+                Task.Run(() => {
+                    try
+                    {
+                        Console.WriteLine("{0} uses Compression Version {1}", s, reader.CheckFileVersion(s));
+                    }
+                    catch (IOException ex)
+                    {
+                        Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
+                        returncode = -1;
+                    }
+                });
             }
             return returncode;
         }
@@ -153,30 +165,33 @@ namespace FileDBReader.src
             int returncode = 0; 
             foreach (String s in InputFiles)
             {
-                try
+                Task.Run(() =>
                 {
-                    var result = FcFileHelper.ReadFcFile(s);
-                    if (Interpreter != null)
+                    try
                     {
-                        try
+                        var result = FcFileHelper.ReadFcFile(s);
+                        if (Interpreter != null)
                         {
-                            var interpreterDoc = new XmlDocument();
-                            interpreterDoc.Load(Interpreter);
-                            result = interpreter.Interpret(result, interpreterDoc);
+                            try
+                            {
+                                var interpreterDoc = new XmlDocument();
+                                interpreterDoc.Load(Interpreter);
+                                result = interpreter.Interpret(result, interpreterDoc);
+                            }
+                            catch (IOException ex)
+                            {
+                                Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
+                                returncode = -1;
+                            }
                         }
-                        catch (IOException ex)
-                        {
-                            Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                            returncode = -1; 
-                        }
+                        result.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, FcImportedFileSuffix), "xml"));
                     }
-                    result.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, FcImportedFileSuffix), "xml"));
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                    returncode = -1; 
-                }
+                    catch (IOException ex)
+                    {
+                        Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
+                        returncode = -1;
+                    }
+                });
             }
             return returncode; 
         }
@@ -186,27 +201,29 @@ namespace FileDBReader.src
             int returncode = 0; 
             foreach (String s in InputFiles)
             {
-                try
-                {
-                    XmlDocument exported;
-                    if (Interpreter != null)
+                Task.Run( () => {
+                    try
                     {
-                        exported = exporter.Export(s, Interpreter);
-                    }
-                    else
-                    {
-                        exported = new XmlDocument();
-                        exported.Load(s);
-                    }
+                        XmlDocument exported;
+                        if (Interpreter != null)
+                        {
+                            exported = exporter.Export(s, Interpreter);
+                        }
+                        else
+                        {
+                            exported = new XmlDocument();
+                            exported.Load(s);
+                        }
 
-                    var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(exported), ConversionMode.Write);
-                    FcFileHelper.SaveStreamToFile(Written, Path.ChangeExtension(HexHelper.AddSuffix(s, FcExportedFileSuffix), "xml"));
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                    returncode = -1;
-                }
+                        var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(exported), ConversionMode.Write);
+                        FcFileHelper.SaveStreamToFile(Written, Path.ChangeExtension(HexHelper.AddSuffix(s, FcExportedFileSuffix), "xml"));
+                    }
+                    catch (IOException ex)
+                    {
+                        Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
+                        returncode = -1;
+                    }
+                });
             }
 
             return returncode;

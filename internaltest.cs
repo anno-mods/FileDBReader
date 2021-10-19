@@ -35,7 +35,6 @@ namespace FileDBReader
 
         public static void FcFileDevTest()
         {
-
             FcFile_GenericTest("residence_tier02_estate01.fc");
             FcFile_GenericTest("world_map_01.fc");
             FcFile_GenericTest("food_07.fc");
