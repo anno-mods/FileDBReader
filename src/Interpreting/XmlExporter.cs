@@ -68,7 +68,6 @@ namespace FileDBReader
                     var stream = fileWriter.Export(xmldoc, new MemoryStream(), comp.CompressionVersion);
 
                     //Convert This String To Hex Data
-
                     node.InnerText = HexHelper.StreamToHexString(stream);
 
                     //try to overwrite the bytesize since it's always exported the same way
