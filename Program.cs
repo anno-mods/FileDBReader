@@ -144,7 +144,7 @@ namespace FileDBReader {
                     FcImportOptions, 
                     FcExportOptions, 
                     Decompress_Interpret_Options, 
-                    Recompress_Export_Options, 
+                    Recompress_Export_Options
                 > 
                 (args).MapResult(
 

@@ -28,7 +28,7 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            RenamedTagsTest();
+            A7TINFOTest();
         }
 
         #region GenericTestFcFile

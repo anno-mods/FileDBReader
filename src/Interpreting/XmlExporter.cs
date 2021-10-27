@@ -69,8 +69,7 @@ namespace FileDBReader
 
                     //Convert This String To Hex Data
 
-                    //PERFORMANCE OPTIMIZATION: Read from Stream byte by byte and append it to the string. 
-                    node.InnerText = ByteArrayToString(HexHelper.StreamToByteArray(stream));
+                    node.InnerText = HexHelper.StreamToHexString(stream);
 
                     //try to overwrite the bytesize since it's always exported the same way
                     var ByteSize = node.SelectSingleNode("./preceding-sibling::ByteCount");
@@ -207,7 +206,6 @@ namespace FileDBReader
         }
 
         #region DEPRACATED 
-
 
         public XmlDocument Export(XmlDocument doc, XmlDocument interpreter)
         {

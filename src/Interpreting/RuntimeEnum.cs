@@ -39,6 +39,17 @@ namespace FileDBReader.src
             }
         }
 
+        public String GetKey(String Value)
+        {
+            if (Enum.ContainsValue(Value))
+                return Enum.FirstOrDefault(x => x.Value == Value).Key;
+            else
+            {
+                Console.WriteLine("An Enum did not contain a Value for the Key: {0}", Value);
+                throw new Exception(); 
+            }
+        }
+
         public bool IsEmpty() 
         {
             return (Enum.Count() == 0);

@@ -13,6 +13,7 @@ namespace FileDBReader
     /// </summary>
     static class HexHelper
     {
+        readonly static String HexAlphabet = "0123456789ABCDEF";
         public static string FromHexString(string hexString, Encoding encoding)
         {
             var bytes = new byte[hexString.Length / 2];
@@ -116,6 +117,25 @@ namespace FileDBReader
                 s.CopyTo(ms);
                 return ms.ToArray();
             }
+        }
+
+        public static String StreamToHexString(Stream s)
+        {
+            StringBuilder Result = new StringBuilder( (int) s.Length * 2);
+            s.Position = 0;
+            while (s.Position < s.Length - 1)
+            {
+                Result.Append(ByteToHex ((byte)s.ReadByte()));
+            }
+            return Result.ToString();
+        }
+
+        public static String ByteToHex(byte b)
+        {
+            StringBuilder Result = new StringBuilder(2);
+            Result.Append(HexAlphabet[b >> 4]);
+            Result.Append(HexAlphabet[b & 0xF]);
+            return Result.ToString();
         }
 
         //copied from https://stackoverflow.com/questions/321370/how-can-i-convert-a-hex-string-to-a-byte-array/321404 because why not
