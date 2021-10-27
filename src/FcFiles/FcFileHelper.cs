@@ -134,7 +134,6 @@ namespace FileDBReader
 
             //if we get here, our conversionmode is wrong
             throw new ArgumentException();
-
         }
 
         private void HexToBinary(ref BinaryReader reader, ref BinaryWriter writer)

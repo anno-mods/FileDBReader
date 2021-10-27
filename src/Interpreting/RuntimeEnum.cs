@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FileDBReader.src
 {
-    class RuntimeEnum
+    public class RuntimeEnum
     {
         private Dictionary<String, String> Enum = new Dictionary<String, String>();
         public RuntimeEnum() 

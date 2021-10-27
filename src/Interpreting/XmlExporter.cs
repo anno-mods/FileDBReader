@@ -97,6 +97,7 @@ namespace FileDBReader
                     }
                     else
                     {
+                        //todo remove this
                         Console.WriteLine("Your interpreter should specify a version for internal FileDBs. For this conversion, 1 was auto-chosen. Make sure your versions match up!");
                     }
 
