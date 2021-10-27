@@ -18,24 +18,24 @@
 			Number of particles is controlled by <ParticleCount>
 		-->
 		<!-- (Particle list) First frame when a particle is shown -->
-		<Convert Path ="//P_Starts" Type ="UInt16" Structure ="List" IsCdataNode ="1"/>
+		<Convert Path ="//P_Starts" Type ="UInt16" Structure ="Cdata"/>
 		<!-- (Particle list) Last frame (inclusive) when a particle is shown -->
-		<Convert Path ="//P_Ends" Type ="UInt16" Structure ="List" IsCdataNode ="1"/>
+		<Convert Path ="//P_Ends" Type ="UInt16" Structure ="Cdata"/>
 		<!-- (Particle list) Material index of particle -->
-		<Convert Path ="//P_Materials" Type ="Byte" Structure ="List" IsCdataNode ="1"/>
+		<Convert Path ="//P_Materials" Type ="Byte" Structure ="Cdata"/>
 
 		<!--
 			T_ are lists of tick properties.
 			Number of ticks is the sum of (P_Ends - P_Starts) % FrameCount + 1
 		-->
 		<!-- (Tick list) Position x y z with -32767-32767 => -1.0-1.0 * <Extents> -->
-		<Convert Path ="//T_Positions" Type ="Int16" Structure ="List" IsCdataNode ="1"/>
+		<Convert Path ="//T_Positions" Type ="Int16" Structure ="Cdata"/>
 		<!-- (Tick list) Clockwise rotation x y z with 0-256 => 0-360 degrees -->
 		<!-- y is what you want to rotate with <ViewAligned>=1 -->
-		<Convert Path ="//T_Rotations" Type ="Byte" Structure ="List" IsCdataNode ="1"/>
+		<Convert Path ="//T_Rotations" Type ="Byte" Structure ="Cdata"/>
 		<!-- (Tick list) Scale x y z with 0-255 => 0.0-1.0 * <MaxScale> -->
-		<Convert Path ="//T_Scales" Type ="Byte" Structure ="List" IsCdataNode ="1"/>
+		<Convert Path ="//T_Scales" Type ="Byte" Structure ="Cdata"/>
 		<!-- (Tick list) Colors in BGRA -->
-		<Convert Path ="//T_Colors" Type ="Byte" Structure ="List" IsCdataNode ="1"/>
+		<Convert Path ="//T_Colors" Type ="Byte" Structure ="Cdata"/>
 	</Converts>
 </Converts>

@@ -28,7 +28,7 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            RenamedTagsTest();
+            FcFileDevTest();
         }
 
         #region GenericTestFcFile
@@ -222,18 +222,15 @@ namespace FileDBReader
             String TOHEX_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_reinterpreted.xml");
             String EXPORTED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_recompressed" + Path.GetExtension(TESTFILE_NAME));
 
-            //decompress gamedata.data
-            var interpreterDoc = new XmlDocument();
-            interpreterDoc.Load(INTERPRETER_FILE);
-
             //decompress
             var decompressed = reader.ReadFile(TESTFILE);//interpret
             decompressed.Save(DECOMPRESSED_TESTFILE);
-            var interpreted = interpreter.Interpret(decompressed, interpreterDoc);
+
+            var interpreted = interpreter.Interpret(decompressed, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
             interpreted.Save(INTERPRETED_TESTFILE);
 
             //to hex 
-            var Hexed = exporter.Export(interpreted, interpreterDoc);
+            var Hexed = exporter.Export(interpreted, Interpreter.ToInterpreterDoc(INTERPRETER_FILE));
             Hexed.Save(TOHEX_TESTFILE);
 
             //back to gamedata 
@@ -287,21 +284,21 @@ namespace FileDBReader
             var Read = FcFileHelper.ReadFcFile(TESTFILE);
             Read.Save(CDATAREAD_TESTFILE);
 
-            var Interpreted = interpreter.Interpret(Read, interpreterDoc);
+            var Interpreted = interpreter.Interpret(Read, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
             Interpreted.Save(INTERPRETED_TESTFILE);
 
-            var Reinterpreted = exporter.Export(Interpreted, interpreterDoc);
-            Reinterpreted.Save(REINTERPRETED_TESTFILE);
+            //var Reinterpreted = exporter.Export(Interpreted, interpreterDoc);
+            //Reinterpreted.Save(REINTERPRETED_TESTFILE);
 
-            var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(Reinterpreted), ConversionMode.Write);
-            Save(Written, CDATAWRITTEN_TESTFILE);
+            //var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(Reinterpreted), ConversionMode.Write);
+            //Save(Written, CDATAWRITTEN_TESTFILE);
 
             //save 
-            var stream = FcFileHelper.ConvertFile(File.OpenRead(TESTFILE), ConversionMode.Read);
-            var outstream = FcFileHelper.ConvertFile(stream, ConversionMode.Write);
+            //var stream = FcFileHelper.ConvertFile(File.OpenRead(TESTFILE), ConversionMode.Read);
+            //var outstream = FcFileHelper.ConvertFile(stream, ConversionMode.Write);
             
 
-            ShowFileWithDefaultProgram(CDATAWRITTEN_TESTFILE);
+            //ShowFileWithDefaultProgram(CDATAWRITTEN_TESTFILE);
 
             try
             {

@@ -29,15 +29,6 @@ namespace FileDBReader
 
         }
 
-        public XmlDocument Interpret(String docPath, String InterpreterPath)
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(docPath);
-            XmlDocument interpreter = new XmlDocument();
-            interpreter.Load(InterpreterPath);
-            return Interpret(doc, interpreter);
-        }
-
         public XmlDocument Interpret(XmlDocument doc, Interpreter Interpreter)
         {
             //Convert Internal FileDBs before conversion
@@ -81,12 +72,6 @@ namespace FileDBReader
         }
 
 
-        //f* performance I won't write everything twice :) the cast should not take to long
-        private void ConvertNodeSet(XmlNodeList matches, XmlNode ConverterInfo)
-        {
-            IEnumerable<XmlNode> cast = matches.Cast<XmlNode>();
-            ConvertNodeSet(cast, ConverterInfo);
-        }
 
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)
         {
@@ -114,7 +99,7 @@ namespace FileDBReader
                             Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
                         }
                         break;
-                    case ContentStructure.CDATA:
+                    case ContentStructure.Cdata:
                         try
                         {
                             InterpretAsList(match, Conversion.Type, true);
@@ -290,11 +275,6 @@ namespace FileDBReader
                     var decompressed = filereader.ReadSpan(span);
                     node.InnerText = "";
                     node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
-
-                    //write the current decompressed internal filedb to a file
-                    //String path = Path.Combine("tests", "lists", DateTime.Now.ToString("HH-mm-ss-ff") + "_" + node.Name + ".bin");
-                    //using FileStream fs = File.Create(path);
-                    //fs.Write(span);
                 }
             }
 
@@ -332,6 +312,13 @@ namespace FileDBReader
             }
 
             return doc;
+        }
+
+        //f* performance I won't write everything twice :) the cast should not take to long
+        private void ConvertNodeSet(XmlNodeList matches, XmlNode ConverterInfo)
+        {
+            IEnumerable<XmlNode> cast = matches.Cast<XmlNode>();
+            ConvertNodeSet(cast, ConverterInfo);
         }
 
         #endregion

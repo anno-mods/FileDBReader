@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace FileDBReader.src
 {
-    public enum ContentStructure {Default, List, CDATA};
+    public enum ContentStructure {Default, List, Cdata};
 
     /// <summary>
     /// Represents an InterpreterFile
@@ -67,10 +67,9 @@ namespace FileDBReader.src
             }
 
             //default type
-            Conversion DefaultConv = new Conversion(DefaultAttribNode);
-            if (DefaultConv != null)
+            if (DefaultAttribNode != null)
             {
-                DefaultType = DefaultConv; 
+                DefaultType = new Conversion(DefaultAttribNode); 
             }
         }
 
@@ -96,13 +95,16 @@ namespace FileDBReader.src
         public Conversion(XmlNode ConvertNode)
         {
             //gather info from the Conversion Attributes
-            var TypeAttr = ConvertNode.Attributes["Type"].Value;
-            var StructureAttr = ConvertNode.Attributes["Structure"].Value;
-            var EncodingAttr = ConvertNode.Attributes["Encoding"].Value;
+            var TypeAttr = ConvertNode.Attributes["Type"];
+            var StructureAttr = ConvertNode.Attributes["Structure"];
+            var EncodingAttr = ConvertNode.Attributes["Encoding"];
 
-            Type = ToType(TypeAttr);
-            Structure = ToContentStructure(StructureAttr);
-            Encoding = ToEncoding(EncodingAttr);
+            if(TypeAttr != null)
+                Type = ToType(TypeAttr.Value);
+            if(StructureAttr != null)
+                Structure = ToContentStructure(StructureAttr.Value);
+            if(EncodingAttr != null)
+                Encoding = ToEncoding(EncodingAttr.Value);
 
             //Enum Parsing
             var EnumNode = ConvertNode.SelectSingleNode("./Enum");

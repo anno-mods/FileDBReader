@@ -148,7 +148,7 @@ namespace FileDBReader.src
             return returncode;
         }
 
-        public int FcFileImport(IEnumerable<String> InputFiles, String Interpreter)
+        public int FcFileImport(IEnumerable<String> InputFiles, String InterpreterPath)
         {
             int returncode = 0; 
             foreach (String s in InputFiles)
@@ -156,13 +156,11 @@ namespace FileDBReader.src
                 try
                 {
                     var result = FcFileHelper.ReadFcFile(s);
-                    if (Interpreter != null)
+                    if (InterpreterPath != null)
                     {
                         try
                         {
-                            var interpreterDoc = new XmlDocument();
-                            interpreterDoc.Load(Interpreter);
-                            result = interpreter.Interpret(result, interpreterDoc);
+                            result = interpreter.Interpret(result, new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath)));
                         }
                         catch (IOException ex)
                         {
