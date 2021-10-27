@@ -29,6 +29,8 @@ namespace FileDBReader
             
         }
 
+
+        //remove this method
         public XmlDocument Interpret(String docPath, String InterpreterPath) 
         {
             XmlDocument doc = new XmlDocument();
@@ -124,9 +126,7 @@ namespace FileDBReader
             bool IsCdataNode = false;
             if (ConverterInfo.Attributes["IsCdataNode"] != null)
                 IsCdataNode = true;
-
             //get if it should use Enum
-
             RuntimeEnum Enum = new RuntimeEnum();
             var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
 
