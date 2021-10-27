@@ -37,7 +37,7 @@ namespace FileDBReader
                 var nodes = doc.SelectNodes(comp.Path);
                 foreach (XmlNode node in nodes)
                 {
-                    var span = HexHelper.toSpan<byte>(comp.Path);
+                    var span = HexHelper.toSpan<byte>(node.InnerText);
                     var filereader = new FileReader();
                     var decompressed = filereader.ReadSpan(span);
                     node.InnerText = "";
@@ -55,7 +55,7 @@ namespace FileDBReader
                 }
                 catch (IOException ex)
                 {
-                    Console.WriteLine("This is an error message even dumber than the old one. Modders gonna take over the world!!");
+                    Console.WriteLine("I don't even know what this is for. This is an error message even dumber than the old one. Modders gonna take over the world!!");
                 }
             }
 
@@ -70,8 +70,6 @@ namespace FileDBReader
 
             return doc;
         }
-
-
 
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)
         {

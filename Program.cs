@@ -120,28 +120,6 @@ namespace FileDBReader {
             public int CompressionVersion { get; set; }
         }
 
-        [Verb("fctohex_interpret", HelpText = "DEPRACATED. Import an FC file to valid XML and interpret it using an interpreter.")]
-        class FcImport_InterpretOptions
-        {
-            [Option('f', "file", Required = true, HelpText = "input files")]
-            public IEnumerable<String> InputFiles { get; set; }
-
-            [Option('i', "interpreter", Required = true, HelpText = "Interpreter file")]
-            public String Interpreter { get; set; }
-        }
-        [Verb("hextofc_export", HelpText = "DEPRACATED. Exports the xml version back to an fc file using an interpreter.")]
-        class FcExport_ExportOptions
-        {
-            [Option('f', "file", Required = true, HelpText = "input files")]
-            public IEnumerable<String> InputFiles { get; set; }
-
-            [Option('i', "interpreter", Required = true, HelpText = "Interpreter file")]
-            public String Interpreter { get; set; }
-
-            [Option('o', "outputFileExtension", Required = false, HelpText = "file Format of the output file")]
-            public String OutputFileExtension { get; set; }
-        }
-
         #endregion
 
         #region MainMethod
@@ -167,8 +145,6 @@ namespace FileDBReader {
                     FcExportOptions, 
                     Decompress_Interpret_Options, 
                     Recompress_Export_Options, 
-                    FcImport_InterpretOptions, 
-                    FcExport_ExportOptions
                 > 
                 (args).MapResult(
 
@@ -208,58 +184,8 @@ namespace FileDBReader {
                     return Functions.FcFileExport(o.InputFiles, o.Interpreter);
                 },
 
-
-
                 //DEPRACATED ARGUMENTS START HERE
                 //I don't want to rewrite this too :) will be removed anyway
-                (FcImport_InterpretOptions o) =>
-                {
-                    foreach (String s in o.InputFiles)
-                    {
-                        try
-                        {
-                            var interpreterDoc = new XmlDocument();
-                            interpreterDoc.Load(o.Interpreter);
-                            var doc = interpreter.Interpret(FcFileHelper.ReadFcFile(s), interpreterDoc);
-                            doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, "_fc_i"), "xml"));
-                        }
-                        catch (IOException e)
-                        {
-                            Console.WriteLine("File Path wrong, File in use or does not exist.");
-                        }
-                    }
-
-                    return 0; 
-                },
-                (FcExport_ExportOptions o) =>
-                {
-                    var ext = "";
-                    if (o.OutputFileExtension != null)
-                    {
-                        ext = o.OutputFileExtension;
-                    }
-                    else
-                    {
-                        ext = ".filedb";
-                    }
-                    foreach (String s in o.InputFiles)
-                    {
-                        try
-                        {
-                            var exported = exporter.Export(s, o.Interpreter);
-                            var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(exported), ConversionMode.Write);
-                            FcFileHelper.SaveStreamToFile(Written, Path.ChangeExtension(HexHelper.AddSuffix(s, "_fc_e"), "xml"));
-                        }
-                        catch (IOException e)
-                        {
-                            Console.WriteLine("File Path wrong, File in use or does not exist.");
-                        }
-
-                    }
-                    return 0;
-                },
-
-
                 (Decompress_Interpret_Options o) =>
                 {
                     foreach (String s in o.InputFiles)

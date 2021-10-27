@@ -89,8 +89,8 @@ namespace FileDBReader.src
     {
         public Type Type;
         public ContentStructure Structure;
-        public RuntimeEnum Enum;
-        public Encoding Encoding;
+        public RuntimeEnum Enum = new RuntimeEnum();
+        public Encoding Encoding = new UnicodeEncoding();
 
         public Conversion(XmlNode ConvertNode)
         {
