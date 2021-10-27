@@ -34,19 +34,17 @@ namespace FileDBReader.src
             FcFileHelper = new FcFileHelper();
         }
 
-        public int Decompress(IEnumerable<String> InputFiles, String Interpreter)
+        public int Decompress(IEnumerable<String> InputFiles, String InterpreterPath)
         {
             int returncode = 0;
             foreach (String s in InputFiles)
             {
                 var result = reader.ReadFile(s);
-                if (Interpreter != null)
+                if (InterpreterPath != null)
                 {
                     try
                     {
-                        var interpreterDoc = new XmlDocument();
-                        interpreterDoc.Load(Interpreter);
-                        result = interpreter.Interpret(result, interpreterDoc);
+                        result = interpreter.Interpret(result, new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath)));
                     }
                     catch (IOException ex)
                     {
@@ -92,15 +90,16 @@ namespace FileDBReader.src
             }
             return returncode;
         }
-
-        public int Interpret(IEnumerable<String> InputFiles, String Interpreter)
+        public int Interpret(IEnumerable<String> InputFiles, String InterpreterPath)
         {
             int returncode = 0; 
             foreach (String s in InputFiles)
             {
                 try
                 {
-                    var doc = interpreter.Interpret(s, Interpreter);
+                    var baseDoc = new XmlDocument();
+                    baseDoc.Load(s);
+                    var doc = interpreter.Interpret(baseDoc, new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath)));
                     doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, InterpretedFileSuffix), "xml"));
                 }
                 catch (IOException ex)

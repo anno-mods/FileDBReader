@@ -24,158 +24,111 @@ namespace FileDBReader
     /// </summary>
     class XmlInterpreter
     {
-        
+
         public XmlInterpreter() {
-            
+
         }
 
-        public XmlDocument Interpret(String docPath, String InterpreterPath) 
+        public XmlDocument Interpret(String docPath, String InterpreterPath)
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(docPath);
-
             XmlDocument interpreter = new XmlDocument();
             interpreter.Load(InterpreterPath);
-
             return Interpret(doc, interpreter);
         }
 
-        public XmlDocument Interpret(XmlDocument doc, XmlDocument interpreter) 
+        public XmlDocument Interpret(XmlDocument doc, Interpreter Interpreter)
         {
-            //default type
-            XmlNode defaultAttrib = null;
-            defaultAttrib = interpreter.SelectSingleNode("/Converts/Default");
-            var internalFileDBs = interpreter.SelectNodes("/Converts/InternalCompression/Element");
-            var converts = interpreter.SelectNodes("/Converts/Converts/Convert");
-
-            //Convert internal FileDBs before conversion
-            foreach (XmlNode n in internalFileDBs) {
-                var nodes = doc.SelectNodes(n.Attributes["Path"].Value);
-                foreach (XmlNode node in nodes) {
-                    var span = HexHelper.toSpan<byte>(node.InnerText);
-
-                    
-
+            //Convert Internal FileDBs before conversion
+            foreach (InternalCompression comp in Interpreter.InternalCompressions)
+            {
+                var nodes = doc.SelectNodes(comp.Path);
+                foreach (XmlNode node in nodes)
+                {
+                    var span = HexHelper.toSpan<byte>(comp.Path);
                     var filereader = new FileReader();
                     var decompressed = filereader.ReadSpan(span);
                     node.InnerText = "";
                     node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
-
-                    //write the current decompressed internal filedb to a file
-                    //String path = Path.Combine("tests", "lists", DateTime.Now.ToString("HH-mm-ss-ff") + "_" + node.Name + ".bin");
-                    //using FileStream fs = File.Create(path);
-                    //fs.Write(span);
                 }
             }
 
-            //converts
-            foreach (XmlNode x in converts) {
+            //Dictionary stores Path -> Conversion
+            foreach (KeyValuePair<String, Conversion> k in Interpreter.Conversions)
+            {
                 try
                 {
-                    String Path = x.Attributes["Path"].Value;
-                    var Nodes = doc.SelectNodes(Path);
-                    ConvertNodeSet(Nodes, x);
+                    var Nodes = doc.SelectNodes(k.Key);
+                    ConvertNodeSet(Nodes.Cast<XmlNode>(), k.Value);
                 }
-                catch (Exception e) {
-                    Console.WriteLine("Path not correctly set lol");
+                catch (IOException ex)
+                {
+                    Console.WriteLine("This is an error message even dumber than the old one. Modders gonna take over the world!!");
                 }
             }
 
-            //DefaultType
-            if (defaultAttrib != null) {
-                //get a combined xpath of all
-                List<String> StringList = new List<string>(); 
-                foreach (XmlNode convert in converts)
-                    StringList.Add(convert.Attributes["Path"].Value);
-                foreach (XmlNode internalFileDB in internalFileDBs)
-                    StringList.Add(internalFileDB.Attributes["Path"].Value);
-                String xPath = String.Join(" | ", StringList);
-
-                //select all text that is not in the combined path
+            if (Interpreter.HasDefaultType())
+            {
+                String Inverse = Interpreter.GetInverseXPath();
                 var Base = doc.SelectNodes("//*[text()]");
-                var toFilter = doc.SelectNodes(xPath);
+                var toFilter = doc.SelectNodes(Inverse);
                 var defaults = HexHelper.ExceptNodelists(Base, toFilter);
-                ConvertNodeSet(defaults, defaultAttrib);
+                ConvertNodeSet(defaults, Interpreter.DefaultType);
             }
 
             return doc;
         }
 
+
         //f* performance I won't write everything twice :) the cast should not take to long
-        private void ConvertNodeSet(XmlNodeList matches, XmlNode ConverterInfo) 
+        private void ConvertNodeSet(XmlNodeList matches, XmlNode ConverterInfo)
         {
             IEnumerable<XmlNode> cast = matches.Cast<XmlNode>();
             ConvertNodeSet(cast, ConverterInfo);
         }
 
-        private void ConvertNodeSet(IEnumerable<XmlNode> matches, XmlNode ConverterInfo)
+        private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)
         {
-            //get type the nodeset should be converted to
-            var type = Type.GetType("System." + ConverterInfo.Attributes["Type"].Value);
-            //get encoding
-            Encoding encoding = new UnicodeEncoding();
-            if (ConverterInfo.Attributes["Encoding"] != null)
-                encoding = Encoding.GetEncoding(ConverterInfo.Attributes["Encoding"].Value);
-            //get structure
-            String Structure = "Default";
-            if (ConverterInfo.Attributes["Structure"] != null)
-                Structure = ConverterInfo.Attributes["Structure"].Value;
-            //get Cdata
-            bool IsCdataNode = false;
-            if (ConverterInfo.Attributes["IsCdataNode"] != null)
-                IsCdataNode = true;
-
-            //get if it should use Enum
-
-            RuntimeEnum Enum = new RuntimeEnum();
-            var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
-
-            if (EnumEntries != null) {
-                foreach (XmlNode EnumEntry in EnumEntries)
-                {
-                    try
-                    {
-                        var Value = EnumEntry.Attributes["Value"];
-                        var Name = EnumEntry.Attributes["Name"];
-                        if (Value != null && Name != null) {
-                            Enum.AddValue(Value.Value, Name.Value);
-                        }
-                        else
-                        {
-                            Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
-                        }
-                    }
-                    catch (NullReferenceException ex )
-                    {
-                    }
-                }
-            }
-
             foreach (XmlNode match in matches)
             {
-                switch (Structure)
+                switch (Conversion.Structure)
                 {
-                    case "List":
-                        try {
-                            InterpretAsList(match, type, IsCdataNode);
+                    case ContentStructure.List:
+                        try
+                        {
+                            InterpretAsList(match, Conversion.Type, false);
                         }
                         catch (InvalidConversionException e)
                         {
                             Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
                         }
                         break;
-                    case "Default":
-                        try {
-                            InterpretSingleNode(match, type, encoding, Enum, IsCdataNode);
+                    case ContentStructure.Default:
+                        try
+                        {
+                            InterpretSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
                         }
                         catch (InvalidConversionException e)
                         {
                             Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
                         }
                         break;
+                    case ContentStructure.CDATA:
+                        try
+                        {
+                            InterpretAsList(match, Conversion.Type, true);
+                        }
+                        catch (InvalidConversionException e)
+                        {
+                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
+                        }
+                        break; 
                 }
             }
         }
+
+
 
         private void InterpretAsList(XmlNode n, Type type, bool FilterCDATA)
         {
@@ -240,5 +193,147 @@ namespace FileDBReader
                 throw new InvalidConversionException(type, n.Name, "List Value");
             }
         }
+
+        #region DEPRACATED 
+
+        private void ConvertNodeSet(IEnumerable<XmlNode> matches, XmlNode ConverterInfo)
+        {
+            //get type the nodeset should be converted to
+            var type = Type.GetType("System." + ConverterInfo.Attributes["Type"].Value);
+            //get encoding
+            Encoding encoding = new UnicodeEncoding();
+            if (ConverterInfo.Attributes["Encoding"] != null)
+                encoding = Encoding.GetEncoding(ConverterInfo.Attributes["Encoding"].Value);
+            //get structure
+            String Structure = "Default";
+            if (ConverterInfo.Attributes["Structure"] != null)
+                Structure = ConverterInfo.Attributes["Structure"].Value;
+            //get Cdata
+            bool IsCdataNode = false;
+            if (ConverterInfo.Attributes["IsCdataNode"] != null)
+                IsCdataNode = true;
+
+            //get if it should use Enum
+
+            RuntimeEnum Enum = new RuntimeEnum();
+            var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
+
+            if (EnumEntries != null)
+            {
+                foreach (XmlNode EnumEntry in EnumEntries)
+                {
+                    try
+                    {
+                        var Value = EnumEntry.Attributes["Value"];
+                        var Name = EnumEntry.Attributes["Name"];
+                        if (Value != null && Name != null)
+                        {
+                            Enum.AddValue(Value.Value, Name.Value);
+                        }
+                        else
+                        {
+                            Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
+                        }
+                    }
+                    catch (NullReferenceException ex)
+                    {
+                    }
+                }
+            }
+
+            foreach (XmlNode match in matches)
+            {
+                switch (Structure)
+                {
+                    case "List":
+                        try
+                        {
+                            InterpretAsList(match, type, IsCdataNode);
+                        }
+                        catch (InvalidConversionException e)
+                        {
+                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
+                        }
+                        break;
+                    case "Default":
+                        try
+                        {
+                            InterpretSingleNode(match, type, encoding, Enum, IsCdataNode);
+                        }
+                        catch (InvalidConversionException e)
+                        {
+                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
+                        }
+                        break;
+                }
+            }
+        }
+
+
+        public XmlDocument Interpret(XmlDocument doc, XmlDocument interpreter)
+        {
+            //default type
+            XmlNode defaultAttrib = null;
+            defaultAttrib = interpreter.SelectSingleNode("/Converts/Default");
+            var internalFileDBs = interpreter.SelectNodes("/Converts/InternalCompression/Element");
+            var converts = interpreter.SelectNodes("/Converts/Converts/Convert");
+
+            //Convert internal FileDBs before conversion
+            foreach (XmlNode n in internalFileDBs)
+            {
+                var nodes = doc.SelectNodes(n.Attributes["Path"].Value);
+                foreach (XmlNode node in nodes)
+                {
+                    var span = HexHelper.toSpan<byte>(node.InnerText);
+
+                    var filereader = new FileReader();
+                    var decompressed = filereader.ReadSpan(span);
+                    node.InnerText = "";
+                    node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
+
+                    //write the current decompressed internal filedb to a file
+                    //String path = Path.Combine("tests", "lists", DateTime.Now.ToString("HH-mm-ss-ff") + "_" + node.Name + ".bin");
+                    //using FileStream fs = File.Create(path);
+                    //fs.Write(span);
+                }
+            }
+
+            //converts
+            foreach (XmlNode x in converts)
+            {
+                try
+                {
+                    String Path = x.Attributes["Path"].Value;
+                    var Nodes = doc.SelectNodes(Path);
+                    ConvertNodeSet(Nodes, x);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Path not correctly set lol");
+                }
+            }
+
+            //DefaultType
+            if (defaultAttrib != null)
+            {
+                //get a combined xpath of all
+                List<String> StringList = new List<string>();
+                foreach (XmlNode convert in converts)
+                    StringList.Add(convert.Attributes["Path"].Value);
+                foreach (XmlNode internalFileDB in internalFileDBs)
+                    StringList.Add(internalFileDB.Attributes["Path"].Value);
+                String xPath = String.Join(" | ", StringList);
+
+                //select all text that is not in the combined path
+                var Base = doc.SelectNodes("//*[text()]");
+                var toFilter = doc.SelectNodes(xPath);
+                var defaults = HexHelper.ExceptNodelists(Base, toFilter);
+                ConvertNodeSet(defaults, defaultAttrib);
+            }
+
+            return doc;
+        }
+
+        #endregion
     }
 }

@@ -208,8 +208,9 @@ namespace FileDBReader {
                     return Functions.FcFileExport(o.InputFiles, o.Interpreter);
                 },
 
-                //DEPRACATED ARGUMENTS START HERE
 
+
+                //DEPRACATED ARGUMENTS START HERE
                 //I don't want to rewrite this too :) will be removed anyway
                 (FcImport_InterpretOptions o) =>
                 {
