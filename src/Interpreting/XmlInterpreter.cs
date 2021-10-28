@@ -164,7 +164,7 @@ namespace FileDBReader
                 String s = ConverterFunctions.ConversionRulesImport[type](BinaryData, e);
 
                 if (!Enum.IsEmpty()) {
-                    s = Enum.GetKey(s);
+                    s = Enum.GetValue(s);
                 }
                 //readd cdata to the string
                 if (BinaryData != "" && FilterCDATA) s = "CDATA[" + s + "]";

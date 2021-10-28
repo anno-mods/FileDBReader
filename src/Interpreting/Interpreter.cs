@@ -42,6 +42,11 @@ namespace FileDBReader.src
             return String.Join(" | ", StringList);
         }
 
+        public Interpreter()
+        { 
+        
+        }
+
         public Interpreter(XmlDocument InterpreterDoc)
         {
             XmlNode DefaultAttribNode = null;
@@ -91,6 +96,9 @@ namespace FileDBReader.src
         public ContentStructure Structure;
         public RuntimeEnum Enum = new RuntimeEnum();
         public Encoding Encoding = new UnicodeEncoding();
+
+        public Conversion()
+        { }
 
         public Conversion(XmlNode ConvertNode)
         {
@@ -147,7 +155,7 @@ namespace FileDBReader.src
                         var Name = EnumEntry.Attributes["Name"];
                         if (Value != null && Name != null)
                         {
-                            Enum.AddValue(Name.Value, Value.Value);
+                            Enum.AddValue(Value.Value, Name.Value);
                         }
                         else
                         {
@@ -182,6 +190,12 @@ namespace FileDBReader.src
     {
         public String Path;
         public int CompressionVersion;
+
+        public InternalCompression()
+        { 
+        
+        }
+
 
         public InternalCompression(XmlNode CompressionNode)
         {

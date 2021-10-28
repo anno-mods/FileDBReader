@@ -172,7 +172,7 @@ namespace FileDBReader
 
             if (!Enum.IsEmpty())
             {
-                Text = Enum.GetValue(n.InnerText);
+                Text = Enum.GetKey(n.InnerText);
             }
             else 
             {
