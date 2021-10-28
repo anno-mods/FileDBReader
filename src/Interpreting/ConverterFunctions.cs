@@ -19,6 +19,7 @@ namespace FileDBReader
                 { typeof(long),   (s, Encoding) => long.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
                 { typeof(ulong),  (s, Encoding) => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
                 { typeof(float),  (s, Encoding) => HexHelper.ToFloat(HexHelper.flip(s)).ToString() },
+                { typeof(double), (s, Encoding) => HexHelper.ToDouble(HexHelper.flip(s)).ToString() },
                 { typeof(String), (s, Encoding) => HexHelper.FromHexString(s, Encoding) }
             };
 
@@ -34,7 +35,8 @@ namespace FileDBReader
                 { typeof(long),     (s, Encoding)   => BitConverter.GetBytes(long.Parse(s))},
                 { typeof(ulong),    (s, Encoding)   => BitConverter.GetBytes(ulong.Parse(s))},
                 { typeof(float),    (s, Encoding)   => BitConverter.GetBytes(float.Parse(s))},
-                { typeof (String),  (s, Encoding)   => Encoding.GetBytes(s)}
+                { typeof(double),   (s, Encoding)   => BitConverter.GetBytes(double.Parse(s))},
+                { typeof(String),   (s, Encoding)   => Encoding.GetBytes(s)}
             };
 
         public static Dictionary<Type, Func<string, object>> ConversionRulesToObject = new Dictionary<Type, Func<string, object>>
@@ -48,6 +50,7 @@ namespace FileDBReader
                 { typeof(uint),   s => uint.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
                 { typeof(long),   s => long.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
                 { typeof(ulong),  s => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(double), s => HexHelper.ToDouble(HexHelper.flip(s)) },
                 { typeof(float),  s => HexHelper.ToFloat(HexHelper.flip(s)) },
                 { typeof(String), s => HexHelper.FromHexString(s, new UnicodeEncoding()) }
             };
