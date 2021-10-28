@@ -8,8 +8,8 @@ using System.Xml;
 
 namespace FileDBReader
 {
-    enum ConversionMode { Write, Read }
-    class FcFileHelper
+    public enum ConversionMode { Write, Read }
+    public class FcFileHelper
     {
         /// <summary>
         /// CDATA to Hex conversion.

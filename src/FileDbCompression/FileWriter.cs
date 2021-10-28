@@ -12,7 +12,7 @@ namespace FileDBReader
     /// <summary>
     /// Converts an xml file with data represented in hex strings into filedb compression readable by Anno 1800. 
     /// </summary>
-    class FileWriter
+    public class FileWriter
     {
         public FileWriter() {
 

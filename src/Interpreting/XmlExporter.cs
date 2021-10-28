@@ -12,7 +12,7 @@ namespace FileDBReader
     /// <summary>
     /// converts all text in an xml file into hex strings using conversion rules set up in an external xml file
     /// </summary>
-    class XmlExporter
+    public class XmlExporter
     {
         public XmlExporter() {
             
@@ -76,7 +76,7 @@ namespace FileDBReader
                     {
                         long BufferSize = stream.Length;
                         Type type = typeof(int);
-                        ByteSize.InnerText = ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
+                        ByteSize.InnerText = HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
                     }
                 }
             }
@@ -149,7 +149,7 @@ namespace FileDBReader
                         String s = arr[i];
                         try
                         {
-                            sb.Append(ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
+                            sb.Append(HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
                         }
                         catch (Exception ex)
                         {
@@ -191,17 +191,12 @@ namespace FileDBReader
             {
                 throw new InvalidConversionException(type, n.Name, n.InnerText);
             }
-            String hex = ByteArrayToString(converted);
+            String hex = HexHelper.ByteArrayToString(converted);
 
             if (RespectCdata) 
-                hex = "CDATA[" + ByteArrayToString(BitConverter.GetBytes(hex.Length/2))+ hex + "]";
+                hex = "CDATA[" + HexHelper.ByteArrayToString(BitConverter.GetBytes(hex.Length/2))+ hex + "]";
 
             n.InnerText = hex;
-        }
-
-        public static string ByteArrayToString(byte[] ba)
-        {
-            return BitConverter.ToString(ba).Replace("-", "");
         }
 
         #region DEPRACATED 
@@ -279,7 +274,7 @@ namespace FileDBReader
                     var stream = fileWriter.Export(xmldoc, new MemoryStream(), FileVersion);
 
                     //get this stream to hex 
-                    node.InnerText = ByteArrayToString(HexHelper.StreamToByteArray(stream));
+                    node.InnerText = HexHelper.ByteArrayToString(HexHelper.StreamToByteArray(stream));
 
                     //try to overwrite the bytesize since it's always exported the same way
                     var ByteSize = node.SelectSingleNode("./preceding-sibling::ByteCount");
@@ -287,7 +282,7 @@ namespace FileDBReader
                     {
                         long BufferSize = stream.Length;
                         Type type = typeof(int);
-                        ByteSize.InnerText = ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
+                        ByteSize.InnerText = HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
                     }
                 }
             }

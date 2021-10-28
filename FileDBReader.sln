@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileDBReader", "FileDBReader.csproj", "{1CB40510-A10E-4637-B1B5-32DDDF4FB13C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileDBReader.Unit-Tests", "unittests\FileDBReader-Tests\FileDBReader.Unit-Tests.csproj", "{265AACA6-4471-4C5C-965F-CBAB72455E6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,14 @@ Global
 		{1CB40510-A10E-4637-B1B5-32DDDF4FB13C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CB40510-A10E-4637-B1B5-32DDDF4FB13C}.Release|x64.ActiveCfg = Release|Any CPU
 		{1CB40510-A10E-4637-B1B5-32DDDF4FB13C}.Release|x64.Build.0 = Release|Any CPU
+		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Debug|x64.Build.0 = Debug|Any CPU
+		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Release|x64.ActiveCfg = Release|Any CPU
+		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

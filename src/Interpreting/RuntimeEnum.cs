@@ -42,6 +42,7 @@ namespace FileDBReader.src
         public String GetKey(String Value)
         {
             if (Enum.ContainsValue(Value))
+                //ignore duplicate values, just take the first.
                 return Enum.FirstOrDefault(x => x.Value == Value).Key;
             else
             {

@@ -56,10 +56,10 @@ namespace FileDBReader
         /// <returns></returns>
         public static double ToDouble(String hexString)
         {
-            ulong num = uint.Parse(hexString, System.Globalization.NumberStyles.AllowHexSpecifier);
+            ulong num = ulong.Parse(hexString, System.Globalization.NumberStyles.AllowHexSpecifier);
 
             byte[] doubleVals = BitConverter.GetBytes(num);
-            double f = BitConverter.ToSingle(doubleVals, 0);
+            double f = BitConverter.ToDouble(doubleVals, 0);
             return f;
         }
 

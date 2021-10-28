@@ -22,7 +22,7 @@ namespace FileDBReader
     /// <summary>
     /// converts hex strings in an xml file into their types using conversion rules set up in an external xml file.
     /// </summary>
-    class XmlInterpreter
+    public class XmlInterpreter
     {
 
         public XmlInterpreter() {
@@ -147,7 +147,6 @@ namespace FileDBReader
                 //make a bytesize check
                 int ExpectedBytesize = 0;
                 int StringSize = BinaryData.Length;
-
                 if (type != typeof(String))
                 {
                     ExpectedBytesize = Marshal.SizeOf(type);
