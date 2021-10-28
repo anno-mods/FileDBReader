@@ -26,7 +26,7 @@ namespace FileDBReader
             {
                 { typeof(bool),     (s, Encoding)   => BitConverter.GetBytes(bool.Parse(s))},
                 { typeof(byte),     (s, Encoding)   => new byte[] { byte.Parse(s) }},
-                { typeof(sbyte),    (s, Encoding)   => BitConverter.GetBytes(sbyte.Parse(s))},
+                { typeof(sbyte),    (s, Encoding)   => new byte[] { (byte)sbyte.Parse(s) }},
                 { typeof(short),    (s, Encoding)   => BitConverter.GetBytes(short.Parse(s))},
                 { typeof(ushort),   (s, Encoding)   => BitConverter.GetBytes(ushort.Parse(s))},
                 { typeof(int),      (s, Encoding)   => BitConverter.GetBytes(int.Parse(s))},
