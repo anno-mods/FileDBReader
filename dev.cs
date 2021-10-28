@@ -11,9 +11,9 @@ using System.Xml;
 
 namespace FileDBReader
 {
-    class internaltest {
+    class dev {
 
-        static String TEST_DIRECTORY_NAME = "tests";
+        static String TEST_DIRECTORY_NAME = "dev_files";
         static String FILEFORMAT_DIRECTORY_NAME = "FileFormats";
 
         //FileDB
