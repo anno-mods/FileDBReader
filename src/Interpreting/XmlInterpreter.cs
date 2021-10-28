@@ -178,6 +178,7 @@ namespace FileDBReader
 
         #region DEPRACATED 
 
+        [Obsolete("ConvertNodeSet(IEnumerable<XmlNode> matches, XmlNode ConverterInfo) is deprecated, please use Export(IEnumerable<XmlNode> matches, Conversion c) instead.")]
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, XmlNode ConverterInfo)
         {
             //get type the nodeset should be converted to
@@ -251,7 +252,7 @@ namespace FileDBReader
             }
         }
 
-
+        [Obsolete("Export(XmlDocument doc, XmlDocument interpreter) is deprecated, please use Interpret(XmlDocument doc, Interpreter i) instead.")]
         public XmlDocument Interpret(XmlDocument doc, XmlDocument interpreter)
         {
             //default type
@@ -311,7 +312,9 @@ namespace FileDBReader
             return doc;
         }
 
+
         //f* performance I won't write everything twice :) the cast should not take to long
+        [Obsolete]
         private void ConvertNodeSet(XmlNodeList matches, XmlNode ConverterInfo)
         {
             IEnumerable<XmlNode> cast = matches.Cast<XmlNode>();

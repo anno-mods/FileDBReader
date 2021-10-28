@@ -85,11 +85,6 @@ namespace FileDBReader
         }
 
 
-        private void ConvertNodeSet(XmlNodeList matches, XmlNode ConverterInfo)
-        {
-            IEnumerable<XmlNode> cast = matches.Cast<XmlNode>();
-            ConvertNodeSet(cast, ConverterInfo);
-        }
 
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)
         {
@@ -201,6 +196,7 @@ namespace FileDBReader
 
         #region DEPRACATED 
 
+        [Obsolete("Export(XmlDocument doc, XmlDocument doc) is deprecated, please use Export(XmlDocument doc, Interpreter i) instead.")]
         public XmlDocument Export(XmlDocument doc, XmlDocument interpreter)
         {
             //default type
@@ -290,6 +286,14 @@ namespace FileDBReader
             return doc;
         }
 
+        [Obsolete]
+        private void ConvertNodeSet(XmlNodeList matches, XmlNode ConverterInfo)
+        {
+            IEnumerable<XmlNode> cast = matches.Cast<XmlNode>();
+            ConvertNodeSet(cast, ConverterInfo);
+        }
+
+        [Obsolete("ConvertNodeSet(IEnumerable<XmlNode> matches, XmlNode ConverterInfo) is deprecated, please use Export(IEnumerable<XmlNode> matches, Conversion c) instead.")]
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, XmlNode ConverterInfo)
         {
             //get type the nodeset should be converted to

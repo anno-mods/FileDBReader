@@ -109,6 +109,9 @@ namespace FileDBReader
         /// <summary>
         /// Test for the ctt interpreter.
         /// </summary>
+        /// 
+
+        [Obsolete("This test is old and will not be supported in the future")]
         public static void CttTest() {
             const String DIRECTORY_NAME = "ctt";
             const String INTERPRETER_FILE = "FileFormats/ctt.xml";

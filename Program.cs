@@ -91,7 +91,7 @@ namespace FileDBReader {
         }
 
         //Functions starting from here are depracated
-
+        [Obsolete("decompress_Interpret has been merged with the verb decompress")]
         [Verb("decompress_interpret", HelpText = "DEPRACATED. decompress a filedb file and interpret it. An interpreter file is needed. ")]
         class Decompress_Interpret_Options
         {
@@ -104,6 +104,7 @@ namespace FileDBReader {
             [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
             public int CompressionVersion { get; set; }
         }
+        [Obsolete("recompress_export has been merged with the verb recompress")]
         [Verb("recompress_export", HelpText = "DEPRACATED, WILL BE REMOVED IN THE FUTURE. reimport an xml file to filedb. An interpreter file is needed")]
         class Recompress_Export_Options
         {
