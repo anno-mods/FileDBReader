@@ -41,7 +41,7 @@ namespace FileDBReader
 
         public static Dictionary<Type, Func<string, object>> ConversionRulesToObject = new Dictionary<Type, Func<string, object>>
             {
-                { typeof(bool),   s => HexHelper.ToBool(s).ToString()},
+                { typeof(bool),   s => HexHelper.ToBool(s)},
                 { typeof(byte),   s => byte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
                 { typeof(sbyte),  s => sbyte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
                 { typeof(short),  s => short.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
