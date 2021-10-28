@@ -19,9 +19,33 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="unittest_files\Expected\" />
-    <Folder Include="unittest_files\Testfiles\" />
-    <Folder Include="unittest_interpreters\" />
+    <None Update="unittest_files\Expected\a7tinfo\decompressed.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Expected\a7tinfo\interpreted.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Expected\a7tinfo\recompressed.a7tinfo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Expected\a7tinfo\reinterpreted.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Testfiles\a7tinfo\testfile.a7tinfo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Testfiles\version\version1.tmc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Testfiles\version\version2.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_interpreters\a7tinfo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_interpreters\Interpreter_demo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

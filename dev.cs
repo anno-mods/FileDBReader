@@ -205,7 +205,6 @@ namespace FileDBReader
         }
         public static void FcFile_GenericTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME)
         {
-           
             String TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME);
 
             String CDATAREAD_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_CdataRead.xml");

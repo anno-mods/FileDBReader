@@ -8,7 +8,7 @@ using FileDBReader;
 
 namespace FileDBReader_Tests
 {
-    [TestClass]
+    [TestClass, TestCategory("Converter Functions")]
     public class ConverterFunctionsTest
     {
         private static Encoding DummyEncoding = new UnicodeEncoding();
@@ -80,33 +80,12 @@ namespace FileDBReader_Tests
         }
 
         [TestMethod]
-        public void TypeConversion_Test_String_Ascii()
+        public void TypeConversion_Test_String()
         {
             Assert.IsTrue(StringConversion_Test_Generic(new ASCIIEncoding()));
-        }
-
-        [TestMethod]
-        //Let's keep this for now, simply because a BDU might still use it ._.
-        public void TypeConversion_Test_String_UTF7()
-        {
             Assert.IsTrue(StringConversion_Test_Generic(new UTF7Encoding()));
-        }
-
-        [TestMethod]
-        public void TypeConversion_Test_String_UTF8()
-        {
             Assert.IsTrue(StringConversion_Test_Generic(new UTF8Encoding()));
-        }
-
-        [TestMethod]
-        public void TypeConversion_Test_String_Unicode()
-        {
             Assert.IsTrue(StringConversion_Test_Generic(new UnicodeEncoding()));
-        }
-
-        [TestMethod]
-        public void TypeConversion_Test_String_UTF32()
-        {
             Assert.IsTrue(StringConversion_Test_Generic(new UTF32Encoding()));
         }
 
@@ -123,8 +102,11 @@ namespace FileDBReader_Tests
             String ConvertedBack = HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[typeof(T)](Converted, e));
 
             bool b = ConvertedBack.Equals(Original);
-            //for everything different from string, test the object conversion rules
-            if (typeof(T) != typeof(String))
+
+            //for everything different from string, test the object conversion rules. We need to rule out anything that is not unicode encoding,
+            //since ConverterFunctions uses Unicode for string objects.
+            //This is not too bad because ConverterFunctions[typeof(String)] is not really that likely to be called.
+            if (e is UnicodeEncoding)
             {
                 T Converted_AsObject = (T)ConverterFunctions.ConversionRulesToObject[typeof(T)](Original);
                 b = Converted_AsObject.ToString().Equals(Converted);

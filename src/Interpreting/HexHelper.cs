@@ -50,7 +50,7 @@ namespace FileDBReader
         }
 
         /// <summary>
-        /// Floats are big endian meh
+        /// doubles are big endian meh
         /// </summary>
         /// <param name="hexString"></param>
         /// <returns></returns>
