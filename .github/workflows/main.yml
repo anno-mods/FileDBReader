@@ -13,13 +13,25 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+        
     - name: Restore dependencies
       run: dotnet restore
+      
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore --configuration Release -o Build
+      
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+    # Artifact name
+        name: FileDBReader
+        path: |
+          Build/**
