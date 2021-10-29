@@ -31,7 +31,22 @@
     <None Update="unittest_files\Expected\a7tinfo\reinterpreted.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="unittest_files\Expected\tmc\decompressed.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Expected\tmc\interpreted.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Expected\tmc\recompressed.tmc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Expected\tmc\reinterpreted.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="unittest_files\Testfiles\a7tinfo\testfile.a7tinfo">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_files\Testfiles\tmc\testfile.tmc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="unittest_files\Testfiles\version\version1.tmc">
@@ -45,6 +60,9 @@
     </None>
     <None Update="unittest_interpreters\Interpreter_demo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_interpreters\tmc.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

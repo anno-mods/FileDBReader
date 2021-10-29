@@ -24,120 +24,238 @@ namespace FileDBReader_Tests
         static FcFileHelper FcFileHelper = new FcFileHelper();
 
         #region VERSION_TEST
-
         [TestMethod, TestCategory("version")]
         public void Detects_Version1()
         {
-            String UNITTEST_EXPECTED_SUBDIR = "version";
             String INPUT_FILENAME = "version1.tmc";
-            var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UNITTEST_EXPECTED_SUBDIR, INPUT_FILENAME);
+            var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
             Assert.IsTrue(reader.CheckFileVersion(STRING_PATH) == 1);
         }
 
         [TestMethod, TestCategory("version")]
         public void Detects_Version2()
         {
-            String UNITTEST_EXPECTED_SUBDIR = "version";
             String INPUT_FILENAME = "version2.bin";
-            var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UNITTEST_EXPECTED_SUBDIR, INPUT_FILENAME);
+            var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
             Assert.IsTrue(reader.CheckFileVersion(STRING_PATH) == 2);
         }
-
         #endregion
 
+        //----------------------------#######-------------------------------------//
+        // The following tests prove:
 
-        #region A7TINFOTEST
+        // <Base File> -> Decompression is also validated.
+        // <Base File> -> Decompression -> Recompression -> <Recompressed File> will lead to <Base File> <=> <Recompressed File>
+        // <Decompressed File> -> Interpretation -> Reinterpretation -> <Reinterpreted File> will lead to <Decompressed File> <=> <Reinterpreted File>. 
+        //Equivalence is proven by expected preconverted files that have been deemed valid by human input.
+
+        //----------------------------#######-------------------------------------//
+
+        #region A7TINFO_TEST
 
         [TestMethod, TestCategory("a7tinfo")]
         public void a7tinfo_Decompress()
         {
-            String UNITTEST_EXPECTED_SUBDIR = "a7tinfo";
             String COMPARE_DECOMPRESSED_FILE = "decompressed.xml";
-            String INPUT_FILENAME = "testfile.a7tinfo";
+            String INPUT_FILE = "testfile.a7tinfo";
 
-            var COMPARE_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UNITTEST_EXPECTED_SUBDIR, COMPARE_DECOMPRESSED_FILE);
-            var INPUT_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UNITTEST_EXPECTED_SUBDIR, INPUT_FILENAME);
-
-            bool b = Test_Decompress(INPUT_PATH, COMPARE_PATH);
-            Assert.IsTrue(b);
+            Assert.IsTrue(Test_Decompress(Folders.UNITTEST_A7TINFO_SUBDIR, INPUT_FILE, COMPARE_DECOMPRESSED_FILE, out var decompressed));
         }
 
         [TestMethod, TestCategory("a7tinfo")]
-        public void a7tinfo_DecompressAndInterpret()
+        public void a7tinfo_FileEquality_AfterCompressionCycle()
         {
-            String UNITTEST_EXPECTED_SUBDIR = "a7tinfo";
-            String COMPARE_INTERPRETED_FILE = "interpreted.xml";
-            String INPUT_FILENAME = "testfile.a7tinfo";
-            String INTERPRETER_FILENAME = "a7tinfo.xml";
+            String COMPARE_RECOMPRESSED_FILE = "recompressed.a7tinfo";
+            String INPUT_FILE = "testfile.a7tinfo";
+            int COMPRESSION_VERSION = 1;
 
-            String INTERPRETER_PATH = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INTERPRETER_FILENAME);
-            var COMPARE_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UNITTEST_EXPECTED_SUBDIR, COMPARE_INTERPRETED_FILE);
-            var INPUT_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UNITTEST_EXPECTED_SUBDIR, INPUT_FILENAME);
+            Assert.IsTrue(Test_DecompressAndRecompress(Folders.UNITTEST_A7TINFO_SUBDIR, INPUT_FILE, COMPARE_RECOMPRESSED_FILE, COMPRESSION_VERSION));
+        }
 
-            var Interpr = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_PATH));
+        [TestMethod, TestCategory("a7tinfo")]
+        public void a7tinfo_FileEquality_AfterInterpretation()
+        {
+            String COMPARE_REINTERPRETED_FILE = "reinterpreted.xml";
+            String INPUT_FILE = "decompressed.xml";
+            String INTERPRETER_FILE = "a7tinfo.xml";
 
-            Assert.IsTrue( Test_Interpret(INPUT_PATH, COMPARE_PATH, Interpr) );
+            Assert.IsTrue(Test_InterpretAndReinterpret(Folders.UNITTEST_A7TINFO_SUBDIR, INPUT_FILE, COMPARE_REINTERPRETED_FILE, INTERPRETER_FILE));
         }
 
         #endregion
 
-
-        public bool Test_Decompress(String FileIn, String FileDecompressed)
+        #region TMC_TEST
+        [TestMethod, TestCategory("tmc")]
+        public void tmc_FileEquality_AfterCompressionCycle()
         {
-            var doc = reader.ReadFile(FileIn);
-            using (MemoryStream ms = new MemoryStream())
+            String COMPARE_RECOMPRESSED_FILE = "recompressed.tmc";
+            String INPUT_FILE = "testfile.tmc";
+            int COMPRESSION_VERSION = 1;
+
+            Assert.IsTrue(Test_DecompressAndRecompress(Folders.UNITTEST_TMC_SUBDIR, INPUT_FILE, COMPARE_RECOMPRESSED_FILE, COMPRESSION_VERSION));
+        }
+
+        [TestMethod, TestCategory("a7tinfo")]
+        public void tmc_FileEquality_AfterInterpretation()
+        {
+            String COMPARE_REINTERPRETED_FILE = "reinterpreted.xml";
+            String INPUT_FILE = "decompressed.xml";
+            String INTERPRETER_FILE = "tmc.xml";
+
+            Assert.IsTrue(Test_InterpretAndReinterpret(Folders.UNITTEST_TMC_SUBDIR, INPUT_FILE, COMPARE_REINTERPRETED_FILE, INTERPRETER_FILE));
+        }
+
+        [TestMethod, TestCategory("a7tinfo")]
+        public void tmc_Decompress()
+        {
+            String COMPARE_DECOMPRESSED_FILE = "decompressed.xml";
+            String INPUT_FILE = "testfile.tmc";
+
+            Assert.IsTrue(Test_Decompress(Folders.UNITTEST_TMC_SUBDIR, INPUT_FILE, COMPARE_DECOMPRESSED_FILE, out var decompressed));
+        }
+
+
+        #endregion
+
+        #region GenericTests
+
+        /// <summary>
+        /// Tests whether a file stays the same after decompressing and recompressing.
+        /// </summary>
+        /// <param name="FileIn"></param>
+        /// <param name="FileRecompressed"></param>
+        /// <returns></returns>
+        public bool Test_DecompressAndRecompress(String UnittestSubdir, String FileIn, String ExpectedResult, int CompressionVersion)
+        {
+            var COMPARE_EXPECTED_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UnittestSubdir, ExpectedResult);
+            var INPUT_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UnittestSubdir, FileIn);
+            
+            var decompressed = reader.ReadFile(INPUT_PATH);
+
+            using (MemoryStream result = new MemoryStream())
+            using (FileStream expected = File.OpenRead(COMPARE_EXPECTED_PATH))
             {
-                doc.Save(ms);
-                return FilesAreEqual(ms, FileDecompressed);
+                var recompressed = writer.Export(decompressed, result, CompressionVersion);
+                return StreamsAreEqual(result, expected);
             }
         }
 
-        public bool Test_Interpret(String FileIn, String FileInterpreted, Interpreter Interpr)
+        public bool Test_InterpretAndReinterpret(String UnittestSubdir, String FileIn, String ExpectedResult, String InterpreterFile)
         {
-            var doc = reader.ReadFile(FileIn);
-            var interpreted = interpreter.Interpret(doc, Interpr);
-            using (MemoryStream ms = new MemoryStream())
+            var EXPECTED_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UnittestSubdir, ExpectedResult);
+
+            //note: Decompressed File is taken from the expected directory to avoid duplication.
+            var INPUT_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UnittestSubdir, FileIn);
+
+            String INTERPRETER_PATH = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, InterpreterFile);
+
+            var Interpr = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_PATH));
+            var DecompressedDocument = new XmlDocument();
+            DecompressedDocument.Load(INPUT_PATH);
+            var ExpectedDocument = new XmlDocument();
+            ExpectedDocument.Load(EXPECTED_PATH);
+
+            //execute
+            var interpretedDocument = interpreter.Interpret(DecompressedDocument, Interpr);
+            var reinterpretedDocument = exporter.Export(interpretedDocument, Interpr);
+
+            using (MemoryStream ExpectedResultStream = new MemoryStream())
+            using (MemoryStream ReinterpretedStream = new MemoryStream())
             {
-                interpreted.Save(ms);
-                return FilesAreEqual(ms, FileInterpreted);
+                ExpectedDocument.Save(ExpectedResultStream);
+                reinterpretedDocument.Save(ReinterpretedStream);
+                //Return
+                return StreamsAreEqual(ExpectedResultStream, ReinterpretedStream);
             }
         }
 
-        public bool Test_Reinterpret(String FileIn, String FileReinterpret)
+        public bool Test_Decompress(String UnittestSubdir, String FileIn, String ExpectedResult, out XmlDocument decompressedResult)
         {
-            throw new NotImplementedException(); 
-        }
+            var COMPARE_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UnittestSubdir, ExpectedResult);
+            var INPUT_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UnittestSubdir, FileIn);
 
-        public bool Test_Recompress(String FileIn, String FileRecompressed)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool FilesAreEqual(MemoryStream StreamToCheck, String FileCompare)
-        {
-            using (FileStream Compare = File.OpenRead(FileCompare))
+            var decompressed = reader.ReadFile(INPUT_PATH);
+            decompressedResult = decompressed;
+            using (MemoryStream ms = new MemoryStream())
+            using (FileStream expected = File.OpenRead(COMPARE_PATH))
             {
-                //setup streams!!!
-                Compare.Position = 0;
-                StreamToCheck.Position = 0;
+                decompressed.Save(ms);
+                return StreamsAreEqual(ms, expected);
+            }
+        }
 
-                if (Compare.Length == StreamToCheck.Length)
+        public bool Test_Interpret(String DecompressedFile, String ExpectedResult, String InterpreterFile, out XmlDocument interpretedResult)
+        {
+            //setup
+            String INTERPRETER_PATH = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, InterpreterFile);
+            var Interpr = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_PATH));
+            var Decompressed = new XmlDocument();
+            Decompressed.Load(DecompressedFile);
+
+            //Execute
+            var interpreted = interpreter.Interpret(Decompressed, Interpr);
+            interpretedResult = interpreted; 
+
+            using (MemoryStream result = new MemoryStream())
+            using (FileStream expected = File.OpenRead(ExpectedResult))
+            {
+                interpreted.Save(result);
+                return StreamsAreEqual(result, expected);
+            }
+        }
+
+        public bool Test_Reinterpret(XmlDocument Interpreted, String FileInterpreted, String InterpreterFile, out XmlDocument reinterpretedResult)
+        {
+            String INTERPRETER_PATH = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, InterpreterFile);
+            var Interpr = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_PATH));
+
+            var reinterpreted = exporter.Export(Interpreted, Interpr);
+            reinterpretedResult = reinterpreted;
+
+            using (MemoryStream ms = new MemoryStream())
+            using (FileStream expected = File.OpenRead(FileInterpreted))
+            {
+                reinterpreted.Save(ms);
+                return StreamsAreEqual(ms, expected);
+            }
+        }
+
+        public bool Test_Recompress(XmlDocument Reinterpreted, String FileRecompressed, int CompressionVersion)
+        {
+            using (MemoryStream TargetStream = new MemoryStream())
+            using (FileStream expected = File.OpenRead(FileRecompressed))
+            {
+                writer.Export(Reinterpreted, TargetStream, CompressionVersion);
+                return StreamsAreEqual(TargetStream, expected);
+            }
+        }
+
+        #endregion
+
+        #region HelpfulFunctions
+
+        public bool StreamsAreEqual(Stream StreamToCheck, Stream StreamCompare)
+        {
+            StreamToCheck.Position = 0;
+            StreamCompare.Position = 0;
+
+            if (StreamCompare.Length == StreamToCheck.Length)
+            {
+                //we only need one check because we prechecked for equal length here
+                while (StreamCompare.Position < StreamCompare.Length - 1)
                 {
-                    //we only need one check because we prechecked for equal length here
-                    while (Compare.Position < Compare.Length - 1)
+                    if (StreamCompare.ReadByte() != StreamToCheck.ReadByte())
                     {
-                        if (Compare.ReadByte() != StreamToCheck.ReadByte())
-                        {
-                            return false; 
-                        }
+                        return false;
                     }
-                    return true; 
                 }
-                else
-                {
-                    return false;
-                }
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
+        #endregion
     }
 }
