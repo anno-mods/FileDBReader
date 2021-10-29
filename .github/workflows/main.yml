@@ -36,4 +36,10 @@ jobs:
       with:
     # Artifact name
         name: FileDBReader
-        path: Build/**
+        path: |
+          Build/FileFormats
+          Build/FileDBReader.exe
+          Build/FileDBReader.dll
+          Build/CommandLine.dll
+          Build/ICSharpCode.SharpZipLib.dll
+        
