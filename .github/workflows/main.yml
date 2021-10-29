@@ -23,15 +23,7 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --no-restore -o Build
+      run: dotnet build --no-restore
       
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.4
-      with:
-    # Artifact name
-        name: FileDBReader
-        path: |
-          Build/**
