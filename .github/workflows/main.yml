@@ -41,5 +41,7 @@ jobs:
           Build/FileDBReader.exe
           Build/FileDBReader.dll
           Build/CommandLine.dll
+          Build/FileDBReader.runtimeconfig.json
+          Build/FileDBReader.deps.json
           Build/ICSharpCode.SharpZipLib.dll
         
