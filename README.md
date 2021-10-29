@@ -28,9 +28,11 @@ compress -f <inputFiles> -o <outputFileExtension> -c <CompressionVersion> -i <in
 interpret -f <inputFiles> -i <interpreterFile>
 toHex -f <inputFiles> -i <interpreterFile>
 check_fileversion -f <inputfiles>
+fctohex -f <inputfiles> -i <interpreterFile>
+hextofc -f <inputfiles> -i <interpreterFile>
 ```
 
-> Note that i is optional on decompress and compress verbs. If provided, it will directly go from compressed to interpreted / from interpreted to recompressed.
+> Note that i is optional on decompress, compress, fctohex and hextofc verbs. If provided, the program will directly convert from compressed to interpreted / from interpreted to recompressed.
 
 included converters
 
@@ -40,6 +42,8 @@ included converters
 - Map Gamedata
 - a7minfo
 - a7tinfo
+- rdp
+- tmc
 
 # Compression Versions
 
@@ -84,8 +88,14 @@ Convert Args
 - Path: Xpath that selects nodes to be converted. 
 - Type: primitive as it occurs in [.NET system](https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/builtin-types/built-in-types)
 - Encoding: Encoding as in [.NET encoding](https://docs.microsoft.com/de-de/dotnet/api/system.text.encoding?view=net-5.0)
+- Structure: Can be either Default, List or Cdata. 
+- Enum: Define your own mapping for IDs as seen in the previous example
 
-> the same can be used for Default. 
+> Type, Encoding and Structure can also be used for Default. 
+
+## Invalid XML
+Anno can use </> as a closing tag. While reading, any of these closing tags are autocorrected, 
+and since Anno also understands the valid xml syntax, you can use them ingame right away. 
 
 # What you typically may find in Anno 1800 fileformats
 - zlib Compression

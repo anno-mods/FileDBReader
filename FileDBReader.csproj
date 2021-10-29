@@ -5,7 +5,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <StartupObject>FileDBReader.Program</StartupObject>
     <Platforms>AnyCPU;x64</Platforms>
-    <Version>1.4.0</Version>
+    <Version>1.5.0</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
@@ -34,8 +34,11 @@
 
   <ItemGroup>
     <Compile Remove="FileFormatDoc\**" />
+    <Compile Remove="unittests\**" />
     <EmbeddedResource Remove="FileFormatDoc\**" />
+    <EmbeddedResource Remove="unittests\**" />
     <None Remove="FileFormatDoc\**" />
+    <None Remove="unittests\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -77,82 +80,82 @@
     <None Update="FileFormats\map_Gamedata.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tests\a7tinfo\moderate_atoll_ll_01.a7tinfo">
+    <None Update="dev_files\a7tinfo\moderate_atoll_ll_01.a7tinfo">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\a7tinfo\moderate_c_01.a7tinfo">
+    <None Update="dev_files\a7tinfo\moderate_c_01.a7tinfo">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\fcFiles\cannon_ball_small_01.rdp">
+    <None Update="dev_files\fcFiles\cannon_ball_small_01.rdp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tests\fcFiles\electricity_01.fc">
+    <None Update="dev_files\fcFiles\electricity_01.fc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\fcFiles\food_07.fc">
+    <None Update="dev_files\fcFiles\food_07.fc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\fcFiles\mining_08.fc">
+    <None Update="dev_files\fcFiles\mining_08.fc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\fcFiles\residence_tier02_estate01.fc">
+    <None Update="dev_files\fcFiles\residence_tier02_estate01.fc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\fcFiles\workshop_06.fc">
+    <None Update="dev_files\fcFiles\workshop_06.fc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\fcFiles\world_map_01.fc">
+    <None Update="dev_files\fcFiles\world_map_01.fc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="tests\filedb\gamedata.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\goodwill\gamedata_og.data">
+    <None Update="dev_files\goodwill\gamedata_og.data">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tests\infotip\export.bin">
+    <None Update="dev_files\infotip\export.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\innerfiledb\gamedata_og.data">
+    <None Update="dev_files\innerfiledb\gamedata_og.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\innerfiledb\original.bin">
+    <None Update="dev_files\innerfiledb\original.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\innerfiledb\recompressed.bin">
+    <None Update="dev_files\innerfiledb\recompressed.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\island\0x0.tmc">
+    <None Update="dev_files\island\0x0.tmc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tests\island\4x3.tmc">
+    <None Update="dev_files\island\4x3.tmc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tests\island\gamedata.data">
+    <None Update="dev_files\island\gamedata.data">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tests\island\rd3d.data">
+    <None Update="dev_files\island\rd3d.data">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="tests\lists\gamedata.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\lists\gamedata_og.data">
+    <None Update="dev_files\lists\gamedata_og.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\ctt\0x1.ctt">
+    <None Update="dev_files\ctt\0x1.ctt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="tests\maps\gamedata.data">
+    <None Update="dev_files\maps\gamedata.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\RenamedTags\gamedata.data">
+    <None Update="dev_files\RenamedTags\gamedata.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\zlib\0x1.ctt">
+    <None Update="dev_files\zlib\0x1.ctt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="tests\zlib\data.a7s">
+    <None Update="dev_files\zlib\data.a7s">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

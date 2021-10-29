@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace FileDBReader.src
 {
-    public enum ContentStructure {Default, List, CDATA};
+    public enum ContentStructure {Default, List, Cdata};
 
     /// <summary>
     /// Represents an InterpreterFile
@@ -18,17 +18,7 @@ namespace FileDBReader.src
         public Dictionary<string, Conversion> Conversions = new Dictionary<string, Conversion>();
         public Conversion DefaultType;
 
-        //Constructors
-        public Interpreter()
-        {
-
-        }
-
-        /// <summary>
-        /// Constructs an Interpreter Object directly from a filepath.
-        /// </summary>
-        /// <param name="InterpreterPath"></param>
-        public Interpreter(String InterpreterPath)
+        public static XmlDocument ToInterpreterDoc(String InterpreterPath) 
         {
             XmlDocument doc = new XmlDocument();
             try
@@ -38,8 +28,23 @@ namespace FileDBReader.src
             catch (XmlException e)
             {
                 Console.WriteLine("Could not load Interpreter at: {0}", InterpreterPath);
-                return;
             }
+            return doc; 
+        }
+
+        public String GetInverseXPath()
+        {
+            List<String> StringList = new List<string>();
+            foreach (KeyValuePair<String, Conversion> k in Conversions)
+                StringList.Add(k.Key);
+            foreach (InternalCompression internalFileDB in InternalCompressions)
+                StringList.Add(internalFileDB.Path);
+            return String.Join(" | ", StringList);
+        }
+
+        public Interpreter()
+        { 
+        
         }
 
         public Interpreter(XmlDocument InterpreterDoc)
@@ -58,6 +63,8 @@ namespace FileDBReader.src
 
                 Conversions.Add(Path, c);
             }
+
+            //Internal Compression Parsing
             foreach (XmlNode InternalCompression in InternalCompressionNodes)
             {
                 InternalCompression Compression = new InternalCompression(InternalCompression);
@@ -65,10 +72,9 @@ namespace FileDBReader.src
             }
 
             //default type
-            Conversion DefaultConv = new Conversion(DefaultAttribNode);
-            if (DefaultConv != null)
+            if (DefaultAttribNode != null)
             {
-                DefaultType = DefaultConv; 
+                DefaultType = new Conversion(DefaultAttribNode); 
             }
         }
 
@@ -88,19 +94,25 @@ namespace FileDBReader.src
     {
         public Type Type;
         public ContentStructure Structure;
-        public RuntimeEnum Enum;
-        public Encoding Encoding;
+        public RuntimeEnum Enum = new RuntimeEnum();
+        public Encoding Encoding = new UnicodeEncoding();
+
+        public Conversion()
+        { }
 
         public Conversion(XmlNode ConvertNode)
         {
             //gather info from the Conversion Attributes
-            var TypeAttr = ConvertNode.Attributes["Type"].Value;
-            var StructureAttr = ConvertNode.Attributes["Structure"].Value;
-            var EncodingAttr = ConvertNode.Attributes["Encoding"].Value;
+            var TypeAttr = ConvertNode.Attributes["Type"];
+            var StructureAttr = ConvertNode.Attributes["Structure"];
+            var EncodingAttr = ConvertNode.Attributes["Encoding"];
 
-            Type = ToType(TypeAttr);
-            Structure = ToContentStructure(StructureAttr);
-            Encoding = ToEncoding(EncodingAttr);
+            if(TypeAttr != null)
+                Type = ToType(TypeAttr.Value);
+            if(StructureAttr != null)
+                Structure = ToContentStructure(StructureAttr.Value);
+            if(EncodingAttr != null)
+                Encoding = ToEncoding(EncodingAttr.Value);
 
             //Enum Parsing
             var EnumNode = ConvertNode.SelectSingleNode("./Enum");
@@ -127,6 +139,7 @@ namespace FileDBReader.src
         {
             return Encoding.GetEncoding(encodingStr);
         }
+
         private RuntimeEnum ToEnum(XmlNode EnumNode)
         {
             //getEnum
@@ -142,7 +155,7 @@ namespace FileDBReader.src
                         var Name = EnumEntry.Attributes["Name"];
                         if (Value != null && Name != null)
                         {
-                            Enum.AddValue(Name.Value, Value.Value);
+                            Enum.AddValue(Value.Value, Name.Value);
                         }
                         else
                         {
@@ -177,6 +190,12 @@ namespace FileDBReader.src
     {
         public String Path;
         public int CompressionVersion;
+
+        public InternalCompression()
+        { 
+        
+        }
+
 
         public InternalCompression(XmlNode CompressionNode)
         {

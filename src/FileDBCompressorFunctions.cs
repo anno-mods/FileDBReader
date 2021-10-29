@@ -34,19 +34,25 @@ namespace FileDBReader.src
             FcFileHelper = new FcFileHelper();
         }
 
-        public int Decompress(IEnumerable<String> InputFiles, String Interpreter)
+        public int Decompress(IEnumerable<String> InputFiles, String InterpreterPath)
         {
             int returncode = 0;
+
+            //Preload Interpreter
+            Interpreter Interpr = null; 
+            if (InterpreterPath != null)
+            {
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath));
+            }
+
             foreach (String s in InputFiles)
             {
                 var result = reader.ReadFile(s);
-                if (Interpreter != null)
+                if (InterpreterPath != null)
                 {
                     try
                     {
-                        var interpreterDoc = new XmlDocument();
-                        interpreterDoc.Load(Interpreter);
-                        result = interpreter.Interpret(result, interpreterDoc);
+                        result = interpreter.Interpret(result, Interpr);
                     }
                     catch (IOException ex)
                     {
@@ -59,7 +65,7 @@ namespace FileDBReader.src
             return returncode;
         }
 
-        public int Compress(IEnumerable<String> InputFiles, String Interpreter, String OutputFileExtension, int CompressionVersion)
+        public int Compress(IEnumerable<String> InputFiles, String InterpreterPath, String OutputFileExtension, int CompressionVersion)
         {
             int returncode = 0; 
             //set output file extension
@@ -69,14 +75,23 @@ namespace FileDBReader.src
             else
                 ext = DefaultFileFormat;
 
+            //Preload Interpreter
+            Interpreter Interpr = null;
+            if (InterpreterPath != null)
+            {
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath));
+            }
+
             //convert all input files
             foreach (String s in InputFiles)
             {
-                if (Interpreter != null)
+                if (InterpreterPath != null)
                 {
                     try
                     {
-                        var result = exporter.Export(s, Interpreter);
+                        var doc = new XmlDocument();
+                        doc.Load(s);
+                        var result = exporter.Export(doc, Interpr);
                         writer.Export(result, ext, s, CompressionVersion);
                     }
                     catch (IOException ex)
@@ -92,15 +107,24 @@ namespace FileDBReader.src
             }
             return returncode;
         }
-
-        public int Interpret(IEnumerable<String> InputFiles, String Interpreter)
+        public int Interpret(IEnumerable<String> InputFiles, String InterpreterPath)
         {
-            int returncode = 0; 
+            int returncode = 0;
+
+            //Preload Interpreter
+            Interpreter Interpr = null;
+            if (InterpreterPath != null)
+            {
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath));
+            }
+
             foreach (String s in InputFiles)
             {
                 try
                 {
-                    var doc = interpreter.Interpret(s, Interpreter);
+                    var baseDoc = new XmlDocument();
+                    baseDoc.Load(s);
+                    var doc = interpreter.Interpret(baseDoc, Interpr);
                     doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, InterpretedFileSuffix), "xml"));
                 }
                 catch (IOException ex)
@@ -112,14 +136,24 @@ namespace FileDBReader.src
             return returncode;
         }
 
-        public int Reinterpret(IEnumerable<String> InputFiles, String Interpreter)
+        public int Reinterpret(IEnumerable<String> InputFiles, String InterpreterPath)
         {
-            int returncode = 0; 
+            int returncode = 0;
+
+            //Preload Interpreter
+            Interpreter Interpr = null;
+            if (InterpreterPath != null)
+            {
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath));
+            }
+
             foreach (String s in InputFiles)
             {
                 try
                 {
-                    var doc = exporter.Export(s, Interpreter);
+                    var inputDoc = new XmlDocument();
+                    inputDoc.Load(s);
+                    var doc = exporter.Export(inputDoc, Interpr);
                     doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, ReinterpretedFileSuffix), "xml"));
                 }
                 catch (IOException ex)
@@ -149,21 +183,27 @@ namespace FileDBReader.src
             return returncode;
         }
 
-        public int FcFileImport(IEnumerable<String> InputFiles, String Interpreter)
+        public int FcFileImport(IEnumerable<String> InputFiles, String InterpreterPath)
         {
             int returncode = 0; 
+            
+            //Preload Interpreter
+            Interpreter Interpr = null;
+            if (InterpreterPath != null)
+            {
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath));
+            }
+
             foreach (String s in InputFiles)
             {
                 try
                 {
                     var result = FcFileHelper.ReadFcFile(s);
-                    if (Interpreter != null)
+                    if (InterpreterPath != null)
                     {
                         try
                         {
-                            var interpreterDoc = new XmlDocument();
-                            interpreterDoc.Load(Interpreter);
-                            result = interpreter.Interpret(result, interpreterDoc);
+                            result = interpreter.Interpret(result, Interpr);
                         }
                         catch (IOException ex)
                         {
@@ -182,24 +222,31 @@ namespace FileDBReader.src
             return returncode; 
         }
 
-        public int FcFileExport(IEnumerable<String> InputFiles, String Interpreter)
+        public int FcFileExport(IEnumerable<String> InputFiles, String InterpreterPath)
         {
-            int returncode = 0; 
+            int returncode = 0;
+            //Preload Interpreter
+            Interpreter Interpr = null;
+            if (InterpreterPath != null)
+            {
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath));
+            }
+
             foreach (String s in InputFiles)
             {
                 try
                 {
-                    XmlDocument exported;
-                    if (Interpreter != null)
+                    XmlDocument exported = new XmlDocument();
+                    if (InterpreterPath != null)
                     {
-                        exported = exporter.Export(s, Interpreter);
+                        exported.Load(s);
+                        exported = exporter.Export(exported, Interpr);
                     }
                     else
                     {
                         exported = new XmlDocument();
                         exported.Load(s);
                     }
-
                     var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(exported), ConversionMode.Write);
                     FcFileHelper.SaveStreamToFile(Written, Path.ChangeExtension(HexHelper.AddSuffix(s, FcExportedFileSuffix), "xml"));
                 }

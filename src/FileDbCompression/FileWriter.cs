@@ -12,7 +12,7 @@ namespace FileDBReader
     /// <summary>
     /// Converts an xml file with data represented in hex strings into filedb compression readable by Anno 1800. 
     /// </summary>
-    class FileWriter
+    public class FileWriter
     {
         public FileWriter() {
 
@@ -39,6 +39,13 @@ namespace FileDBReader
         }
 
         //converts an xmlNode to fileDB Compression and returns the result as stream
+        /// <summary>
+        /// Compresses an XML Document to FileDB compression.
+        /// </summary>
+        /// <param name="xml">The document to be compressed</param>
+        /// <param name="stream">The target stream to save the compressed document in</param>
+        /// <param name="FileVersion">The compression version to be used</param>
+        /// <returns></returns>
         public Stream Export(XmlDocument xml, Stream stream, int FileVersion) {
 
             Dictionary<String, byte> Tags = new Dictionary<string, byte>();
@@ -116,8 +123,8 @@ namespace FileDBReader
         public void writeNode_FileVersion1(XmlNode e, ref Dictionary<String, byte> Tags, ref Dictionary<String, byte> Attribs, ref byte tagcount, ref byte attribcount, ref BinaryWriter writer)
         {
             //if this does not contain text
-            //is a tag
             var FirstChild = e.FirstChild;
+            //is a tag
             if (!(FirstChild != null && FirstChild.NodeType == XmlNodeType.Text))
             {
                 //if key doesn't exist, add it

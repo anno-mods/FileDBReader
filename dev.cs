@@ -11,9 +11,9 @@ using System.Xml;
 
 namespace FileDBReader
 {
-    class internaltest {
+    class dev {
 
-        static String TEST_DIRECTORY_NAME = "tests";
+        static String TEST_DIRECTORY_NAME = "dev_files";
         static String FILEFORMAT_DIRECTORY_NAME = "FileFormats";
 
         //FileDB
@@ -28,7 +28,7 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            RenamedTagsTest();
+            IslandTestTMC();
         }
 
         #region GenericTestFcFile
@@ -106,35 +106,12 @@ namespace FileDBReader
 
         #region FileDBTests
 
-        private static void IslandTestGoodwill()
-        {
-            //test directory
-            String DIRECTORY_NAME = "goodwill";
-            //interpreter file path
-            String INTERPRETER_GAMEDATA = Path.Combine(FILEFORMAT_DIRECTORY_NAME, "internalfiledbtest.xml");
-            //input file path
-            String GAMEDATA_FILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "gamedata_og.data");
-            //output file path
-            String GAMEDATA_INTERPRETED_PATH = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "Island_Gamedata_interpreted.xml");
-            String GAMEDATA_READ_PATH = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "Island_Gamedata_Read.xml");
-            String GAMEDATA_EXPORTED_PATH = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "Island_Gamedata_exported.xml");
-            //create interpreter document
-            var GamedataInterpreter = new XmlDocument();
-            GamedataInterpreter.Load(INTERPRETER_GAMEDATA);
-
-            //decompress interpret and save gamedata.data
-            var doc = reader.ReadFile(GAMEDATA_FILE);
-            doc.Save(GAMEDATA_READ_PATH);
-            var interpreted_gamedata = interpreter.Interpret(reader.ReadFile(GAMEDATA_FILE), GamedataInterpreter);
-            interpreted_gamedata.Save(GAMEDATA_INTERPRETED_PATH);
-
-            var exported = exporter.Export(interpreted_gamedata, GamedataInterpreter);
-            exported.Save(GAMEDATA_EXPORTED_PATH);
-        }
-
         /// <summary>
         /// Test for the ctt interpreter.
         /// </summary>
+        /// 
+
+        [Obsolete("This test is old and will not be supported in the future")]
         public static void CttTest() {
             const String DIRECTORY_NAME = "ctt";
             const String INTERPRETER_FILE = "FileFormats/ctt.xml";
@@ -177,41 +154,6 @@ namespace FileDBReader
             reader.ReadFile(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "recompressed.bin")).Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "recompressed.xml") );
         }
 
-        /// <summary>
-        /// Decompresses gamedata_og.data, inteprets it with internalfiledbtest.xml, converts it back to hex using the same interpreter, exports back to filedb compression. 
-        /// A file is saved at each stage of the process.
-        /// </summary>
-        public static void CompressionTest() {
-
-            const String DIRECTORY_NAME = "innerfiledb";
-            const String INTERPRETER_FILE = "FileFormats/internalfiledbtest.xml";
-
-            String TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "gamedata_og.data");
-            String DECOMPRESSED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "gamedata_decompressed.xml");
-            String INTERPRETED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "gamedata_interpreted.xml");
-            String TOHEX_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "gamedata_backtohex.xml");
-            String EXPORTED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "gamedata.data");
-
-            //decompress gamedata.data
-            var interpreterDoc = new XmlDocument();
-            interpreterDoc.Load(INTERPRETER_FILE);
-
-            //decompress
-            var decompressed = reader.ReadFile(TESTFILE);
-            decompressed.Save(DECOMPRESSED_TESTFILE);
-
-            //interpret
-            var interpreted = interpreter.Interpret(decompressed, interpreterDoc);
-            interpreted.Save(INTERPRETED_TESTFILE);
-
-            //to hex 
-            var Hexed = exporter.Export(interpreted, interpreterDoc);
-            Hexed.Save(TOHEX_TESTFILE);
-
-            //back to gamedata 
-            writer.Export(Hexed, EXPORTED_TESTFILE, 1);
-        }
-
         public static void GenericTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME, int FileVersion)
         {
             String INTERPRETER_FILE = Path.Combine(FILEFORMAT_DIRECTORY_NAME, INTERPREFER_FILE_NAME);
@@ -222,18 +164,15 @@ namespace FileDBReader
             String TOHEX_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_reinterpreted.xml");
             String EXPORTED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_recompressed" + Path.GetExtension(TESTFILE_NAME));
 
-            //decompress gamedata.data
-            var interpreterDoc = new XmlDocument();
-            interpreterDoc.Load(INTERPRETER_FILE);
-
             //decompress
-            var decompressed = reader.ReadFile(TESTFILE);//interpret
+            var decompressed = reader.ReadFile(TESTFILE);
             decompressed.Save(DECOMPRESSED_TESTFILE);
-            var interpreted = interpreter.Interpret(decompressed, interpreterDoc);
+
+            var interpreted = interpreter.Interpret(decompressed, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
             interpreted.Save(INTERPRETED_TESTFILE);
 
             //to hex 
-            var Hexed = exporter.Export(interpreted, interpreterDoc);
+            var Hexed = exporter.Export(interpreted, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
             Hexed.Save(TOHEX_TESTFILE);
 
             //back to gamedata 
@@ -269,7 +208,6 @@ namespace FileDBReader
         }
         public static void FcFile_GenericTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME)
         {
-           
             String TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME);
 
             String CDATAREAD_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_CdataRead.xml");
@@ -287,21 +225,21 @@ namespace FileDBReader
             var Read = FcFileHelper.ReadFcFile(TESTFILE);
             Read.Save(CDATAREAD_TESTFILE);
 
-            var Interpreted = interpreter.Interpret(Read, interpreterDoc);
+            var Interpreted = interpreter.Interpret(Read, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
             Interpreted.Save(INTERPRETED_TESTFILE);
 
-            var Reinterpreted = exporter.Export(Interpreted, interpreterDoc);
+            var Reinterpreted = exporter.Export(Interpreted, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
             Reinterpreted.Save(REINTERPRETED_TESTFILE);
 
             var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(Reinterpreted), ConversionMode.Write);
             Save(Written, CDATAWRITTEN_TESTFILE);
 
             //save 
-            var stream = FcFileHelper.ConvertFile(File.OpenRead(TESTFILE), ConversionMode.Read);
-            var outstream = FcFileHelper.ConvertFile(stream, ConversionMode.Write);
+            //var stream = FcFileHelper.ConvertFile(File.OpenRead(TESTFILE), ConversionMode.Read);
+            //var outstream = FcFileHelper.ConvertFile(stream, ConversionMode.Write);
             
 
-            ShowFileWithDefaultProgram(CDATAWRITTEN_TESTFILE);
+            //ShowFileWithDefaultProgram(CDATAWRITTEN_TESTFILE);
 
             try
             {
