@@ -56,6 +56,9 @@
     <None Update="FileFormats\FcFile.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="FileFormats\rdp.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="FileFormats\tmc.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
