@@ -74,11 +74,6 @@ namespace FileDBReader
                 }
             }
 
-            //nullterminate data section
-            Int16 nullchar = 0;
-            writer.Write(nullchar);
-            writer.Flush();
-
             //Replace Values in Tags and Attribs if we need to
             if (InvalidTagNameHelper.ReplaceOperations != null)
             {
@@ -90,20 +85,13 @@ namespace FileDBReader
             switch (FileVersion)
             {
                 case 1:
+                    //nullterminate datasection (Int16 for version 1)
+                    writer.Write((Int16)0);
                     writeTagSection_FileVersion1(ref Tags, ref Attribs, 0, ref writer);
                     break;
                 case 2:
-                    //before the tag section, fill the other section to a multiple of 8 bytes.
-                    var streamSize = (int)writer.BaseStream.Position;
-                    if (streamSize % 8 != 0)
-                    {
-                        int bytesToAdd = (8 - (streamSize % 8));
-                        for (var i = 0; i < bytesToAdd; i++)
-                        {
-                            writer.Write((byte)0);
-                        }
-                    }
-                    //write the text section
+                    //nullterminate data section (Int64 for version 2)
+                    writer.Write((Int64)0);
                     writeTagSection_FileVersion2(ref Tags, ref Attribs, 0, ref writer);
                     break;
             }
