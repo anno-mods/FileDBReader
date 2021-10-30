@@ -9,17 +9,39 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET
+    
+    - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+        
     - name: Restore dependencies
       run: dotnet restore
+      
     - name: Build
       run: dotnet build --no-restore
+      
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    
+    - name: Publish
+      run: dotnet publish -c Release -o Build
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+    # Artifact name
+        name: FileDBReader
+        path: |
+          Build/FileFormats
+          Build/FileDBReader.exe
+          Build/FileDBReader.dll
+          Build/CommandLine.dll
+          Build/FileDBReader.runtimeconfig.json
+          Build/FileDBReader.deps.json
+          Build/ICSharpCode.SharpZipLib.dll
+        
