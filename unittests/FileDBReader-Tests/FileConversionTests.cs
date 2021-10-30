@@ -51,9 +51,42 @@ namespace FileDBReader_Tests
 
         //----------------------------#######-------------------------------------//
 
+        #region INFOTIP_TEST 
+
+        [TestMethod, TestCategory("Version 2 -> infotip")]
+        public void infotip_Decompress()
+        {
+            String COMPARE_DECOMPRESSED_FILE = "decompressed.xml";
+            String INPUT_FILE = "export.bin";
+
+            Assert.IsTrue(Test_Decompress(Folders.UNITTEST_INFOTIP_SUBDIR, INPUT_FILE, COMPARE_DECOMPRESSED_FILE, out var decompressed));
+        }
+
+        [TestMethod, TestCategory("Version 2 -> infotip")]
+        public void infotip_FileEquality_AfterCompressionCycle()
+        {
+            String COMPARE_RECOMPRESSED_FILE = "recompressed.bin";
+            String INPUT_FILE = "export.bin";
+            int COMPRESSION_VERSION = 2;
+
+            Assert.IsTrue(Test_DecompressAndRecompress(Folders.UNITTEST_INFOTIP_SUBDIR, INPUT_FILE, COMPARE_RECOMPRESSED_FILE, COMPRESSION_VERSION));
+        }
+
+        [TestMethod, TestCategory("Version 2 -> infotip")]
+        public void infotip_FileEquality_AfterInterpretation()
+        {
+            String COMPARE_REINTERPRETED_FILE = "reinterpreted.xml";
+            String INPUT_FILE = "decompressed.xml";
+            String INTERPRETER_FILE = "infotip.xml";
+
+            Assert.IsTrue(Test_InterpretAndReinterpret(Folders.UNITTEST_INFOTIP_SUBDIR, INPUT_FILE, COMPARE_REINTERPRETED_FILE, INTERPRETER_FILE));
+        }
+
+        #endregion
+
         #region A7TINFO_TEST
 
-        [TestMethod, TestCategory("a7tinfo")]
+        [TestMethod, TestCategory("Version 1 -> a7tinfo")]
         public void a7tinfo_Decompress()
         {
             String COMPARE_DECOMPRESSED_FILE = "decompressed.xml";
@@ -62,7 +95,7 @@ namespace FileDBReader_Tests
             Assert.IsTrue(Test_Decompress(Folders.UNITTEST_A7TINFO_SUBDIR, INPUT_FILE, COMPARE_DECOMPRESSED_FILE, out var decompressed));
         }
 
-        [TestMethod, TestCategory("a7tinfo")]
+        [TestMethod, TestCategory("Version 1 -> a7tinfo")]
         public void a7tinfo_FileEquality_AfterCompressionCycle()
         {
             String COMPARE_RECOMPRESSED_FILE = "recompressed.a7tinfo";
@@ -72,7 +105,7 @@ namespace FileDBReader_Tests
             Assert.IsTrue(Test_DecompressAndRecompress(Folders.UNITTEST_A7TINFO_SUBDIR, INPUT_FILE, COMPARE_RECOMPRESSED_FILE, COMPRESSION_VERSION));
         }
 
-        [TestMethod, TestCategory("a7tinfo")]
+        [TestMethod, TestCategory("Version 1 -> a7tinfo")]
         public void a7tinfo_FileEquality_AfterInterpretation()
         {
             String COMPARE_REINTERPRETED_FILE = "reinterpreted.xml";
@@ -85,7 +118,7 @@ namespace FileDBReader_Tests
         #endregion
 
         #region TMC_TEST
-        [TestMethod, TestCategory("tmc")]
+        [TestMethod, TestCategory("Version 1 -> tmc")]
         public void tmc_FileEquality_AfterCompressionCycle()
         {
             String COMPARE_RECOMPRESSED_FILE = "recompressed.tmc";
@@ -95,7 +128,7 @@ namespace FileDBReader_Tests
             Assert.IsTrue(Test_DecompressAndRecompress(Folders.UNITTEST_TMC_SUBDIR, INPUT_FILE, COMPARE_RECOMPRESSED_FILE, COMPRESSION_VERSION));
         }
 
-        [TestMethod, TestCategory("a7tinfo")]
+        [TestMethod, TestCategory("Version 1 -> tmc")]
         public void tmc_FileEquality_AfterInterpretation()
         {
             String COMPARE_REINTERPRETED_FILE = "reinterpreted.xml";
@@ -105,7 +138,7 @@ namespace FileDBReader_Tests
             Assert.IsTrue(Test_InterpretAndReinterpret(Folders.UNITTEST_TMC_SUBDIR, INPUT_FILE, COMPARE_REINTERPRETED_FILE, INTERPRETER_FILE));
         }
 
-        [TestMethod, TestCategory("a7tinfo")]
+        [TestMethod, TestCategory("Version 1 -> tmc")]
         public void tmc_Decompress()
         {
             String COMPARE_DECOMPRESSED_FILE = "decompressed.xml";

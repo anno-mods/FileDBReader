@@ -28,7 +28,7 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            IslandTestTMC();
+            InfotipTestNewFileVersion();
         }
 
         #region GenericTestFcFile
