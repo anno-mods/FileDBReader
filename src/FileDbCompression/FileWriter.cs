@@ -236,7 +236,6 @@ namespace FileDBReader
                     tagcount++;
                 }
 
-
                 //write Int32 Bytesize (in case of tags: 0)
                 //write Int32 ID
                 writer.Write(0);
@@ -306,15 +305,9 @@ namespace FileDBReader
 
             writeDictionary_FileVersion2(Tags, ref writer, (byte)0);
 
-            //three bytes to fill at the end
-            for (int i = 0; i < 3; i++) {
-                writer.Write((byte)0);
-            }
-
             var AttribSectionOffset = (int)writer.BaseStream.Position;
 
             writeDictionary_FileVersion2(Attribs, ref writer, (byte)128);
-            writer.Write((Int32)0);
 
             //Bytesize offset
             writer.Write(TagSectionOffset);
@@ -325,17 +318,22 @@ namespace FileDBReader
             writer.Flush();
         }
 
-        public void writeDictionary_FileVersion2(Dictionary<String, byte> Tags, ref BinaryWriter writer, byte separator)
+        public void writeDictionary_FileVersion2(Dictionary<String, byte> Tags, ref BinaryWriter writer, byte IDAddition)
         {
             Tags.Remove("None");
+
+            int byteswritten = 0; 
+
             writer.Write((Int32)(Tags.Count));
+            byteswritten += 4; 
 
             //write ids
             foreach (string s in Tags.Keys)
             {
                 byte i = Tags[s];
                 writer.Write(i);
-                writer.Write(separator);
+                writer.Write(IDAddition);
+                byteswritten += 2; 
             }
             //write names divided with zeroes
             foreach (string s in Tags.Keys)
@@ -343,7 +341,19 @@ namespace FileDBReader
                 var TagName = s; 
                 writer.Write(Encoding.UTF8.GetBytes(TagName));
                 writer.Write((byte)0);
+                byteswritten += TagName.Length + 1; 
             }
+
+            //fill bytes to get full 8 byte blocks.
+            if (byteswritten % 8 != 0)
+            {
+                int bytesToAdd = (8 - (byteswritten % 8));
+                for (var i = 0; i < bytesToAdd; i++)
+                {
+                    writer.Write((byte)0);
+                }
+            }
+
             writer.Flush();
         }
 
