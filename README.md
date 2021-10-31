@@ -147,6 +147,9 @@ Map Template files consist of
 - an .a7tinfo file that is in filedb compression. 
 
 # Future plans 
+- FileDB Serialization library (coming soon! )
+
+also on the list:
 - full support for zlib compressed files
 - automated conversion routines
 - support for rda archives (maybe)
