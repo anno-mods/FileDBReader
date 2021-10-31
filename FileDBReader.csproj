@@ -33,10 +33,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FileDBSerializer\**" />
     <Compile Remove="FileFormatDoc\**" />
     <Compile Remove="unittests\**" />
+    <EmbeddedResource Remove="FileDBSerializer\**" />
     <EmbeddedResource Remove="FileFormatDoc\**" />
     <EmbeddedResource Remove="unittests\**" />
+    <None Remove="FileDBSerializer\**" />
     <None Remove="FileFormatDoc\**" />
     <None Remove="unittests\**" />
   </ItemGroup>
@@ -44,6 +47,10 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="FileDBSerializer\FileDBSerializer\FileDBSerializer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

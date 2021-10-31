@@ -8,6 +8,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using FileDBSerializer;
+using FileDBReader.src.XmlSerialization;
 
 namespace FileDBReader
 {
@@ -28,7 +30,15 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            InfotipTestNewFileVersion();
+            FileDBDeserializer doc = new FileDBDeserializer(); 
+            var d = doc.Deserialize("dev_files/infotip/export.bin");
+            //FileDBSerializer serializer = new FileDBSerializer();
+            //serializer.Serialize(d);
+
+            FileDbXmlSerializer ser = new FileDbXmlSerializer();
+            ser.ToXml(d);
+
+            InfotipTestNewFileVersion(); 
         }
 
         #region GenericTestFcFile

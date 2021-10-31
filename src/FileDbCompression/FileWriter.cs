@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using FileDBReader.src;
+using System.Diagnostics;
 
 namespace FileDBReader
 {
@@ -46,7 +47,10 @@ namespace FileDBReader
         /// <param name="stream">The target stream to save the compressed document in</param>
         /// <param name="FileVersion">The compression version to be used</param>
         /// <returns></returns>
-        public Stream Export(XmlDocument xml, Stream stream, int FileVersion) {
+        public Stream Export(XmlDocument xml, Stream stream, int FileVersion) 
+        {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
 
             Dictionary<String, byte> Tags = new Dictionary<string, byte>();
             Dictionary<String, byte> Attribs = new Dictionary<string, byte>();
@@ -95,7 +99,8 @@ namespace FileDBReader
                     writeTagSection_FileVersion2(ref Tags, ref Attribs, 0, ref writer);
                     break;
             }
-
+            stopWatch.Stop();
+            Console.WriteLine("FILEDB Writing from XML took: " + stopWatch.ElapsedMilliseconds);
             return stream;
         }
 

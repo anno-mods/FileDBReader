@@ -1,6 +1,7 @@
 ﻿using Syroot.BinaryData.Core;
 using Syroot.BinaryData.Memory;
 using System;
+using System.IO;
 using System.Text;
 
 namespace FileDBReader {
@@ -29,7 +30,6 @@ namespace FileDBReader {
 
       return Result.ToString();
     }
-
     #endregion Methods
   }
 }
