@@ -12,24 +12,26 @@ namespace FileDBSerializing
     {
         BinaryReader reader;
 
-        public FileDBDocument Deserialize(String Filename)
+        #region COMPRESSION_VERSION_2_PARENT_FUNCTIONS
+
+        public FileDBDocument_V2 VERSION2_Deserialize(String Filename)
         {
             using (var fs = File.OpenRead(Filename))
             {
-                return Deserialize(fs);
+                return VERSION2_Deserialize(fs);
             }
         }
 
-        public FileDBDocument Deserialize(Stream s)
+        public FileDBDocument_V2 VERSION2_Deserialize(Stream s)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
             reader = new BinaryReader(s);
-            FileDBDocument filedb = new FileDBDocument(); 
+            FileDBDocument_V2 filedb = new FileDBDocument_V2();
 
             int CurrentLevel = 0;
-            Tag Root = new Tag(); 
+            Tag Root = new Tag();
             Tag CurrentTag = Root;
 
             //at the end of the DOM section, there is an additional closing tag 0x0000000000000000. This means we will end up with CurrentLevel = -1; 
@@ -41,75 +43,130 @@ namespace FileDBSerializing
                 switch (bytesize)
                 {
                     //we found attrib
-                    case > 0 :
-                            int ContentSize = FileDBDocument.GetBlockSpace(bytesize);
-                            var Content = reader.ReadBytes(ContentSize);
-                            Array.Resize<byte>(ref Content, bytesize);
-
-                            Attrib attrib = new Attrib() { ID = ID, Bytesize = bytesize, Content = Content, ParentDoc = filedb };
-                            CurrentTag.Children.Add(attrib);
-                            break;
+                    case > 0:
+                        var attrib = VERSION2_ReadAttrib(bytesize, ID, filedb);
+                        CurrentTag.Children.Add(attrib);
+                        break;
                     //we found tag
                     case <= 0 when ID != 0:
-                            //Create a new tag and set this one to be the current tag!
-                            Tag Tag = new Tag() { Bytesize = bytesize, ID = ID, ParentDoc = filedb, Parent = CurrentTag };
-
-                            //make the new tag the current tag and increment
-                            CurrentTag.Children.Add(Tag);
-                            CurrentTag = Tag;
-                            CurrentLevel++;
+                        //Create a new tag and set this one to be the current tag!
+                        var Tag = VERSION2_ReadTag(ID, filedb, CurrentTag);
+                        //make the new tag the current tag and increment
+                        CurrentTag.Children.Add(Tag);
+                        CurrentTag = Tag;
+                        CurrentLevel++;
                         break;
                     //we found terminator
                     case <= 0 when ID == 0:
-                            if (CurrentLevel-- >= 0)
-                                CurrentTag = CurrentTag.Parent;
-                        break; 
+                        if (CurrentLevel-- >= 0)
+                            CurrentTag = CurrentTag.Parent;
+                        break;
                 }
             }
 
-            //Read Tag Section 
+            //Read Tag Section Offsets.
             reader.BaseStream.Position = reader.BaseStream.Length - FileDBDocument.OFFSET_TO_OFFSETS;
             int TagsOffset = reader.ReadInt32();
             int AttribsOffset = reader.ReadInt32();
 
             //init tag section
-            TagSection t = ReadTagSection(TagsOffset, AttribsOffset);
-            filedb.Tags = t; 
+            TagSection t = VERSION2_ReadTagSection(TagsOffset, AttribsOffset);
+            filedb.Tags = t;
 
             stopWatch.Stop();
             Console.WriteLine("FILEDB Deserialization took: " + stopWatch.Elapsed.TotalMilliseconds);
 
             //we are copying the entire roots here just to save a few lines of code :D
-            filedb.Roots = Root.Children; 
+            filedb.Roots = Root.Children;
             return filedb;
         }
 
-        private TagSection ReadTagSection( int TagsOffset, int AttribsOffset)
+        #endregion
+
+        #region COMPRESSION_VERSION_2_SUBFUNCTIONS
+        private TagSection VERSION2_ReadTagSection(int TagsOffset, int AttribsOffset)
         {
             return new TagSection(
-                /*Tags*/    GetDictionary(TagsOffset), 
-                /*Attribs*/ GetDictionary(AttribsOffset)
+                /*Tags*/    VERSION2_GetDictionary(TagsOffset),
+                /*Attribs*/ VERSION2_GetDictionary(AttribsOffset)
             );
         }
 
-        private Dictionary<ushort, String> GetDictionary(int Offset)
+        private Dictionary<ushort, String> VERSION2_GetDictionary(int Offset)
         {
-            reader.BaseStream.Position = Offset; 
+            reader.BaseStream.Position = Offset;
             Dictionary<ushort, string> dictionary = new Dictionary<ushort, string>();
 
             int Count = reader.ReadInt32();
-            ushort[] IDs = new ushort[Count]; 
+            ushort[] IDs = new ushort[Count];
 
             for (int i = 0; i < Count; i++)
             {
-                IDs[i] = reader.ReadUInt16(); 
+                IDs[i] = reader.ReadUInt16();
             }
             for (int i = 0; i < Count; i++)
             {
                 String name = reader.ReadString0();
                 dictionary.Add(IDs[i], name);
             }
-            return dictionary; 
+            return dictionary;
         }
+
+        private Attrib VERSION2_ReadAttrib(int bytesize, int ID, FileDBDocument ParentDoc)
+        {
+            int ContentSize = FileDBDocument_V2.GetBlockSpace(bytesize);
+            var Content = reader.ReadBytes(ContentSize);
+            Array.Resize<byte>(ref Content, bytesize);
+
+            return new Attrib() { ID = ID, Bytesize = bytesize, Content = Content, ParentDoc = ParentDoc };
+        }
+
+        private Tag VERSION2_ReadTag(int ID, FileDBDocument parentDoc, Tag Parent)
+        {
+            return new Tag() { Bytesize = 0, ID = ID, ParentDoc = parentDoc, Parent = Parent };
+        }
+
+        #endregion
+
+        #region COMPRESSION_VERSION_1_SUBFUNCTIONS
+
+        private Attrib VERSION1_ReadAttrib(int ID, FileDBDocument ParentDoc)
+        {
+            var bytesize = reader.Read7BitEncodedInt();
+            byte[] Content = reader.ReadBytes(bytesize);
+
+            return new Attrib() { ID = ID, Bytesize = bytesize, Content = Content, ParentDoc = ParentDoc };
+        }
+
+        private Tag VERSION1_ReadTag(int ID, FileDBDocument parentDoc, Tag Parent)
+        {
+            return new Tag() { Bytesize = 0, ID = ID, ParentDoc = parentDoc, Parent = Parent };
+        }
+
+        private TagSection VERSION1_ReadTagSection(int TagsOffset, int AttribsOffset)
+        {
+            return new TagSection(
+                /*Tags*/    VERSION1_GetDictionary(TagsOffset),
+                /*Attribs*/ VERSION1_GetDictionary(AttribsOffset)
+            );
+        }
+
+        private Dictionary<ushort, String> VERSION1_GetDictionary(int Offset)
+        {
+            reader.BaseStream.Position = Offset;
+            Dictionary<ushort, string> dictionary = new Dictionary<ushort, string>();
+            var Count = reader.Read7BitEncodedInt();
+            for (var i = 0; i < Count; i++)
+            {
+                var name = reader.ReadString0();
+                var id = reader.ReadUInt16();
+                dictionary.Add(id, name);
+            }
+            return dictionary;
+        }
+
+
+        #endregion
+
     }
 }

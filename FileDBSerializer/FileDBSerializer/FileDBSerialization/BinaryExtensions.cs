@@ -19,5 +19,12 @@ namespace FileDBSerializing
             }
             return sb.ToString();
         }
+
+        public static void WriteString0(this BinaryWriter writer, String AsciiString)
+        {
+            Encoding e = new ASCIIEncoding();
+            writer.Write(e.GetBytes(AsciiString));
+            writer.Write((byte)0);
+        }
     }
 }

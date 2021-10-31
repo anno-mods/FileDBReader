@@ -25,7 +25,7 @@ namespace FileDBSerializing
                 //actual code
                 foreach (FileDBNode n in filedb.Roots)
                 {
-                    this.SerializeNode(n);
+                    this.VERSION2_SerializeNode(n);
                 }
                 writer.Write((Int64)0);
 
@@ -37,39 +37,68 @@ namespace FileDBSerializing
             }
         }
 
-        private void SerializeNode(FileDBNode n)
+        #endregion
+
+        #region COMPRESSION_VERSION_2_SUBFUNCTIONS
+
+        private void VERSION2_SerializeNode(FileDBNode n)
         {
             if (n is Tag)
-                SerializeTag((Tag)n);
+                VERSION2_SerializeTag((Tag)n);
             else if (n is Attrib)
-                SerializeAttrib((Attrib)n);
+                VERSION2_SerializeAttrib((Attrib)n);
             writer.Flush();
         }
 
-        private void SerializeTag(Tag t)
+        private void VERSION2_SerializeTag(Tag t)
         {
             writer.Write(t.Bytesize);
             writer.Write(t.ID);
             foreach (FileDBNode n in t.Children)
             {
-                SerializeNode(n);
+                VERSION2_SerializeNode(n);
             }
             writer.Write((Int64)0);
         }
 
-        private void SerializeAttrib(Attrib a)
+        private void VERSION2_SerializeAttrib(Attrib a)
         {
             writer.Write(a.Bytesize);
             writer.Write(a.ID);
-            writer.Write(GetAttribInBlocks(a.Content, a.Bytesize));
+            writer.Write(FileDBDocument_V2.GetBytesInBlocks(a.Content, a.Bytesize));
         }
 
-        private byte[] GetAttribInBlocks(byte[] attrib, int bytesize)
+        #endregion
+
+        #region COMPRESSION_VERSION_1_SUBFUNCTIONS
+
+        private void VERSION1_SerializeNode(FileDBNode n)
         {
-            int ContentSize = FileDBDocument.GetBlockSpace(bytesize);
-            Array.Resize<byte>(ref attrib, ContentSize);
-            return attrib; 
+            if (n is Tag)
+                VERSION1_SerializeTag((Tag)n);
+            else if (n is Attrib)
+                VERSION1_SerializeAttrib((Attrib)n);
+            writer.Flush();
         }
+
+        private void VERSION1_SerializeTag(Tag t)
+        {
+            writer.Write(t.Bytesize);
+            writer.Write(t.ID);
+            foreach (FileDBNode n in t.Children)
+            {
+                VERSION1_SerializeNode(n);
+            }
+            writer.Write((Int64)0);
+        }
+
+        private void VERSION1_SerializeAttrib(Attrib a)
+        {
+            writer.Write(a.Bytesize);
+            writer.Write(a.ID);
+            writer.Write(a.Content);
+        }
+
         #endregion
 
     }
