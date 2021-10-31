@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
+using FileDBSerializing;
+using FileDBReader.src.XmlSerialization; 
 
 namespace FileDBReader.src
 {
@@ -23,15 +25,26 @@ namespace FileDBReader.src
         private XmlExporter exporter;
         private FileWriter writer;
         private XmlInterpreter interpreter;
-        private FcFileHelper FcFileHelper; 
+        private FcFileHelper FcFileHelper;
+
+        //use new serializer options for better performance in the future
+        private FileDBDeserializer FileDBDeserializer;
+        private FileDBSerializer FileDBSerializer;
+        private FileDbXmlSerializer XmlSerializer; 
+
 
         public FileDBCompressorFunctions()
         {
             reader = new FileReader();
             exporter = new XmlExporter();
+
             writer = new FileWriter();
             interpreter = new XmlInterpreter();
             FcFileHelper = new FcFileHelper();
+
+            FileDBDeserializer = new FileDBDeserializer();
+            FileDBSerializer = new FileDBSerializer(); 
+            XmlSerializer = new FileDbXmlSerializer();
         }
 
         public int Decompress(IEnumerable<String> InputFiles, String InterpreterPath)

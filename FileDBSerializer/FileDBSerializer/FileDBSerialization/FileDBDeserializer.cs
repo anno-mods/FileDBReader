@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileDBSerializer
+namespace FileDBSerializing
 {
     public class FileDBDeserializer
     {
