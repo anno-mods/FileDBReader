@@ -7,21 +7,53 @@ using System.Runtime.InteropServices;
 
 namespace FileDBSerializing
 {
-    public class FileDBDocument
+    public interface FileDBDocument
     {
-        public List<FileDBNode> Roots = new List<FileDBNode>();
-        public TagSection Tags = new TagSection();
-        int AttribSectionOffset = 0;
-        int TagSectionOffset = 0;
+        public List<FileDBNode> Roots { get; set; }
+        public TagSection Tags { get; set; }
+        public static int OFFSET_TO_OFFSETS { get; set; }
+    }
+
+    public class FileDBDocument_V1 : FileDBDocument
+    { 
+        public List<FileDBNode> Roots { get; set; }
+        public TagSection Tags { get; set; }
+        public FileDBDocument_V1()
+        {
+            Roots = new List<FileDBNode>();
+            Tags = new TagSection(); 
+        }
+
+        new public static int OFFSET_TO_OFFSETS = 4;
+    }
+
+    public class FileDBDocument_V2 : FileDBDocument
+    {
+        public List<FileDBNode> Roots { get; set; }
+        public TagSection Tags { get; set;  }
+        public FileDBDocument_V2()
+        {
+            Roots = new List<FileDBNode>();
+            Tags = new TagSection();
+        }
+
         byte[] MagicBytes = { 0x08, 0x00, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0xFF };
 
-        public static readonly int ATTRIB_BLOCK_SIZE = 8;
-        public static readonly int OFFSET_TO_OFFSETS = 16;
+        new public static int OFFSET_TO_OFFSETS = 16;
+
+        public static int ATTRIB_BLOCK_SIZE = 8;
 
         public static int GetBlockSpace(int bytesize)
         {
-            return ((bytesize / FileDBDocument.ATTRIB_BLOCK_SIZE) * FileDBDocument.ATTRIB_BLOCK_SIZE + FileDBDocument.ATTRIB_BLOCK_SIZE * Math.Clamp(bytesize % FileDBDocument.ATTRIB_BLOCK_SIZE, 0, 1));
+            return ((bytesize / FileDBDocument_V2.ATTRIB_BLOCK_SIZE) * FileDBDocument_V2.ATTRIB_BLOCK_SIZE + FileDBDocument_V2.ATTRIB_BLOCK_SIZE * Math.Clamp(bytesize % FileDBDocument_V2.ATTRIB_BLOCK_SIZE, 0, 1));
         }
+        public static byte[] GetBytesInBlocks(byte[] attrib, int bytesize)
+        {
+            int ContentSize = GetBlockSpace(bytesize);
+            Array.Resize<byte>(ref attrib, ContentSize);
+            return attrib;
+        }
+
     }
 
     public class TagSection
@@ -70,7 +102,15 @@ namespace FileDBSerializing
 
     public class Attrib : FileDBNode
     {
-        public byte[] Content;
+        public byte[] Content
+        {
+            get { return Content; }
+            set 
+            { 
+                Content = value;
+                Bytesize = Content.Length;
+            } 
+        }
         public override String GetID()
         {
             if (ParentDoc.Tags.Attribs.TryGetValue((ushort)ID, out string value))
