@@ -31,7 +31,7 @@ jobs:
     - name: Publish
       run: dotnet publish -c Release -o Build
 
-    - name: Upload a Build Artifact
+    - name: Upload FileDBReader
       uses: actions/upload-artifact@v2.2.4
       with:
     # Artifact name
@@ -44,4 +44,13 @@ jobs:
           Build/FileDBReader.runtimeconfig.json
           Build/FileDBReader.deps.json
           Build/ICSharpCode.SharpZipLib.dll
+          Build/FileDBSerializer.dll
+    
+    - name: Upload FileDBSerializer
+      uses: actions/upload-artifact@v2.2.4
+      with:
+    # Artifact name
+        name: FileDBSerializer
+        path: |
+          Build/FileDBSerializer.dll
         
