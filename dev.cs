@@ -31,7 +31,7 @@ namespace FileDBReader
         public static void Main(String[] args)
         {
             FileDBDeserializer doc = new FileDBDeserializer(); 
-            var d = doc.Deserialize("dev_files/infotip/export.bin");
+            var d = doc.VERSION2_Deserialize("dev_files/infotip/export.bin");
             //FileDBSerializer serializer = new FileDBSerializer();
             //serializer.Serialize(d);
 
