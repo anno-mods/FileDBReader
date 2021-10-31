@@ -15,8 +15,8 @@ namespace FileDBSerializer
         int TagSectionOffset = 0;
         byte[] MagicBytes = { 0x08, 0x00, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0xFF };
 
-        public static int ATTRIB_BLOCK_SIZE = 8;
-        public static int OFFSET_TO_OFFSETS = 16;
+        public static readonly int ATTRIB_BLOCK_SIZE = 8;
+        public static readonly int OFFSET_TO_OFFSETS = 16;
 
         public static int GetBlockSpace(int bytesize)
         {
