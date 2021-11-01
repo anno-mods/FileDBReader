@@ -63,8 +63,11 @@ namespace FileDBReader.src.XmlSerialization
         {
             String Name = a.GetID();
             var node = doc.CreateElement(Name);
-            node.InnerText = HexHelper.ByteArrayToString(a.Content);
-            return node; 
+            using (XmlWriter writer = node.CreateNavigator().AppendChild())
+            {
+                writer.WriteBinHex(a.Content, 0, a.Bytesize);
+            }
+            return node;
         }
 
     }

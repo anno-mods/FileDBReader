@@ -27,7 +27,7 @@ namespace FileDBSerializing
             }
         }
 
-        new public static int OFFSET_TO_OFFSETS = 4;
+        public static int OFFSET_TO_OFFSETS = 4;
 
         //CONSTRUCTORS
         public FileDBDocument_V1()
@@ -53,7 +53,7 @@ namespace FileDBSerializing
 
         byte[] MagicBytes = { 0x08, 0x00, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0xFF };
 
-        new public static int OFFSET_TO_OFFSETS = 16;
+        public static int OFFSET_TO_OFFSETS = 16;
 
         public static int ATTRIB_BLOCK_SIZE = 8;
 

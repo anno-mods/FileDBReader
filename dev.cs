@@ -35,7 +35,9 @@ namespace FileDBReader
             FileDBSerializer serializer = new FileDBSerializer();
             serializer.Serialize(d);
 
-        }
+            FileDbXmlSerializer xml = new FileDbXmlSerializer();
+            xml.ToXml(d).Save("shit.xml");
+        ;}
 
         #region GenericTestFcFile
 
