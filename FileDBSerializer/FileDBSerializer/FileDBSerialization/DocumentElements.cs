@@ -38,8 +38,6 @@ namespace FileDBSerializing
         internal static int _offset_to_offsets = 4;
 
         internal static byte[] _magic_bytes = new byte[0]; 
-        
-        internal static Type ID_TYPE = typeof(ushort);
 
         //CONSTRUCTORS
         public FileDBDocument_V1()
@@ -74,8 +72,6 @@ namespace FileDBSerializing
         internal static byte[] _magic_bytes = { 0x08, 0x00, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0xFF };
 
         internal static int _magic_byte_count = _magic_bytes.Length;
-
-        internal static Type ID_TYPE = typeof(uint);
 
         //CONSTRUCTORS
         public FileDBDocument_V2()
@@ -142,7 +138,6 @@ namespace FileDBSerializing
     {
         public List<FileDBNode> Children = new List<FileDBNode>();
         //we are only allowed to get bytesize because it is needed when writing. Otherwise, bytesize for tags is always 0!
-        new public int Bytesize { get; }
         public int ChildCount
         {
             get

@@ -9,7 +9,7 @@ namespace FileDBSerializing
 {
     public static class VersionDetector
     {
-        public static int GetCompressionVersion(FileStream fs)
+        public static int GetCompressionVersion(Stream fs)
         {
             int magicByteSize = FileDBDocument_V2._magic_byte_count;
             //check for version 2
