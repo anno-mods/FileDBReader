@@ -39,6 +39,22 @@ namespace FileDBReader_Tests
             var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
             Assert.IsTrue(reader.CheckFileVersion(STRING_PATH) == 2);
         }
+
+        [TestMethod, TestCategory("version")]
+        public void Detects_Version1_Ser()
+        {
+            String INPUT_FILENAME = "version1.tmc";
+            var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
+            Assert.IsTrue(FileDBSerializing.VersionDetector.GetCompressionVersion(File.OpenRead(STRING_PATH)) == 1);
+        }
+
+        [TestMethod, TestCategory("version")]
+        public void Detects_Version2_ser()
+        {
+            String INPUT_FILENAME = "version2.bin";
+            var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
+            Assert.IsTrue(FileDBSerializing.VersionDetector.GetCompressionVersion(File.OpenRead(STRING_PATH)) == 2);
+        }
         #endregion
 
         //----------------------------#######-------------------------------------//

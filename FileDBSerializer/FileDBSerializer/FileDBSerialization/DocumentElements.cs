@@ -1,39 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace FileDBSerializing
 {
-
+    public enum FileDBNodeType { Tag, Attrib }
     public interface FileDBDocument
     {
         public List<FileDBNode> Roots { get; set; }
-        public int ElementCount { get; }
         public TagSection Tags { get; set; }
-        public static int OFFSET_TO_OFFSETS { get; set; }
+        public int ELEMENT_COUNT { get; }
+        public int VERSION { get; }
+        public int OFFSET_TO_OFFSETS { get; }
+        public byte[] MAGIC_BYTES { get; }
+        public int MAGIC_BYTE_COUNT { get; }
     }
+
     [DebuggerDisplay("[FileDB_Document: Version = 1, Count = {ElementCount}]")]
     public class FileDBDocument_V1 : FileDBDocument
     { 
-        //FIELDS
+        //PUBLIC MEMBERS
         public List<FileDBNode> Roots { get; set; }
         public TagSection Tags { get; set; }
 
-        public int ElementCount
-        {
-            get
-            {
-                return Roots.Count;
-            }
-        }
+        public int ELEMENT_COUNT { get => Roots.Count; }
 
-        public static int OFFSET_TO_OFFSETS = 4;
+        public byte[] MAGIC_BYTES { get => _magic_bytes; }
+
+        //Version 1 does not have magic bytes, so MAGIC_BYTE_COUNT is automatically 0!
+        public int MAGIC_BYTE_COUNT { get => 0; }
+        public int VERSION { get; }
+        public int OFFSET_TO_OFFSETS { get => _offset_to_offsets; }
+
+        //INTERNAL MEMBERS
+
+        internal static int _offset_to_offsets = 4;
+
+        internal static byte[] _magic_bytes = new byte[0]; 
+        
+        internal static Type ID_TYPE = typeof(ushort);
 
         //CONSTRUCTORS
         public FileDBDocument_V1()
         {
             Roots = new List<FileDBNode>();
             Tags = new TagSection();
+            VERSION = 1; 
+        }
+        public static Int16 GetNodeTerminator()
+        {
+            return (Int16)0;
         }
     }
     [DebuggerDisplay("[FileDB_Document: Version = 2, Count = {ElementCount}]")]
@@ -41,27 +58,31 @@ namespace FileDBSerializing
     {
         //FIELDS 
         public List<FileDBNode> Roots { get; set; }
-        public TagSection Tags { get; set;  }
+        public TagSection Tags { get; set; }
+        public int ELEMENT_COUNT { get => Roots.Count; }
+        public int VERSION { get; }
+        public byte[] MAGIC_BYTES { get => _magic_bytes; }
+        public int MAGIC_BYTE_COUNT { get => _magic_byte_count; }
+        public int OFFSET_TO_OFFSETS { get => _offset_to_offsets; }
 
-        public int ElementCount
-        {
-            get
-            {
-                return Roots.Count;
-            }
-        }
+        //INTERNAL MEMBERS: Just for Binding the public ones.
 
-        byte[] MagicBytes = { 0x08, 0x00, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0xFF };
+        internal static int ATTRIB_BLOCK_SIZE = 8;
 
-        public static int OFFSET_TO_OFFSETS = 16;
+        internal static int _offset_to_offsets = 16;
 
-        public static int ATTRIB_BLOCK_SIZE = 8;
+        internal static byte[] _magic_bytes = { 0x08, 0x00, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0xFF };
+
+        internal static int _magic_byte_count = _magic_bytes.Length;
+
+        internal static Type ID_TYPE = typeof(uint);
 
         //CONSTRUCTORS
         public FileDBDocument_V2()
         {
             Roots = new List<FileDBNode>();
             Tags = new TagSection();
+            VERSION = 2;
         }
 
         //STATIC FUNCTIONS
@@ -74,6 +95,11 @@ namespace FileDBSerializing
             int ContentSize = GetBlockSpace(bytesize);
             Array.Resize<byte>(ref attrib, ContentSize);
             return attrib;
+        }
+
+        public static Int64 GetNodeTerminator()
+        {
+            return (Int64)0;
         }
 
     }
@@ -107,6 +133,7 @@ namespace FileDBSerializing
         public int Bytesize = 0;
         public int ID = -1;
 
+        public FileDBNodeType NodeType; 
         public abstract String GetID();
     }
 
@@ -126,7 +153,8 @@ namespace FileDBSerializing
 
         public Tag()
         {
-            Bytesize = 0; 
+            Bytesize = 0;
+            NodeType = FileDBNodeType.Tag;
         }
 
         public override String GetID()
@@ -154,11 +182,20 @@ namespace FileDBSerializing
                 return _content;
             }
         }
+        public Attrib()
+        {
+            NodeType = FileDBNodeType.Attrib;
+        }
         public override String GetID()
         {
             if (ParentDoc.Tags.Attribs.TryGetValue((ushort)ID, out string value))
                 return value;
             else return "a_" + ID; 
+        }
+
+        public MemoryStream ContentToStream()
+        {
+            return new MemoryStream(Content);
         }
     }
 }

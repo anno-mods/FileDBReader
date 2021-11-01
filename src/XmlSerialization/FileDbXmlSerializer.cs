@@ -36,9 +36,9 @@ namespace FileDBReader.src.XmlSerialization
         private FileDBNode DeserializeFileDBNode<T>(ref T filedb, XmlNode n, Tag parent) where T : FileDBDocument
         {
             if (n.NodeType == XmlNodeType.Text)
-                return DeserializeAttrib(ref filedb, n, parent);
+                return DeserializeAttrib<T>(ref filedb, n, parent);
             else
-                return DeserializeTag(ref filedb, n, parent);
+                return DeserializeTag<T>(ref filedb, n, parent);
         }
 
         private Attrib DeserializeAttrib<T>(ref T filedb, XmlNode n, Tag parent) where T : FileDBDocument
@@ -87,9 +87,9 @@ namespace FileDBReader.src.XmlSerialization
 
         private XmlNode SerializeFileDBNode(ref XmlDocument doc, FileDBNode n)
         {
-            if (n is Attrib)
+            if (n.NodeType == FileDBNodeType.Attrib)
                 return AttribToXmlNode(ref doc, (Attrib)n);
-            else if (n is Tag)
+            else if (n.NodeType == FileDBNodeType.Tag)
                 return TagToXmlNode(ref doc, (Tag)n);
             throw new Exception(); 
         }

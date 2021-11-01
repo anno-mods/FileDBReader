@@ -13,39 +13,97 @@ namespace FileDBSerializing
         private BinaryWriter writer;
 
         #region serialize
-        public MemoryStream Serialize(FileDBDocument filedb)
+        /// <summary>
+        /// Serializes a FileDBDocument to a Stream.
+        /// </summary>
+        /// <param name="filedb"></param>
+        /// <param name="s">The Stream that should be serialized to.</param>
+        /// <returns>the UNCLOSED Stream that contains a serialized version of the document</returns>
+        public Stream Serialize (FileDBDocument filedb, Stream s)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            using (MemoryStream ms = new MemoryStream())
+            writer = new BinaryWriter(s);
+
+            if (filedb.VERSION == 2)
             {
-                writer = new BinaryWriter(ms);
-
-                //actual code
                 VERSION2_SerializeCollection(filedb.Roots);
-                
-                //(todo) serialize tag section
-
-                stopWatch.Stop();
-                Console.WriteLine("FILEDB Serialization took: " + stopWatch.Elapsed.TotalMilliseconds);
-                
-                return ms;
+                VERSION2_SerializeTagSection(filedb.Tags);
+                writer.Write(FileDBDocument_V2._magic_bytes);
+                writer.Flush(); 
             }
+            else if (filedb.VERSION == 1)
+            {
+                VERSION1_SerializeCollection(filedb.Roots);
+            }
+            s.Position = 0;
+
+            stopWatch.Stop();
+            Console.WriteLine("FILEDB Serialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
+
+            
+            return s;
         }
 
         #endregion
 
         #region COMPRESSION_VERSION_2_SUBFUNCTIONS
 
+        
+        private void VERSION2_SerializeTagSection(TagSection t)
+        {
+            //remove None Tags
+            t.Tags.Remove(1);
+            t.Attribs.Remove(32768);
+
+            int TagsOffset = VERSION2_SerializeDictionary(t.Tags);
+            int AttribsOffset = VERSION2_SerializeDictionary(t.Attribs);
+            writer.Write(TagsOffset);
+            writer.Write(AttribsOffset);
+            writer.Flush();
+
+            //readd None Tags
+            t.Tags.Add(1, "None");
+            t.Attribs.Add(32768, "None");
+        }
+
+        /// <summary>
+        /// Serializes a dictionary 
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns>The in file offset to the tag section </returns>
+        private int VERSION2_SerializeDictionary(Dictionary<ushort, String> dict)
+        {
+            int Offset = (int)writer.BaseStream.Position;
+            writer.Write(dict.Count);
+            int bytesWritten = 4;
+            foreach (KeyValuePair<ushort, String> k in dict)
+            {
+                writer.Write(k.Key);
+                bytesWritten += 2; 
+            }
+            foreach (KeyValuePair<ushort, String> k in dict)
+            {
+                bytesWritten += writer.WriteString0(k.Value);
+            }
+
+            //fill each dictionary size up to a multiple of 8.
+            int ToWrite = FileDBDocument_V2.GetBlockSpace(bytesWritten) - bytesWritten;
+            var AddBytes = new byte[ToWrite];
+            writer.Write(AddBytes);
+            writer.Flush(); 
+            return Offset; 
+        }
+
         private void VERSION2_SerializeNode(FileDBNode n)
         {
             writer.Write(n.Bytesize);
             writer.Write(n.ID);
 
-            if (n is Tag)
+            if (n.NodeType == FileDBNodeType.Tag)
                 VERSION2_SerializeTag((Tag)n);
-            else if (n is Attrib)
+            else if (n.NodeType == FileDBNodeType.Attrib)
                 VERSION2_SerializeAttrib((Attrib)n);
             writer.Flush();
         }
@@ -61,7 +119,7 @@ namespace FileDBSerializing
             {
                 VERSION2_SerializeNode(n);
             }
-            writer.Write((Int64)0);
+            writer.Write(FileDBDocument_V2.GetNodeTerminator());
         }
 
         private void VERSION2_SerializeAttrib(Attrib a)
@@ -93,7 +151,7 @@ namespace FileDBSerializing
             {
                 VERSION1_SerializeNode(n);
             }
-            writer.Write((Int16)0);
+            writer.Write( FileDBDocument_V2.GetNodeTerminator());
         }
 
         private void VERSION1_SerializeAttrib(Attrib a)
