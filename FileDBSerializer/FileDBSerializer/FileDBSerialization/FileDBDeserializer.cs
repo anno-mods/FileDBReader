@@ -90,21 +90,95 @@ namespace FileDBSerializing
             return filedb;
         }
 
-        #region VERSION_SPECIFIC
+        #region ParentFunctions
+        /// <summary>
+        /// Reads the Next Operation from the Reader and advances its position.
+        /// </summary>
+        /// <param name="bytesize">out bytesize of the next element: in case of tags and terminators, this is 0</param>
+        /// <param name="id">out id of the next element.</param>
+        /// <returns>
+        /// 
+        /// An element of the States enum that describes what the next element is logically. 
+        /// 
+        /// Tag -> Node that contains other nodes.
+        /// Attrib -> Node that contains content data.
+        /// Terminator -> closes the current Tag.
+        /// 
+        /// </returns>
 
         private States ReadOperation(out int bytesize, out int id)
         {
-            if (filedb.VERSION == 2)
+            switch (filedb.VERSION)
             {
-                return ReadOperation_VERSION2(out bytesize, out id);
+                case 1:
+                    return ReadOperation_VERSION1(out bytesize, out id);
+                case 2:
+                    return ReadOperation_VERSION2(out bytesize, out id);
+                default:
+                    throw new InvalidFileDBException(message: "Unknown FileDB Compression Version");
             }
-            else if (filedb.VERSION == 1)
-            {
-                return ReadOperation_VERSION1(out bytesize, out id); 
-            }
-            //we should not get here
-            throw new InvalidFileDBException(); 
         }
+
+        private Attrib ReadAttrib(int bytesize, int ID)
+        {
+            byte[] Content;
+            switch (filedb.VERSION)
+            {
+                case 1:
+                    Content = ReadAttribContent_VERSION1(bytesize, ID);
+                    break;
+                case 2:
+                    Content = ReadAttribContent_VERSION2(bytesize, ID);
+                    break;
+                default:
+                    throw new InvalidFileDBException(message: "Unknown FileDB Document Version");
+            }
+            return new Attrib() { ID = ID, Bytesize = bytesize, Content = Content, ParentDoc = filedb };
+        }
+
+        private Tag ReadTag(int ID, Tag Parent)
+        {
+            return new Tag() { ID = ID, ParentDoc = filedb, Parent = Parent };
+        }
+
+        private TagSection ReadTagSection()
+        {
+            reader.SetPosition(reader.BaseStream.Length - filedb.OFFSET_TO_OFFSETS);
+            switch (filedb.VERSION)
+            {
+                case 1:
+                    int TagsOffset = reader.ReadInt32();
+                    var Tags = GetDictionary_VERSION1(TagsOffset);
+                    int AttribOffset = (int)reader.Position();
+                    var Attribs = GetDictionary_VERSION1(AttribOffset);
+                    return new TagSection() { Tags = Tags, Attribs = Attribs };
+                case 2:
+                    int TagsOff2 = reader.ReadInt32();
+                    int AttribsOffset = reader.ReadInt32();
+                    return new TagSection(
+                        /*Tags*/    GetDictionary_VERSION2(TagsOff2),
+                        /*Attribs*/ GetDictionary_VERSION2(AttribsOffset)
+                    );
+                default:
+                    throw new InvalidFileDBException();
+            }
+        }
+        #endregion
+
+        #region VERSION_SPECIFIC
+
+        private byte[] ReadAttribContent_VERSION1(int bytesize, int ID)
+        {
+            return reader.ReadBytes(bytesize);
+        }
+        private byte[] ReadAttribContent_VERSION2(int bytesize, int ID)
+        {
+            int ContentSize = FileDBDocument_V2.GetBlockSpace(bytesize);
+            byte[] Content = reader.ReadBytes(ContentSize);
+            Array.Resize<byte>(ref Content, bytesize);
+            return Content;
+        }
+
 
         private States ReadOperation_VERSION2(out int _bytesize, out int _id)
         {
@@ -147,29 +221,6 @@ namespace FileDBSerializing
             return States.Undefined;
         }
 
-        private TagSection ReadTagSection()
-        {
-            reader.SetPosition(reader.BaseStream.Length - filedb.OFFSET_TO_OFFSETS);
-            if (filedb.VERSION == 2)
-            {
-                int TagsOffset = reader.ReadInt32();
-                int AttribsOffset = reader.ReadInt32();
-                return new TagSection(
-                    /*Tags*/    GetDictionary_VERSION2(TagsOffset),
-                    /*Attribs*/ GetDictionary_VERSION2(AttribsOffset)
-                );
-            }
-            else if (filedb.VERSION == 1)
-            {
-                int TagsOffset = reader.ReadInt32();
-                var Tags = GetDictionary_VERSION1(TagsOffset);
-                int AttribOffset = (int)reader.Position();
-                var Attribs = GetDictionary_VERSION1(AttribOffset);
-                return new TagSection() { Tags = Tags, Attribs = Attribs };
-            }
-            throw new InvalidFileDBException();
-        }
-
         private Dictionary<ushort, String> GetDictionary_VERSION1(int Offset)
         {
             throw new NotImplementedException();
@@ -198,19 +249,6 @@ namespace FileDBSerializing
         #endregion 
 
 
-        private Attrib ReadAttrib(int bytesize, int ID)
-        {
-            int ContentSize = FileDBDocument_V2.GetBlockSpace(bytesize);
-            var Content = reader.ReadBytes(ContentSize);
-            Array.Resize<byte>(ref Content, bytesize);
-
-            return new Attrib() { ID = ID, Bytesize = bytesize, Content = Content, ParentDoc = filedb };
-        }
-
-        private Tag ReadTag(int ID, Tag Parent)
-        {
-            return new Tag() { ID = ID, ParentDoc = filedb, Parent = Parent };
-        }
     }
 
 }

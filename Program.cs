@@ -105,7 +105,7 @@ namespace FileDBReader {
             public int CompressionVersion { get; set; }
         }
         [Obsolete("recompress_export has been merged with the verb recompress")]
-        [Verb("recompress_export", HelpText = "DEPRACATED, WILL BE REMOVED IN THE FUTURE. reimport an xml file to filedb. An interpreter file is needed")]
+        [Verb("recompress_export", HelpText = "DEPRACATED. reimport an xml file to filedb. An interpreter file is needed")]
         class Recompress_Export_Options
         {
             [Option('f', "file", Required = true, HelpText = "input files")]
