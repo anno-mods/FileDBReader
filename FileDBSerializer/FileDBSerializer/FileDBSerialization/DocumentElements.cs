@@ -17,7 +17,7 @@ namespace FileDBSerializing
         public int MAGIC_BYTE_COUNT { get; }
     }
 
-    [DebuggerDisplay("[FileDB_Document: Version = 1, Count = {ElementCount}]")]
+    [DebuggerDisplay("[FileDB_Document: Version = 1, Count = {ELEMENT_COUNT}]")]
     public class FileDBDocument_V1 : FileDBDocument
     { 
         //PUBLIC MEMBERS
@@ -51,7 +51,7 @@ namespace FileDBSerializing
             return (Int16)0;
         }
     }
-    [DebuggerDisplay("[FileDB_Document: Version = 2, Count = {ElementCount}]")]
+    [DebuggerDisplay("[FileDB_Document: Version = 2, Count = {ELEMENT_COUNT}]")]
     public class FileDBDocument_V2 : FileDBDocument
     {
         //FIELDS 

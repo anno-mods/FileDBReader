@@ -142,6 +142,7 @@ namespace FileDBSerializing
 
         private void VERSION1_SerializeNode(FileDBNode n)
         {
+            writer.Write((ushort)n.ID);
             if (n is Tag)
                 VERSION1_SerializeTag((Tag)n);
             else if (n is Attrib)
@@ -160,12 +161,11 @@ namespace FileDBSerializing
             {
                 VERSION1_SerializeNode(n);
             }
-            writer.Write( FileDBDocument_V2.GetNodeTerminator());
+            writer.Write( FileDBDocument_V1.GetNodeTerminator());
         }
 
         private void VERSION1_SerializeAttrib(Attrib a)
         {
-            writer.Write((ushort)a.ID);
             writer.Write7BitEncodedInt(a.Bytesize);
             writer.Write(a.Content);
         }
