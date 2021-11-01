@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FileDBSerializing
 {
-    class InvalidFileDBException : Exception
+    public class InvalidFileDBException : Exception
     {
         public InvalidFileDBException()
         { }

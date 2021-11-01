@@ -43,52 +43,49 @@ namespace FileDBSerializing
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            using (reader = new BinaryReader(s))
+            reader = new BinaryReader(s);
+            filedb = new T();
+            int CurrentLevel = 0;
+            Tag CurrentTag = null;
+
+            //at the end of the DOM section, there is an additional closing tag. This means we will end up with CurrentLevel = -1; 
+            while (CurrentLevel >= 0)
             {
-                filedb = new T();
-                int CurrentLevel = 0;
-                Tag CurrentTag = null;
+                int bytesize, ID;
+                States State = ReadOperation(out bytesize, out ID);
 
-                //at the end of the DOM section, there is an additional closing tag. This means we will end up with CurrentLevel = -1; 
-                while (CurrentLevel >= 0)
+                switch (State)
                 {
-                    int bytesize, ID;
-                    States State = ReadOperation(out bytesize, out ID);
+                    case States.Attrib:
+                        var attrib = ReadAttrib(bytesize, ID);
+                        if (CurrentLevel > 0)
+                            CurrentTag.Children.Add(attrib);
+                        else
+                            filedb.Roots.Add(attrib);
+                        break;
+                    case States.Tag:
+                        //Create a new tag;
+                        var Tag = ReadTag(ID, CurrentTag);
+                        if (CurrentLevel > 0)
+                            CurrentTag.Children.Add(Tag);
+                        else
+                            filedb.Roots.Add(Tag);
 
-                    switch (State)
-                    {
-                        case States.Attrib:
-                            var attrib = ReadAttrib(bytesize, ID);
-                            if (CurrentLevel > 0)
-                                CurrentTag.Children.Add(attrib);
-                            else
-                                filedb.Roots.Add(attrib);
-                            break;
-                        case States.Tag:
-                            //Create a new tag;
-                            var Tag = ReadTag(ID, CurrentTag);
-                            if (CurrentLevel > 0)
-                                CurrentTag.Children.Add(Tag);
-                            else
-                                filedb.Roots.Add(Tag);
-
-                            CurrentTag = Tag;
-                            CurrentLevel++;
-                            break;
-                        case States.Terminator:
-                            if (CurrentLevel-- > 0)
-                                CurrentTag = CurrentTag.Parent;
-                            else CurrentTag = null;
-                            break;
-                        default:
-                            throw new InvalidFileDBException();
-                    }
+                        CurrentTag = Tag;
+                        CurrentLevel++;
+                        break;
+                    case States.Terminator:
+                        if (CurrentLevel-- > 0)
+                            CurrentTag = CurrentTag.Parent;
+                        else CurrentTag = null;
+                        break;
+                    default:
+                        throw new InvalidFileDBException();
                 }
-
-                //init tag section
-                TagSection t = ReadTagSection();
-                filedb.Tags = t;
             }
+            //init tag section
+            TagSection t = ReadTagSection();
+            filedb.Tags = t;
 
             stopWatch.Stop();
             Console.WriteLine("FILEDB Deserialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
@@ -226,7 +223,17 @@ namespace FileDBSerializing
 
         private Dictionary<ushort, String> GetDictionary_VERSION1(int Offset)
         {
-            throw new NotImplementedException();
+            reader.BaseStream.Position = Offset;
+            Dictionary<ushort, String> dictionary = new Dictionary<ushort, String>();
+
+            int Count = reader.Read7BitEncodedInt();
+            for (int i = 0; i < Count; i++)
+            {
+                String Name = reader.ReadString0();
+                var id = reader.ReadUInt16();
+                dictionary.Add(id, Name);
+            }
+            return dictionary;
         }
 
         private Dictionary<ushort, String> GetDictionary_VERSION2(int Offset)

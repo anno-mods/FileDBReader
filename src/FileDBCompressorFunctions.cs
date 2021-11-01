@@ -21,9 +21,9 @@ namespace FileDBReader.src
         private static readonly String IOErrorMessage = "File Path wrong, File in use or does not exist.";
 
         //tools
-        private FileReader reader;
+        private Reader reader;
         private XmlExporter exporter;
-        private FileWriter writer;
+        private Writer writer;
         private XmlInterpreter interpreter;
         private FcFileHelper FcFileHelper;
 
@@ -35,10 +35,10 @@ namespace FileDBReader.src
 
         public FileDBCompressorFunctions()
         {
-            reader = new FileReader();
+            reader = new Reader();
             exporter = new XmlExporter();
 
-            writer = new FileWriter();
+            writer = new Writer();
             interpreter = new XmlInterpreter();
             FcFileHelper = new FcFileHelper();
 
@@ -60,7 +60,12 @@ namespace FileDBReader.src
 
             foreach (String s in InputFiles)
             {
-                var result = reader.ReadFile(s);
+                XmlDocument result;
+                using (FileStream fs = File.OpenRead(s))
+                {
+                    result = reader.Read(fs);
+                }
+                    
                 if (InterpreterPath != null)
                 {
                     try
@@ -105,7 +110,10 @@ namespace FileDBReader.src
                         var doc = new XmlDocument();
                         doc.Load(s);
                         var result = exporter.Export(doc, Interpr);
-                        writer.Export(result, ext, s, CompressionVersion);
+                        using (FileStream fs = File.Create( Path.ChangeExtension(s, OutputFileExtension)))
+                        {
+                            writer.Write(result, fs, CompressionVersion);
+                        }
                     }
                     catch (IOException ex)
                     {
@@ -115,7 +123,12 @@ namespace FileDBReader.src
                 }
                 else
                 {
-                    writer.Export(s, ext, CompressionVersion);
+                    using (FileStream fs = File.Create(Path.ChangeExtension(s, OutputFileExtension)))
+                    {
+                        var result = new XmlDocument();
+                        result.Load(s);
+                        writer.Write(result, fs, CompressionVersion);
+                    }
                 }
             }
             return returncode;
@@ -185,7 +198,11 @@ namespace FileDBReader.src
             {
                 try
                 {
-                    Console.WriteLine("{0} uses Compression Version {1}", s, reader.CheckFileVersion(s));
+                    using (FileStream fs = File.OpenRead(s))
+                    {
+                        Console.WriteLine("{0} uses Compression Version {1}", s, VersionDetector.GetCompressionVersion(fs));
+                    }
+
                 }
                 catch (IOException ex)
                 {

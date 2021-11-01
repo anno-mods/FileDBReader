@@ -15,9 +15,9 @@ namespace FileDBReader_Tests
     public class FileConversionTests
     {
         //FileDB
-        static FileReader reader = new FileReader();
+        static Reader reader = new Reader();
         static XmlExporter exporter = new XmlExporter();
-        static FileWriter writer = new FileWriter();
+        static Writer writer = new Writer();
         static XmlInterpreter interpreter = new XmlInterpreter();
 
         //Fc Files
@@ -29,27 +29,11 @@ namespace FileDBReader_Tests
         {
             String INPUT_FILENAME = "version1.tmc";
             var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
-            Assert.IsTrue(reader.CheckFileVersion(STRING_PATH) == 1);
-        }
-
-        [TestMethod, TestCategory("version")]
-        public void Detects_Version2()
-        {
-            String INPUT_FILENAME = "version2.bin";
-            var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
-            Assert.IsTrue(reader.CheckFileVersion(STRING_PATH) == 2);
-        }
-
-        [TestMethod, TestCategory("version")]
-        public void Detects_Version1_Ser()
-        {
-            String INPUT_FILENAME = "version1.tmc";
-            var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
             Assert.IsTrue(FileDBSerializing.VersionDetector.GetCompressionVersion(File.OpenRead(STRING_PATH)) == 1);
         }
 
         [TestMethod, TestCategory("version")]
-        public void Detects_Version2_ser()
+        public void Detects_Version2()
         {
             String INPUT_FILENAME = "version2.bin";
             var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
@@ -174,17 +158,21 @@ namespace FileDBReader_Tests
         /// <param name="FileIn"></param>
         /// <param name="FileRecompressed"></param>
         /// <returns></returns>
+
+        //this will likely return a big NO after we basically rewrote the entire application routine. 
+
+        //At this point, its likely we need new unit test files.
         public bool Test_DecompressAndRecompress(String UnittestSubdir, String FileIn, String ExpectedResult, int CompressionVersion)
         {
             var COMPARE_EXPECTED_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UnittestSubdir, ExpectedResult);
             var INPUT_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UnittestSubdir, FileIn);
             
-            var decompressed = reader.ReadFile(INPUT_PATH);
+            var decompressed = reader.Read(File.OpenRead(INPUT_PATH));
 
             using (MemoryStream result = new MemoryStream())
-            using (FileStream expected = File.OpenRead(COMPARE_EXPECTED_PATH))
+            using (FileStream expected = File.OpenRead( COMPARE_EXPECTED_PATH ))
             {
-                var recompressed = writer.Export(decompressed, result, CompressionVersion);
+                var recompressed = writer.Write(decompressed, result, CompressionVersion);
                 return StreamsAreEqual(result, expected);
             }
         }
@@ -223,10 +211,10 @@ namespace FileDBReader_Tests
             var COMPARE_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UnittestSubdir, ExpectedResult);
             var INPUT_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UnittestSubdir, FileIn);
 
-            var decompressed = reader.ReadFile(INPUT_PATH);
+            var decompressed = reader.Read( File.OpenRead( INPUT_PATH ) );
             decompressedResult = decompressed;
             using (MemoryStream ms = new MemoryStream())
-            using (FileStream expected = File.OpenRead(COMPARE_PATH))
+            using (FileStream expected = File.OpenRead( COMPARE_PATH ))
             {
                 decompressed.Save(ms);
                 return StreamsAreEqual(ms, expected);
@@ -274,7 +262,7 @@ namespace FileDBReader_Tests
             using (MemoryStream TargetStream = new MemoryStream())
             using (FileStream expected = File.OpenRead(FileRecompressed))
             {
-                writer.Export(Reinterpreted, TargetStream, CompressionVersion);
+                writer.Write(Reinterpreted, TargetStream, CompressionVersion);
                 return StreamsAreEqual(TargetStream, expected);
             }
         }

@@ -13,10 +13,10 @@ namespace FileDBSerializing
     {
         /*
          * ///------------------################----------------------///
-         * This deserializer holds an Instance of BinaryReader and FileDBDocument.
-         * with each call of Deserialize<typeparamref name="T"/>(Stream s), those variables are newly initialized with fresh BinaryReader and FileDBDocument
+         * This deserializer holds an Instance of BinaryWriter
+         * with each call of Serialize, those variable is newly initialized with a fresh BinaryReader
          * 
-         * Modifying those variables outside of the intended deserializing functions will break the entire deserializer. 
+         * Modifying this variable outside of the intended serializing functions will break the entire serializer. 
          * 
          * ///------------------################----------------------///
          */
@@ -35,23 +35,21 @@ namespace FileDBSerializing
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            using (writer = new BinaryWriter(s))
+            writer = new BinaryWriter(s);
+            if (filedb.VERSION == 2)
             {
-                if (filedb.VERSION == 2)
-                {
-                    VERSION2_SerializeCollection(filedb.Roots);
-                    VERSION2_SerializeTagSection(filedb.Tags);
-                    writer.Write(FileDBDocument_V2._magic_bytes);
-                    writer.Flush();
-                }
-                else if (filedb.VERSION == 1)
-                {
-                    VERSION1_SerializeCollection(filedb.Roots);
-                    VERSION1_SerializeTagSection(filedb.Tags);
-                    writer.Flush();
-                }
-                s.Position = 0;
+                VERSION2_SerializeCollection(filedb.Roots);
+                VERSION2_SerializeTagSection(filedb.Tags);
+                writer.Write(FileDBDocument_V2._magic_bytes);
+                writer.Flush();
             }
+            else if (filedb.VERSION == 1)
+            {
+                VERSION1_SerializeCollection(filedb.Roots);
+                VERSION1_SerializeTagSection(filedb.Tags);
+                writer.Flush();
+            }
+            s.Position = 0;
             stopWatch.Stop();
             Console.WriteLine("FILEDB Serialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
             return s;

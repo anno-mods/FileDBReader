@@ -30,8 +30,8 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            var deserializer = new FileDBDeserializer<FileDBDocument_V2>();
-            var V2Document = deserializer.Deserialize("file.db");
+            var deserializer = new FileDBDeserializer<FileDBDocument_V1>();
+            var V2Document = deserializer.Deserialize("dev_files/island/0x0.tmc");
 
             FileDBSerializer serializer = new FileDBSerializer();
             var outstream = serializer.Serialize(V2Document, new MemoryStream());

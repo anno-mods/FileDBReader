@@ -29,7 +29,6 @@ namespace FileDBReader
 
         }
 
-
         public XmlDocument ReadFcFile(String Filename)
         {
             return StreamToXmlFile(ConvertFile(File.OpenRead(Filename), ConversionMode.Read));
