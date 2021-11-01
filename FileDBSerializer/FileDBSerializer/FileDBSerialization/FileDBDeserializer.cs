@@ -9,6 +9,17 @@ using System.Threading.Tasks;
 namespace FileDBSerializing
 {
     enum States { Undefined, Tag, Attrib, Terminator }
+
+    /*
+     * ///------------------################----------------------///
+     * This deserializer holds an Instance of BinaryReader and FileDBDocument.
+     * with each call of Deserialize<typeparamref name="T"/>(Stream s), those variables are newly initialized with fresh BinaryReader and FileDBDocument
+     * 
+     * Modifying those variables outside of the intended deserializing functions will break the entire deserializer. 
+     * 
+     * ///------------------################----------------------///
+     */
+
     public class FileDBDeserializer<T> where T : FileDBDocument, new()
     {
         private BinaryReader reader;
@@ -32,61 +43,55 @@ namespace FileDBSerializing
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            reader = new BinaryReader(s);
-            filedb = new T();
-
-            int CurrentLevel = 0;
-            Tag CurrentTag = null;
-
-            //at the end of the DOM section, there is an additional closing tag. This means we will end up with CurrentLevel = -1; 
-            while (CurrentLevel >= 0)
+            using (reader = new BinaryReader(s))
             {
-                int bytesize, ID; 
-                States State = ReadOperation(out bytesize, out ID);
+                filedb = new T();
+                int CurrentLevel = 0;
+                Tag CurrentTag = null;
 
-                switch (State)
+                //at the end of the DOM section, there is an additional closing tag. This means we will end up with CurrentLevel = -1; 
+                while (CurrentLevel >= 0)
                 {
-                    //we found attrib
-                    case States.Attrib:
-                        var attrib = ReadAttrib(bytesize, ID);
-                        if (CurrentLevel > 0)
-                            CurrentTag.Children.Add(attrib);
-                        else
-                            filedb.Roots.Add(attrib);
-                        break;
-                    //we found tag
-                    case States.Tag:
-                        //Create a new tag and set this one to be the current tag!
-                        var Tag = ReadTag(ID, CurrentTag);
-                        //make the new tag the current tag and increment
+                    int bytesize, ID;
+                    States State = ReadOperation(out bytesize, out ID);
 
-                        if (CurrentLevel > 0)
-                            CurrentTag.Children.Add(Tag);
-                        else
-                            filedb.Roots.Add(Tag);
+                    switch (State)
+                    {
+                        case States.Attrib:
+                            var attrib = ReadAttrib(bytesize, ID);
+                            if (CurrentLevel > 0)
+                                CurrentTag.Children.Add(attrib);
+                            else
+                                filedb.Roots.Add(attrib);
+                            break;
+                        case States.Tag:
+                            //Create a new tag;
+                            var Tag = ReadTag(ID, CurrentTag);
+                            if (CurrentLevel > 0)
+                                CurrentTag.Children.Add(Tag);
+                            else
+                                filedb.Roots.Add(Tag);
 
-                        CurrentTag = Tag;
-                        CurrentLevel++;
-                        break;
-                    //we found terminator
-                    case States.Terminator:
-                        if (CurrentLevel-- > 0)
-                            CurrentTag = CurrentTag.Parent;
-                        else
-                            CurrentTag = null;
-                        break;
-                    default:
-                        throw new InvalidFileDBException(); 
+                            CurrentTag = Tag;
+                            CurrentLevel++;
+                            break;
+                        case States.Terminator:
+                            if (CurrentLevel-- > 0)
+                                CurrentTag = CurrentTag.Parent;
+                            else CurrentTag = null;
+                            break;
+                        default:
+                            throw new InvalidFileDBException();
+                    }
                 }
-            }
 
-            //init tag section
-            TagSection t = ReadTagSection();
-            filedb.Tags = t;
+                //init tag section
+                TagSection t = ReadTagSection();
+                filedb.Tags = t;
+            }
 
             stopWatch.Stop();
             Console.WriteLine("FILEDB Deserialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
-
             return filedb;
         }
 
@@ -96,9 +101,7 @@ namespace FileDBSerializing
         /// </summary>
         /// <param name="bytesize">out bytesize of the next element: in case of tags and terminators, this is 0</param>
         /// <param name="id">out id of the next element.</param>
-        /// <returns>
-        /// 
-        /// An element of the States enum that describes what the next element is logically. 
+        /// <returns>An element of the States enum that describes what the next element is logically. 
         /// 
         /// Tag -> Node that contains other nodes.
         /// Attrib -> Node that contains content data.

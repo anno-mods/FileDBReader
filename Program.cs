@@ -215,7 +215,7 @@ namespace FileDBReader {
                         {
                             writer.Export(exporter.Export(s, o.Interpreter), o.OutputFileExtension, s, o.CompressionVersion);
                         }
-                        catch (IOException e)
+                        catch (IOException)
                         {
                             Console.WriteLine("File Path wrong, File in use or does not exist.");
                         }

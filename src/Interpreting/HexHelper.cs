@@ -23,7 +23,7 @@ namespace FileDBReader
                 {
                     bytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
                 }
-                catch (Exception e) {
+                catch (Exception) {
                     Console.WriteLine("Hex String not in correct format: {0}", hexString);
                 }
             }
@@ -116,7 +116,7 @@ namespace FileDBReader
                 {
                     bytes[i] = (T)ConverterFunctions.ConversionRulesToObject[t](s.Substring(i * size, size));
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine("Hex String not in correct format: {0}", s);
                 }

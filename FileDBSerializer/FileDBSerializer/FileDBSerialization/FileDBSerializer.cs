@@ -7,9 +7,20 @@ using System.IO;
 using System.Diagnostics;
 
 namespace FileDBSerializing
+
 {
     public class FileDBSerializer
     {
+        /*
+         * ///------------------################----------------------///
+         * This deserializer holds an Instance of BinaryReader and FileDBDocument.
+         * with each call of Deserialize<typeparamref name="T"/>(Stream s), those variables are newly initialized with fresh BinaryReader and FileDBDocument
+         * 
+         * Modifying those variables outside of the intended deserializing functions will break the entire deserializer. 
+         * 
+         * ///------------------################----------------------///
+         */
+
         private BinaryWriter writer;
 
         #region serialize
@@ -24,25 +35,25 @@ namespace FileDBSerializing
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            writer = new BinaryWriter(s);
-
-            if (filedb.VERSION == 2)
+            using (writer = new BinaryWriter(s))
             {
-                VERSION2_SerializeCollection(filedb.Roots);
-                VERSION2_SerializeTagSection(filedb.Tags);
-                writer.Write(FileDBDocument_V2._magic_bytes);
-                writer.Flush(); 
+                if (filedb.VERSION == 2)
+                {
+                    VERSION2_SerializeCollection(filedb.Roots);
+                    VERSION2_SerializeTagSection(filedb.Tags);
+                    writer.Write(FileDBDocument_V2._magic_bytes);
+                    writer.Flush();
+                }
+                else if (filedb.VERSION == 1)
+                {
+                    VERSION1_SerializeCollection(filedb.Roots);
+                    VERSION1_SerializeTagSection(filedb.Tags);
+                    writer.Flush();
+                }
+                s.Position = 0;
             }
-            else if (filedb.VERSION == 1)
-            {
-                VERSION1_SerializeCollection(filedb.Roots);
-            }
-            s.Position = 0;
-
             stopWatch.Stop();
             Console.WriteLine("FILEDB Serialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
-
-            
             return s;
         }
 
@@ -159,6 +170,26 @@ namespace FileDBSerializing
             writer.Write((ushort)a.ID);
             writer.Write7BitEncodedInt(a.Bytesize);
             writer.Write(a.Content);
+        }
+
+        private void VERSION1_SerializeTagSection(TagSection t)
+        {
+            int offset = VERSION1_SerializeDictionary(t.Tags);
+            VERSION1_SerializeDictionary(t.Attribs);
+            writer.Write(offset);
+        }
+
+
+        private int VERSION1_SerializeDictionary(Dictionary<ushort, String> dict)
+        {
+            int offset = (int)writer.Position(); 
+            writer.Write7BitEncodedInt(dict.Count);
+            foreach (KeyValuePair<ushort, String> k in dict)
+            {
+                writer.WriteString0(k.Value);
+                writer.Write(k.Key);
+            }
+            return offset;
         }
 
         #endregion

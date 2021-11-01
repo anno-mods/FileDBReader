@@ -38,7 +38,7 @@ namespace FileDBReader
                     var Nodes = doc.SelectNodes(k.Key);
                     ConvertNodeSet(Nodes.Cast<XmlNode>(), k.Value);
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
                     Console.WriteLine("I don't even know what this is for. This is an error message even dumber than the old one. Modders gonna take over the world!!");
                 }
@@ -131,7 +131,7 @@ namespace FileDBReader
                         {
                             sb.Append(HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             throw new InvalidConversionException(type, n.Name, "List Value");
                         }
@@ -167,7 +167,7 @@ namespace FileDBReader
             {
                 converted = ConverterFunctions.ConversionRulesExport[type](Text, e);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new InvalidConversionException(type, n.Name, n.InnerText);
             }
@@ -316,7 +316,7 @@ namespace FileDBReader
                             Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
                         }
                     }
-                    catch (NullReferenceException ex)
+                    catch (NullReferenceException)
                     {
                     }
                 }

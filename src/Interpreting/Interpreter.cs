@@ -25,7 +25,7 @@ namespace FileDBReader.src
             {
                 doc.Load(InterpreterPath);
             }
-            catch (XmlException e)
+            catch (XmlException)
             {
                 Console.WriteLine("Could not load Interpreter at: {0}", InterpreterPath);
             }
@@ -162,7 +162,7 @@ namespace FileDBReader.src
                             Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
                         }
                     }
-                    catch (NullReferenceException ex)
+                    catch (NullReferenceException)
                     {
                     }
                 }

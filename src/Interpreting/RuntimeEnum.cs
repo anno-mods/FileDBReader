@@ -24,7 +24,7 @@ namespace FileDBReader.src
             {
                 Enum.Add(Key, Value);
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 Console.WriteLine("Duplicate item in an enum: {0} <-> {1}. Please make sure that both are unique.", Key, Value);
             }

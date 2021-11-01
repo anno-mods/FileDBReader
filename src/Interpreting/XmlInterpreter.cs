@@ -53,7 +53,7 @@ namespace FileDBReader
                     var Nodes = doc.SelectNodes(k.Key);
                     ConvertNodeSet(Nodes.Cast<XmlNode>(), k.Value);
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
                     Console.WriteLine("I don't even know what this is for. This is an error message even dumber than the old one. Modders gonna take over the world!!");
                 }
@@ -109,12 +109,12 @@ namespace FileDBReader
                 if (BinaryData != "" && FilterCDATA) s = "CDATA[" + s + "]";
                 n.InnerText = s;
             }
-            catch (ArgumentOutOfRangeException ex) 
+            catch (ArgumentOutOfRangeException) 
             {
                 Console.WriteLine("broken CDATA section.");
                 throw new InvalidConversionException(type, n.Name, "List Value");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new InvalidConversionException(type, n.Name, "List Value");
             }
@@ -154,7 +154,7 @@ namespace FileDBReader
                 if (BinaryData != "" && FilterCDATA) s = "CDATA[" + s + "]";
                 n.InnerText = s;
             }
-            catch (Exception ex)
+            catch (Exception)
             { 
                 throw new InvalidConversionException(type, n.Name, "List Value");
             }
@@ -202,7 +202,7 @@ namespace FileDBReader
                             Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
                         }
                     }
-                    catch (NullReferenceException ex)
+                    catch (NullReferenceException)
                     {
                     }
                 }
@@ -269,7 +269,7 @@ namespace FileDBReader
                     var Nodes = doc.SelectNodes(Path);
                     ConvertNodeSet(Nodes, x);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine("Path not correctly set lol");
                 }
