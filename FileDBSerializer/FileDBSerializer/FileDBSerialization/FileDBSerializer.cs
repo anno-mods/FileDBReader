@@ -17,22 +17,19 @@ namespace FileDBSerializing
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            
+
             using (MemoryStream ms = new MemoryStream())
             {
                 writer = new BinaryWriter(ms);
 
                 //actual code
-                foreach (FileDBNode n in filedb.Roots)
-                {
-                    this.VERSION2_SerializeNode(n);
-                }
-                writer.Write((Int64)0);
+                VERSION2_SerializeCollection(filedb.Roots);
+                
+                //(todo) serialize tag section
 
                 stopWatch.Stop();
                 Console.WriteLine("FILEDB Serialization took: " + stopWatch.Elapsed.TotalMilliseconds);
-
-                //todo serialize tag section
+                
                 return ms;
             }
         }
@@ -43,6 +40,9 @@ namespace FileDBSerializing
 
         private void VERSION2_SerializeNode(FileDBNode n)
         {
+            writer.Write(n.Bytesize);
+            writer.Write(n.ID);
+
             if (n is Tag)
                 VERSION2_SerializeTag((Tag)n);
             else if (n is Attrib)
@@ -52,9 +52,12 @@ namespace FileDBSerializing
 
         private void VERSION2_SerializeTag(Tag t)
         {
-            writer.Write(t.Bytesize);
-            writer.Write(t.ID);
-            foreach (FileDBNode n in t.Children)
+            VERSION2_SerializeCollection(t.Children);
+        }
+
+        private void VERSION2_SerializeCollection(IEnumerable<FileDBNode> coll)
+        {
+            foreach (FileDBNode n in coll)
             {
                 VERSION2_SerializeNode(n);
             }
@@ -63,8 +66,6 @@ namespace FileDBSerializing
 
         private void VERSION2_SerializeAttrib(Attrib a)
         {
-            writer.Write(a.Bytesize);
-            writer.Write(a.ID);
             writer.Write(FileDBDocument_V2.GetBytesInBlocks(a.Content, a.Bytesize));
         }
 
@@ -83,19 +84,22 @@ namespace FileDBSerializing
 
         private void VERSION1_SerializeTag(Tag t)
         {
-            writer.Write(t.Bytesize);
-            writer.Write(t.ID);
-            foreach (FileDBNode n in t.Children)
+            VERSION1_SerializeCollection(t.Children);
+        }
+
+        private void VERSION1_SerializeCollection(IEnumerable<FileDBNode> coll)
+        {
+            foreach (FileDBNode n in coll)
             {
                 VERSION1_SerializeNode(n);
             }
-            writer.Write((Int64)0);
+            writer.Write((Int16)0);
         }
 
         private void VERSION1_SerializeAttrib(Attrib a)
         {
-            writer.Write(a.Bytesize);
-            writer.Write(a.ID);
+            writer.Write((ushort)a.ID);
+            writer.Write7BitEncodedInt(a.Bytesize);
             writer.Write(a.Content);
         }
 

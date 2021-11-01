@@ -32,13 +32,9 @@ namespace FileDBReader
         {
             FileDBDeserializer doc = new FileDBDeserializer(); 
             var d = doc.VERSION2_Deserialize("dev_files/infotip/export.bin");
-            //FileDBSerializer serializer = new FileDBSerializer();
-            //serializer.Serialize(d);
+            FileDBSerializer serializer = new FileDBSerializer();
+            serializer.Serialize(d);
 
-            FileDbXmlSerializer ser = new FileDbXmlSerializer();
-            ser.ToXml(d);
-
-            InfotipTestNewFileVersion(); 
         }
 
         #region GenericTestFcFile

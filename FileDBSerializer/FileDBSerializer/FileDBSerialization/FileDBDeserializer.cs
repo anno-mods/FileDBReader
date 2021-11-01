@@ -31,8 +31,7 @@ namespace FileDBSerializing
             FileDBDocument_V2 filedb = new FileDBDocument_V2();
 
             int CurrentLevel = 0;
-            Tag Root = new Tag();
-            Tag CurrentTag = Root;
+            Tag CurrentTag = null;
 
             //at the end of the DOM section, there is an additional closing tag 0x0000000000000000. This means we will end up with CurrentLevel = -1; 
             while (CurrentLevel >= 0)
@@ -45,27 +44,37 @@ namespace FileDBSerializing
                     //we found attrib
                     case > 0:
                         var attrib = VERSION2_ReadAttrib(bytesize, ID, filedb);
-                        CurrentTag.Children.Add(attrib);
+                        if (CurrentLevel > 0)
+                            CurrentTag.Children.Add(attrib);
+                        else
+                            filedb.Roots.Add(attrib);
                         break;
                     //we found tag
                     case <= 0 when ID != 0:
                         //Create a new tag and set this one to be the current tag!
                         var Tag = VERSION2_ReadTag(ID, filedb, CurrentTag);
                         //make the new tag the current tag and increment
-                        CurrentTag.Children.Add(Tag);
+
+                        if (CurrentLevel > 0)
+                            CurrentTag.Children.Add(Tag);
+                        else
+                            filedb.Roots.Add(Tag);
+
                         CurrentTag = Tag;
                         CurrentLevel++;
                         break;
                     //we found terminator
                     case <= 0 when ID == 0:
-                        if (CurrentLevel-- >= 0)
+                        if (CurrentLevel-- > 0)
                             CurrentTag = CurrentTag.Parent;
+                        else
+                            CurrentTag = null; 
                         break;
                 }
             }
 
             //Read Tag Section Offsets.
-            reader.BaseStream.Position = reader.BaseStream.Length - FileDBDocument.OFFSET_TO_OFFSETS;
+            reader.BaseStream.Position = reader.BaseStream.Length - FileDBDocument_V2.OFFSET_TO_OFFSETS;
             int TagsOffset = reader.ReadInt32();
             int AttribsOffset = reader.ReadInt32();
 
@@ -76,8 +85,6 @@ namespace FileDBSerializing
             stopWatch.Stop();
             Console.WriteLine("FILEDB Deserialization took: " + stopWatch.Elapsed.TotalMilliseconds);
 
-            //we are copying the entire roots here just to save a few lines of code :D
-            filedb.Roots = Root.Children;
             return filedb;
         }
 
@@ -123,7 +130,7 @@ namespace FileDBSerializing
 
         private Tag VERSION2_ReadTag(int ID, FileDBDocument parentDoc, Tag Parent)
         {
-            return new Tag() { Bytesize = 0, ID = ID, ParentDoc = parentDoc, Parent = Parent };
+            return new Tag() { ID = ID, ParentDoc = parentDoc, Parent = Parent };
         }
 
         #endregion
@@ -140,7 +147,7 @@ namespace FileDBSerializing
 
         private Tag VERSION1_ReadTag(int ID, FileDBDocument parentDoc, Tag Parent)
         {
-            return new Tag() { Bytesize = 0, ID = ID, ParentDoc = parentDoc, Parent = Parent };
+            return new Tag() { ID = ID, ParentDoc = parentDoc, Parent = Parent };
         }
 
         private TagSection VERSION1_ReadTagSection(int TagsOffset, int AttribsOffset)
