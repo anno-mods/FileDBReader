@@ -84,45 +84,30 @@ namespace FileDBReader
             return doc; 
         }
 
-
-
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)
         {
             foreach (XmlNode match in matches)
             {
-                switch (Conversion.Structure)
+                try
                 {
-                    case ContentStructure.List:
-                        try
-                        {
+                    switch (Conversion.Structure)
+                    {
+                        case ContentStructure.List:
                             exportAsList(match, Conversion.Type, Conversion.Encoding, false);
-                        }
-                        catch (InvalidConversionException e)
-                        {
-                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                        }
-                        break;
-                    case ContentStructure.Default:
-                        try
-                        {
+                            break;
+                        case ContentStructure.Default:
                             ExportSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
-                        }
-                        catch (InvalidConversionException e)
-                        {
-                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                        }
-                        break;
-                    case ContentStructure.Cdata:
-                        try 
-                        {
+                            break;
+                        case ContentStructure.Cdata:
                             exportAsList(match, Conversion.Type, Conversion.Encoding, true);
-                        }
-                        catch (InvalidConversionException e)
-                        {
-                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                        }
-                        break; 
+                            break;
+                    }
                 }
+                catch (InvalidConversionException e)
+                {
+                    Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
+                }
+                
             }
         }
 

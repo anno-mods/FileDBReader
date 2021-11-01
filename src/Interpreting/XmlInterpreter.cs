@@ -75,43 +75,27 @@ namespace FileDBReader
         {
             foreach (XmlNode match in matches)
             {
-                switch (Conversion.Structure)
+                try
                 {
-                    case ContentStructure.List:
-                        try
-                        {
+                    switch (Conversion.Structure)
+                    {
+                        case ContentStructure.List:
                             InterpretAsList(match, Conversion.Type, false);
-                        }
-                        catch (InvalidConversionException e)
-                        {
-                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                        }
-                        break;
-                    case ContentStructure.Default:
-                        try
-                        {
+                            break;
+                        case ContentStructure.Default:
                             InterpretSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
-                        }
-                        catch (InvalidConversionException e)
-                        {
-                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                        }
-                        break;
-                    case ContentStructure.Cdata:
-                        try
-                        {
+                            break;
+                        case ContentStructure.Cdata:
                             InterpretAsList(match, Conversion.Type, true);
-                        }
-                        catch (InvalidConversionException e)
-                        {
-                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                        }
-                        break; 
+                            break;
+                    }
+                }
+                catch (InvalidConversionException e)
+                {
+                    Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
                 }
             }
         }
-
-
 
         private void InterpretAsList(XmlNode n, Type type, bool FilterCDATA)
         {
