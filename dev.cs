@@ -26,18 +26,27 @@ namespace FileDBReader
         static ZlibFunctions zlib = new ZlibFunctions();
 
         //Fc Files
-        static FcFileHelper FcFileHelper = new FcFileHelper(); 
+        static FcFileHelper FcFileHelper = new FcFileHelper();
 
         public static void Main(String[] args)
         {
-            FileDBDeserializer doc = new FileDBDeserializer(); 
-            var d = doc.VERSION2_Deserialize("dev_files/infotip/export.bin");
-            FileDBSerializer serializer = new FileDBSerializer();
-            serializer.Serialize(d);
+            var deserializer = new FileDBDeserializer<FileDBDocument_V2>();
+            var V2Document = deserializer.Deserialize("file.db");
 
-            FileDbXmlSerializer xml = new FileDbXmlSerializer();
-            xml.ToXml(d).Save("shit.xml");
-        ;}
+            FileDBSerializer serializer = new FileDBSerializer();
+            var outstream = serializer.Serialize(V2Document, new MemoryStream());
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start(); 
+            var filestream = File.Create("version2.bin");
+            outstream.Position = 0;
+            outstream.CopyTo(filestream);
+            filestream.Close();
+            watch.Stop();
+            Console.WriteLine("File Writing Operation took: {0} ms", watch.Elapsed.TotalMilliseconds);
+
+            Console.WriteLine("Finished Test File: file.db");
+        }
 
         #region GenericTestFcFile
 

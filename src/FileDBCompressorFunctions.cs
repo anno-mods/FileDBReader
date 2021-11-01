@@ -28,7 +28,7 @@ namespace FileDBReader.src
         private FcFileHelper FcFileHelper;
 
         //use new serializer options for better performance in the future
-        private FileDBDeserializer FileDBDeserializer;
+        private FileDBDeserializer<FileDBDocument_V2> FileDBDeserializer;
         private FileDBSerializer FileDBSerializer;
         private FileDbXmlSerializer XmlSerializer; 
 
@@ -42,7 +42,7 @@ namespace FileDBReader.src
             interpreter = new XmlInterpreter();
             FcFileHelper = new FcFileHelper();
 
-            FileDBDeserializer = new FileDBDeserializer();
+            FileDBDeserializer = new FileDBDeserializer<FileDBDocument_V2>();
             FileDBSerializer = new FileDBSerializer(); 
             XmlSerializer = new FileDbXmlSerializer();
         }
