@@ -13,11 +13,56 @@ namespace FileDBReader.src.XmlSerialization
 {
     class FileDbXmlSerializer
     {
-        
-        public FileDBDocument ToFileDb(XmlDocument xml)
+
+        #region ToFileDB
+        public T ToFileDb<T>(XmlDocument xml) where T: FileDBDocument, new()
         {
-            throw new NotImplementedException();
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            T filedb = new T();
+
+            //skip content node
+            foreach (XmlNode n in xml.FirstChild.ChildNodes)
+            {
+                filedb.Roots.Add(DeserializeFileDBNode(ref filedb, n, null));
+            }
+
+            stopWatch.Stop();
+            Console.WriteLine("XML to FILEDB conversion took: " + stopWatch.Elapsed.TotalMilliseconds);
+            return filedb; 
         }
+
+        private FileDBNode DeserializeFileDBNode<T>(ref T filedb, XmlNode n, Tag parent) where T : FileDBDocument
+        {
+            if (n.NodeType == XmlNodeType.Text)
+                return DeserializeAttrib(ref filedb, n, parent);
+            else
+                return DeserializeTag(ref filedb, n, parent);
+        }
+
+        private Attrib DeserializeAttrib<T>(ref T filedb, XmlNode n, Tag parent) where T : FileDBDocument
+        {
+            String Text = n.InnerText;
+            byte[] Content = new byte[Text.Length / 2];
+            using (XmlReader reader = new XmlNodeReader(n))
+            {
+                reader.ReadContentAsBinHex(Content, 0, Content.Length); 
+            }
+            return new Attrib() { ID = 0, Content = Content, Parent = parent };
+        }
+
+        private Tag DeserializeTag<T>(ref T filedb, XmlNode n, Tag parent) where T : FileDBDocument
+        {
+            var tag = new Tag() { ID = 0 };
+            foreach (XmlNode child in n.ChildNodes)
+            {
+                tag.Children.Add(DeserializeFileDBNode<T>(ref filedb, child, tag));
+            }
+            return tag; 
+        }
+
+        #endregion
 
         public XmlDocument ToXml(FileDBDocument filedb)
         {
