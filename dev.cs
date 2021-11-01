@@ -255,7 +255,6 @@ namespace FileDBReader
             //var stream = FcFileHelper.ConvertFile(File.OpenRead(TESTFILE), ConversionMode.Read);
             //var outstream = FcFileHelper.ConvertFile(stream, ConversionMode.Write);
             
-
             //ShowFileWithDefaultProgram(CDATAWRITTEN_TESTFILE);
 
             try

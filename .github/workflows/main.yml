@@ -1,4 +1,4 @@
-name: CI > Push
+name: Test master branch
 
 on:
   push:

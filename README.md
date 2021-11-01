@@ -1,5 +1,7 @@
 # FileDBReader
 
+![example workflow](https://github.com/anno-mods/FileDBReader/actions/workflows/main.yml/badge.svg)
+
 A simple command line unpacker, repacker and interpreter for proprietary Anno 1800 compression. Currently Work in Progress.
 
 - Decompressing: all data will be represented in hex strings which can be interpreted with an interpreter file. 
