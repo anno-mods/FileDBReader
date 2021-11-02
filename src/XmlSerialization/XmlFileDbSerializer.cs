@@ -49,7 +49,8 @@ namespace FileDBReader.src.XmlSerialization
 
         private FileDBNode DeserializeFileDBNode( XmlNode n, Tag parent)
         {
-            if (n.NodeType == XmlNodeType.Text)
+            //This is the closest we can determine this shit.
+            if ((n.FirstChild != null && n.FirstChild.NodeType == XmlNodeType.Text))
                 return DeserializeAttrib(n, parent);
             else
                 return DeserializeTag(n, parent);
@@ -57,30 +58,40 @@ namespace FileDBReader.src.XmlSerialization
 
         private Attrib DeserializeAttrib(XmlNode n, Tag parent)
         {
-            String Text = n.InnerText;
-            byte[] Content = new byte[Text.Length / 2];
-            using (XmlReader reader = new XmlNodeReader(n))
+            /* For whatever reason this doesn't work. XML is truly a shitshow
+            using (var reader = n.CreateNavigator().ReadSubtree())
             {
                 reader.ReadContentAsBinHex(Content, 0, Content.Length);
             }
+            */
+
+            var Content = HexHelper.StringToByteArray(n.InnerText);
 
             ushort ID = ATTRIB_START;
-            if (!n.Name.Equals("None") && !filedb.Tags.Attribs.ContainsValue(n.Name))
+            if (!filedb.Tags.Attribs.ContainsValue(n.Name) && !n.Name.Equals("None"))
             {
-                filedb.Tags.Attribs.Add(AttribID++, n.Name);
+                filedb.Tags.Attribs.Add(ID = AttribID, n.Name); 
+                AttribID++;
             }
+            else
+                ID = filedb.Tags.Attribs.FirstOrDefault(x => x.Value == n.Name).Key;
             return new Attrib() { ID = ID, Content = Content, Parent = parent, ParentDoc = filedb };
         }
 
         private Tag DeserializeTag(XmlNode n, Tag parent)
         {
             ushort ID = TAG_START;
-            if (!n.Name.Equals("None") && !filedb.Tags.Attribs.ContainsValue(n.Name))
+            if (!filedb.Tags.Tags.ContainsValue(n.Name) && !n.Name.Equals("None"))
             {
-                filedb.Tags.Tags.Add(TagID++, n.Name);
+                
+                filedb.Tags.Tags.Add(ID = TagID, n.Name); 
+                TagID++;
             }
+            else
+                ID = filedb.Tags.Tags.FirstOrDefault(x => x.Value == n.Name).Key;
 
-            var tag = new Tag() { ID = 0, Parent = parent, ParentDoc = filedb};
+            var tag = new Tag() { ID = ID, Parent = parent, ParentDoc = filedb};
+
             foreach (XmlNode child in n.ChildNodes)
             {
                 tag.Children.Add(DeserializeFileDBNode(child, tag));

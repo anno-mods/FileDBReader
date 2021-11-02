@@ -19,17 +19,21 @@ namespace FileDBReader
         static String FILEFORMAT_DIRECTORY_NAME = "FileFormats";
 
         //FileDB
-        static FileReader reader = new FileReader();
+        static FileReader reader_old = new FileReader();
         static XmlExporter exporter = new XmlExporter();
-        static FileWriter writer = new FileWriter();
+        static FileWriter writer_old = new FileWriter();
         static XmlInterpreter interpreter = new XmlInterpreter();
         static ZlibFunctions zlib = new ZlibFunctions();
+
+        static Reader reader = new Reader();
+        static Writer writer = new Writer();
 
         //Fc Files
         static FcFileHelper FcFileHelper = new FcFileHelper();
 
         public static void Main(String[] args)
         {
+            /*
             var deserializer = new FileDBDeserializer<FileDBDocument_V1>();
             var V2Document = deserializer.Deserialize("dev_files/island/0x0.tmc");
 
@@ -46,6 +50,13 @@ namespace FileDBReader
             Console.WriteLine("File Writing Operation took: {0} ms", watch.Elapsed.TotalMilliseconds);
 
             Console.WriteLine("Finished Test File: file.db");
+            */
+
+            //kek
+
+            InfotipTestNewFileVersion();
+            IslandTestTMC();
+            A7TINFOTest();
         }
 
         #region GenericTestFcFile
@@ -128,25 +139,13 @@ namespace FileDBReader
         /// </summary>
         /// 
 
-        [Obsolete("This test is old and will not be supported in the future")]
-        public static void CttTest() {
-            const String DIRECTORY_NAME = "ctt";
-            const String INTERPRETER_FILE = "FileFormats/ctt.xml";
-            
-            var interpreterDoc = new XmlDocument();
-            interpreterDoc.Load(INTERPRETER_FILE);
-
-            FileStream fs = File.OpenRead(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "0x1.ctt"));
-
-            //Ubisoft uses 8 magic bytes at the start
-            var doc = interpreter.Interpret(reader.ReadSpan(zlib.Decompress(fs, 8)), interpreterDoc);
-            doc.Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "interpreted.xml"));
-        }
 
         /// <summary>
         /// Test for DEFLATE/zlib implementation. 
         /// decompresses 0x1.ctt, ignoring the 8 magic bytes at the start, writes the result to decompressed.xml, then compresses it back.
         /// </summary>
+        
+        /*
         public static void zlibTest() {
             const String DIRECTORY_NAME = "zlib";
 
@@ -158,7 +157,7 @@ namespace FileDBReader
 
             var Stream = writer.Export(doc, ".bin", 1);
             File.WriteAllBytes(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "shittycompress.ctt"), zlib.Compress(Stream, 1));
-        }
+        }*/
 
         /// <summary>
         /// decompresses the two files original.bin and recompressed.bin which are preextracted inner filedb files from gamedata_og.data
@@ -176,13 +175,15 @@ namespace FileDBReader
             String INTERPRETER_FILE = Path.Combine(FILEFORMAT_DIRECTORY_NAME, INTERPREFER_FILE_NAME);
             String TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME);
 
-            String DECOMPRESSED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_decompressed.xml");
-            String INTERPRETED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_interpreted.xml");
-            String TOHEX_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_reinterpreted.xml");
-            String EXPORTED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_recompressed" + Path.GetExtension(TESTFILE_NAME));
+            String DECOMPRESSED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, Path.GetFileNameWithoutExtension(TESTFILE_NAME) + "_decompressed.xml");
+            String INTERPRETED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, Path.GetFileNameWithoutExtension(TESTFILE_NAME) + "_interpreted.xml");
+            String TOHEX_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, Path.GetFileNameWithoutExtension(TESTFILE_NAME) + "_reinterpreted.xml");
+            String EXPORTED_TESTFILE = Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, Path.GetFileNameWithoutExtension(TESTFILE_NAME) + "_recompressed" + Path.GetExtension(TESTFILE_NAME));
+
+            Console.WriteLine("File Test: {0}", TESTFILE_NAME);
 
             //decompress
-            var decompressed = reader.ReadFile(TESTFILE);
+            var decompressed = reader.Read(File.OpenRead(TESTFILE));
             decompressed.Save(DECOMPRESSED_TESTFILE);
 
             var interpreted = interpreter.Interpret(decompressed, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
@@ -193,7 +194,7 @@ namespace FileDBReader
             Hexed.Save(TOHEX_TESTFILE);
 
             //back to gamedata 
-            writer.Export(Hexed, EXPORTED_TESTFILE, FileVersion);
+            writer.Write(Hexed, File.Create(EXPORTED_TESTFILE), FileVersion);
 
             var OriginalInfo = new FileInfo(TESTFILE);
             var DecompressedInfo = new FileInfo(DECOMPRESSED_TESTFILE);
@@ -201,7 +202,7 @@ namespace FileDBReader
             var RehexedInfo = new FileInfo(TOHEX_TESTFILE);
             var ReexportedInfo = new FileInfo(EXPORTED_TESTFILE);
 
-            Console.WriteLine("File Test: {0}", TESTFILE_NAME);
+            
             Console.WriteLine("Used FileDBCompression Version for re-export: {0}", FileVersion);
             Console.WriteLine("FILEDB FILES FILESIZE\nOriginal: {0}, Converted: {1}. Filesize Equality:{2}", OriginalInfo.Length, ReexportedInfo.Length, OriginalInfo.Length == ReexportedInfo.Length);
             //This check will probably give a false if there is internal compression!
