@@ -170,7 +170,7 @@ namespace FileDBReader {
                 //OPTIONS FOR DECOMPRESSING
                 (DecompressOptions o) =>
                 {
-                    return Functions.Decompress(o.InputFiles, o.Interpreter);
+                    return Functions.Decompress(o.InputFiles, o.Interpreter, o.overwrite);
                 },
                 //OPTIONS FOR RECOMPRESSING
                 (CompressOptions o) =>
@@ -207,7 +207,7 @@ namespace FileDBReader {
                 //---------DEPRACATED FUNCTIONS---------//
                 (Decompress_Interpret_Options o ) =>
                 {
-                    return Functions.Decompress(o.InputFiles, o.Interpreter);
+                    return Functions.Decompress(o.InputFiles, o.Interpreter, false);
                 }, 
                 (Recompress_Export_Options o) => 
                 {

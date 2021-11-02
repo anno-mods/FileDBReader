@@ -47,7 +47,7 @@ namespace FileDBReader.src
             XmlSerializer = new FileDbXmlSerializer();
         }
 
-        public int Decompress(IEnumerable<String> InputFiles, String InterpreterPath)
+        public int Decompress(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
         {
             int returncode = 0;
 
@@ -70,7 +70,7 @@ namespace FileDBReader.src
                         {
                             result = interpreter.Interpret(result, Interpr);
                         }
-                        using (FileStream output = SecureIoHandler.WriteHandle(Path.ChangeExtension(s, "xml")))
+                        using (FileStream output = SecureIoHandler.WriteHandle(Path.ChangeExtension(s, "xml"), overwrite))
                         {
                             result.Save(output);
                         }
