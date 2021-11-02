@@ -31,7 +31,7 @@ namespace FileDBReader.src
         {
             if (File.Exists(Filename) && !overwrite)
             {
-                Console.WriteLine("Could not access File: {1} - File already exists. use -y argument to overwrite.", Filename);
+                Console.WriteLine("Could not access File: {0} - File already exists. use -y argument to overwrite.", Filename);
                 throw new IOException();
             }
             else
