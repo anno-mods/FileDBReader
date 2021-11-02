@@ -70,7 +70,7 @@ namespace FileDBReader.src
                         {
                             result = interpreter.Interpret(result, Interpr);
                         }
-                        using (FileStream output = SecureIoHandler.ReadHandle(Path.ChangeExtension(s, "xml")))
+                        using (FileStream output = SecureIoHandler.WriteHandle(Path.ChangeExtension(s, "xml")))
                         {
                             result.Save(output);
                         }
