@@ -62,7 +62,7 @@ namespace FileDBReader.src
             {
                 try
                 {
-                    using (FileStream fs = SecureIoHandler.ReadHandle(s))
+                    using (Stream fs = SecureIoHandler.ReadHandle(s))
                     {
                         XmlDocument result;
                         result = reader.Read(fs);
@@ -70,7 +70,7 @@ namespace FileDBReader.src
                         {
                             result = interpreter.Interpret(result, Interpr);
                         }
-                        using (FileStream output = SecureIoHandler.WriteHandle(Path.ChangeExtension(s, "xml"), overwrite))
+                        using (Stream output = SecureIoHandler.WriteHandle(Path.ChangeExtension(s, "xml"), overwrite))
                         {
                             result.Save(output);
                         }
@@ -104,7 +104,7 @@ namespace FileDBReader.src
                 try
                 {
                     XmlDocument result = new XmlDocument();
-                    using (FileStream fs = SecureIoHandler.ReadHandle(s))
+                    using (Stream fs = SecureIoHandler.ReadHandle(s))
                     {
                         result.Load(fs);
                     }
@@ -112,7 +112,7 @@ namespace FileDBReader.src
                     {
                         result = exporter.Export(result, Interpr);
                     }
-                    using (FileStream fs = SecureIoHandler.WriteHandle(s, overwrite))
+                    using (Stream fs = SecureIoHandler.WriteHandle(s, overwrite))
                     {
                         writer.Write(result, fs, CompressionVersion);
                     }
@@ -139,14 +139,14 @@ namespace FileDBReader.src
                 try
                 {
                     var baseDoc = new XmlDocument();
-                    using (FileStream input = SecureIoHandler.ReadHandle(s))
+                    using (Stream input = SecureIoHandler.ReadHandle(s))
                     {
                         baseDoc.Load(s);
                     }
                     baseDoc = interpreter.Interpret(baseDoc, Interpr);
                     //Save
                     String FileNameNew = Path.GetFileNameWithoutExtension(s) + InterpretedFileSuffix + ".xml";
-                    using (FileStream output = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
+                    using (Stream output = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
                     {
                         baseDoc.Save(output);
                     }
@@ -175,14 +175,14 @@ namespace FileDBReader.src
                 var inputDoc = new XmlDocument();
                 try
                 {
-                    using (FileStream fs = SecureIoHandler.ReadHandle(s))
+                    using (Stream fs = SecureIoHandler.ReadHandle(s))
                     {
                         inputDoc.Load(fs);
                     }
                     var doc = exporter.Export(inputDoc, Interpr);
 
                     String FileNameNew = Path.GetFileNameWithoutExtension(s) + ReinterpretedFileSuffix + ".xml";
-                    using (FileStream fs = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
+                    using (Stream fs = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
                     {
                         doc.Save(fs);
                     }
@@ -202,7 +202,7 @@ namespace FileDBReader.src
             {
                 try
                 {
-                    using (FileStream fs = SecureIoHandler.ReadHandle(s))
+                    using (Stream fs = SecureIoHandler.ReadHandle(s))
                     {
                         Console.WriteLine("{0} uses Compression Version {1}", s, VersionDetector.GetCompressionVersion(fs));
                     }

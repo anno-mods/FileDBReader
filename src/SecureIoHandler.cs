@@ -1,19 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO; 
 
 namespace FileDBReader.src
 {
+    /// <summary>
+    /// This class provides convenient handlers for accessing files via stream copying.
+    /// The serializers do profit from MemoryStreams instead of FileStreams big time - up to 10x faster serialization
+    /// </summary>
     class SecureIoHandler
     {
-        public static FileStream ReadHandle( String Filename )
+        public static Stream ReadHandle( String Filename )
         {
             try
             {
-                return File.OpenRead(Filename);
+                using (Stream stream = File.OpenRead(Filename))
+                {
+                    stream.Position = 0; 
+                    MemoryStream fastStream = new MemoryStream();
+                    stream.CopyTo(fastStream);
+                    return fastStream;
+                }
             }
             catch (FileNotFoundException)
             {
@@ -27,7 +33,7 @@ namespace FileDBReader.src
             }
         }
 
-        public static FileStream WriteHandle ( String Filename, bool overwrite)
+        public static Stream WriteHandle ( String Filename, bool overwrite)
         {
             if (File.Exists(Filename) && !overwrite)
             {
@@ -55,7 +61,7 @@ namespace FileDBReader.src
 
         public static void SaveHandle(String Filename, bool overwrite, Stream Source)
         {
-            using (FileStream fs = WriteHandle(Filename, overwrite))
+            using (Stream fs = WriteHandle(Filename, overwrite))
             {
                 fs.Position = 0;
                 Source.Position = 0;

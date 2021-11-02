@@ -59,10 +59,7 @@ namespace FileDBReader.src.XmlSerialization
             //write empty attribs as <name></name> instead of <Name />
             if (a.Bytesize > 0)
             {
-                using (XmlWriter writer = node.CreateNavigator().AppendChild())
-                {
-                    writer.WriteBinHex(a.Content, 0, a.Bytesize);
-                }
+                node.InnerText = HexHelper.ByteArrayToString(a.Content);
             }
             else node.InnerText = "";
             return node;
