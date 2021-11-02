@@ -151,7 +151,7 @@ namespace FileDBSerializing
                     var Tags = GetDictionary_VERSION1(TagsOffset);
                     int AttribOffset = (int)reader.Position();
                     var Attribs = GetDictionary_VERSION1(AttribOffset);
-                    return new TagSection() { Tags = Tags, Attribs = Attribs };
+                    return new TagSection(Tags, Attribs);
                 case 2:
                     int TagsOff2 = reader.ReadInt32();
                     int AttribsOffset = reader.ReadInt32();
@@ -257,8 +257,6 @@ namespace FileDBSerializing
         }
 
         #endregion 
-
-
     }
 
 }

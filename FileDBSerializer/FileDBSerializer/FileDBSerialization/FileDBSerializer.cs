@@ -171,10 +171,17 @@ namespace FileDBSerializing
         }
 
         private void VERSION1_SerializeTagSection(TagSection t)
-        {
+        {   
+            //remove None Tags
+            t.Tags.Remove(1);
+            t.Attribs.Remove(32768);
+
             int offset = VERSION1_SerializeDictionary(t.Tags);
             VERSION1_SerializeDictionary(t.Attribs);
             writer.Write(offset);
+
+            t.Tags.Add(1, "None");
+            t.Attribs.Add(32768, "None");
         }
 
 

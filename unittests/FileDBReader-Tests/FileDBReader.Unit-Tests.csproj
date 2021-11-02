@@ -15,6 +15,46 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\..\FileFormats\a7tinfo.xml" Link="unittest_interpreters\a7tinfo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\ctt.xml" Link="unittest_interpreters\ctt.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\FcFile.xml" Link="unittest_interpreters\FcFile.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\FcFile_2070.xml" Link="unittest_interpreters\FcFile_2070.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\infotip.xml" Link="unittest_interpreters\infotip.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\internalfiledbtest.xml" Link="unittest_interpreters\internalfiledbtest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\Island_Gamedata.xml" Link="unittest_interpreters\Island_Gamedata.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\Island_RD3D.xml" Link="unittest_interpreters\Island_RD3D.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\listtest.xml" Link="unittest_interpreters\listtest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\map_Gamedata.xml" Link="unittest_interpreters\map_Gamedata.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\rdp.xml" Link="unittest_interpreters\rdp.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\tmc.xml" Link="unittest_interpreters\tmc.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+ 
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.1" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.1" />
@@ -26,68 +66,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="unittest_files\Expected\a7tinfo\decompressed.xml">
+    <None Update="unittest_files\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="unittest_files\Expected\a7tinfo\interpreted.xml">
+    <None Update="unittest_interpreters\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\a7tinfo\recompressed.a7tinfo">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\a7tinfo\reinterpreted.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\infotip\decompressed.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\infotip\interpreted.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\infotip\recompressed.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\infotip\reinterpreted.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\tmc\decompressed.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\tmc\interpreted.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\tmc\recompressed.tmc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Expected\tmc\reinterpreted.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Testfiles\a7tinfo\testfile.a7tinfo">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Testfiles\infotip\export.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Testfiles\tmc\testfile.tmc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Testfiles\version\version1.tmc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_files\Testfiles\version\version2.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_interpreters\a7tinfo.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_interpreters\infotip.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_interpreters\Interpreter_demo.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="unittest_interpreters\tmc.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

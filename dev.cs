@@ -54,9 +54,7 @@ namespace FileDBReader
 
             //kek
 
-            InfotipTestNewFileVersion();
             IslandTestTMC();
-            A7TINFOTest();
         }
 
         #region GenericTestFcFile

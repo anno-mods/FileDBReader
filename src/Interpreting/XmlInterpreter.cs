@@ -151,7 +151,7 @@ namespace FileDBReader
                     s = Enum.GetValue(s);
                 }
                 //readd cdata to the string
-                if (BinaryData != "" && FilterCDATA) s = "CDATA[" + s + "]";
+                if (!BinaryData.Equals("") && FilterCDATA) s = "CDATA[" + s + "]";
                 n.InnerText = s;
             }
             catch (Exception)

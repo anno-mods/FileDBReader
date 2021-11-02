@@ -55,10 +55,16 @@ namespace FileDBReader.src.XmlSerialization
         {
             String Name = a.GetID();
             var node = doc.CreateElement(Name);
-            using (XmlWriter writer = node.CreateNavigator().AppendChild())
+
+            //write empty attribs as <name></name> instead of <Name />
+            if (a.Bytesize > 0)
             {
-                writer.WriteBinHex(a.Content, 0, a.Bytesize);
+                using (XmlWriter writer = node.CreateNavigator().AppendChild())
+                {
+                    writer.WriteBinHex(a.Content, 0, a.Bytesize);
+                }
             }
+            else node.InnerText = "";
             return node;
         }
 
