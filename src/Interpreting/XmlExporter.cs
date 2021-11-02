@@ -58,14 +58,14 @@ namespace FileDBReader
                 var Nodes = doc.SelectNodes(comp.Path);
                 foreach (XmlNode node in Nodes)
                 {
-                    FileWriter fileWriter = new FileWriter();
+                    Writer fileWriter = new Writer();
 
                     var contentNode = node.SelectSingleNode("./Content");
                     XmlDocument xmldoc = new XmlDocument();
                     XmlNode f = xmldoc.ImportNode(contentNode, true);
                     xmldoc.AppendChild(xmldoc.ImportNode(f, true));
 
-                    var stream = fileWriter.Export(xmldoc, new MemoryStream(), comp.CompressionVersion);
+                    var stream = fileWriter.Write(xmldoc, new MemoryStream(), comp.CompressionVersion);
 
                     //Convert This String To Hex Data
                     node.InnerText = HexHelper.StreamToHexString(stream);

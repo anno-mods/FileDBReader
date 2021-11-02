@@ -37,11 +37,14 @@ namespace FileDBReader
                 var nodes = doc.SelectNodes(comp.Path);
                 foreach (XmlNode node in nodes)
                 {
-                    var span = HexHelper.toSpan<byte>(node.InnerText);
-                    var filereader = new FileReader();
-                    var decompressed = filereader.ReadSpan(span);
-                    node.InnerText = "";
-                    node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
+                    var bytearr = HexHelper.StringToByteArray(node.InnerText);
+                    var filereader = new Reader();
+                    using (MemoryStream ms = new MemoryStream(bytearr))
+                    {
+                        var decompressed = filereader.Read(ms);
+                        node.InnerText = "";
+                        node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
+                    }
                 }
             }
 
