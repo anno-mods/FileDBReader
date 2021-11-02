@@ -25,18 +25,6 @@ namespace FileDBSerializing
         private BinaryReader reader;
         private T filedb;
 
-        public T Deserialize(String Filename)
-        {
-            using (var fs = File.OpenRead(Filename))
-            using (var ms = new MemoryStream())
-            {
-                fs.Position = 0;
-                fs.CopyTo(ms);
-                ms.Position = 0;
-                return Deserialize(ms);
-            }
-        }
-
         //Main Deserialize Function
         public T Deserialize(Stream s)
         {
@@ -51,8 +39,15 @@ namespace FileDBSerializing
             //at the end of the DOM section, there is an additional closing tag. This means we will end up with CurrentLevel = -1; 
             while (CurrentLevel >= 0)
             {
-                int bytesize, ID;
+                int bytesize;
+                ushort ID;
                 States State = ReadOperation(out bytesize, out ID);
+
+                //make sure we don't mess up with the stream. if anything is wrong in the document, 99% of the time we will get a problematic bytesize sooner or later.
+                if (bytesize > s.Length - s.Position) 
+                {
+                    throw new InvalidFileDBException( "bytesize was larger than bytes left to read.");
+                }
 
                 switch (State)
                 {
@@ -93,6 +88,7 @@ namespace FileDBSerializing
         }
 
         #region ParentFunctions
+
         /// <summary>
         /// Reads the Next Operation from the Reader and advances its position.
         /// </summary>
@@ -106,7 +102,7 @@ namespace FileDBSerializing
         /// 
         /// </returns>
 
-        private States ReadOperation(out int bytesize, out int id)
+        private States ReadOperation(out int bytesize, out ushort id)
         {
             switch (filedb.VERSION)
             {
@@ -180,10 +176,11 @@ namespace FileDBSerializing
         }
 
 
-        private States ReadOperation_VERSION2(out int _bytesize, out int _id)
+        private States ReadOperation_VERSION2(out int _bytesize, out ushort _id)
         {
+            //typecast is not nice. bb fix your shitty compression. 
             int bytesize = reader.ReadInt32();
-            int ID = reader.ReadInt32();
+            ushort ID = (ushort)reader.ReadInt32();
             _bytesize = bytesize;
             _id = ID; 
 
@@ -202,9 +199,9 @@ namespace FileDBSerializing
             return States.Undefined; 
         }
 
-        private States ReadOperation_VERSION1(out int _bytesize, out int _id)
+        private States ReadOperation_VERSION1(out int _bytesize, out ushort _id)
         {
-            int ID = reader.ReadUInt16();
+            ushort ID = reader.ReadUInt16();
             _id = ID;
             _bytesize = 0; 
 

@@ -1,7 +1,8 @@
 {
   "profiles": {
     "FileDBReader": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "check_fileversion -f d.filedb"
     }
   }
 }

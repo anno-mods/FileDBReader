@@ -60,38 +60,36 @@ namespace FileDBReader.src
 
             foreach (String s in InputFiles)
             {
-                XmlDocument result;
-                using (FileStream fs = File.OpenRead(s))
+                try
                 {
-                    result = reader.Read(fs);
-                }
-                    
-                if (InterpreterPath != null)
-                {
-                    try
+                    using (FileStream fs = SecureIoHandler.ReadHandle(s))
                     {
-                        result = interpreter.Interpret(result, Interpr);
-                    }
-                    catch (IOException ex)
-                    {
-                        Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                        returncode = -1;
+                        XmlDocument result;
+                        result = reader.Read(fs);
+                        if (InterpreterPath != null)
+                        {
+                            result = interpreter.Interpret(result, Interpr);
+                        }
+                        using (FileStream output = SecureIoHandler.ReadHandle(Path.ChangeExtension(s, "xml")))
+                        {
+                            result.Save(output);
+                        }
                     }
                 }
-                result.Save(Path.ChangeExtension(s, "xml"));
+                catch (IOException)
+                {
+                    returncode = -1;
+                }
+                
             }
             return returncode;
         }
 
-        public int Compress(IEnumerable<String> InputFiles, String InterpreterPath, String OutputFileExtension, int CompressionVersion)
+        public int Compress(IEnumerable<String> InputFiles, String InterpreterPath, String OutputFileExtension, int CompressionVersion, bool overwrite)
         {
-            int returncode = 0; 
+            int returncode = 0;
             //set output file extension
-            var ext = "";
-            if (OutputFileExtension != null)
-                ext = OutputFileExtension;
-            else
-                ext = DefaultFileFormat;
+            var ext = OutputFileExtension ?? DefaultFileFormat;
 
             //Preload Interpreter
             Interpreter Interpr = null;
@@ -103,40 +101,32 @@ namespace FileDBReader.src
             //convert all input files
             foreach (String s in InputFiles)
             {
-                if (InterpreterPath != null)
+                try
                 {
-                    try
+                    XmlDocument result = new XmlDocument();
+                    using (FileStream fs = SecureIoHandler.ReadHandle(s))
                     {
-                        var doc = new XmlDocument();
-                        doc.Load(s);
-                        var result = exporter.Export(doc, Interpr);
-                        using (FileStream fs = File.Create( Path.ChangeExtension(s, OutputFileExtension)))
-                        {
-                            writer.Write(result, fs, CompressionVersion);
-                        }
+                        result.Load(fs);
                     }
-                    catch (IOException ex)
+                    if (InterpreterPath != null)
                     {
-                        Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
-                        returncode = -1;
+                        result = exporter.Export(result, Interpr);
                     }
-                }
-                else
-                {
-                    using (FileStream fs = File.Create(Path.ChangeExtension(s, OutputFileExtension)))
+                    using (FileStream fs = SecureIoHandler.WriteHandle(s, overwrite))
                     {
-                        var result = new XmlDocument();
-                        result.Load(s);
                         writer.Write(result, fs, CompressionVersion);
                     }
+                }
+                catch (IOException)
+                {
+                    returncode = -1;
                 }
             }
             return returncode;
         }
-        public int Interpret(IEnumerable<String> InputFiles, String InterpreterPath)
+        public int Interpret(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
         {
             int returncode = 0;
-
             //Preload Interpreter
             Interpreter Interpr = null;
             if (InterpreterPath != null)
@@ -149,20 +139,27 @@ namespace FileDBReader.src
                 try
                 {
                     var baseDoc = new XmlDocument();
-                    baseDoc.Load(s);
-                    var doc = interpreter.Interpret(baseDoc, Interpr);
-                    doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, InterpretedFileSuffix), "xml"));
+                    using (FileStream input = SecureIoHandler.ReadHandle(s))
+                    {
+                        baseDoc.Load(s);
+                    }
+                    baseDoc = interpreter.Interpret(baseDoc, Interpr);
+                    //Save
+                    String FileNameNew = Path.GetFileNameWithoutExtension(s) + InterpretedFileSuffix + ".xml";
+                    using (FileStream output = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
+                    {
+                        baseDoc.Save(output);
+                    }
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
                     returncode = -1;
                 }
             }
             return returncode;
         }
 
-        public int Reinterpret(IEnumerable<String> InputFiles, String InterpreterPath)
+        public int Reinterpret(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
         {
             int returncode = 0;
 
@@ -175,16 +172,23 @@ namespace FileDBReader.src
 
             foreach (String s in InputFiles)
             {
+                var inputDoc = new XmlDocument();
                 try
                 {
-                    var inputDoc = new XmlDocument();
-                    inputDoc.Load(s);
+                    using (FileStream fs = SecureIoHandler.ReadHandle(s))
+                    {
+                        inputDoc.Load(fs);
+                    }
                     var doc = exporter.Export(inputDoc, Interpr);
-                    doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, ReinterpretedFileSuffix), "xml"));
+
+                    String FileNameNew = Path.GetFileNameWithoutExtension(s) + ReinterpretedFileSuffix + ".xml";
+                    using (FileStream fs = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
+                    {
+                        doc.Save(fs);
+                    }
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
                     returncode = -1;
                 }
             }
@@ -198,21 +202,21 @@ namespace FileDBReader.src
             {
                 try
                 {
-                    using (FileStream fs = File.OpenRead(s))
+                    using (FileStream fs = SecureIoHandler.ReadHandle(s))
                     {
                         Console.WriteLine("{0} uses Compression Version {1}", s, VersionDetector.GetCompressionVersion(fs));
                     }
-
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
                     returncode = -1;
                 }
             }
             return returncode;
         }
 
+
+        //TODO IMPLEMENT SAFE FILE HANDLES
         public int FcFileImport(IEnumerable<String> InputFiles, String InterpreterPath)
         {
             int returncode = 0; 
@@ -243,9 +247,8 @@ namespace FileDBReader.src
                     }
                     result.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, FcImportedFileSuffix), "xml"));
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
                     returncode = -1;
                 }
             }
@@ -280,9 +283,8 @@ namespace FileDBReader.src
                     var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(exported), ConversionMode.Write);
                     FcFileHelper.SaveStreamToFile(Written, Path.ChangeExtension(HexHelper.AddSuffix(s, FcExportedFileSuffix), "xml"));
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
-                    Console.WriteLine(IOErrorMessage + "\n {0}", ex.Message);
                     returncode = -1;
                 }
             }
