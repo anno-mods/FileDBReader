@@ -19,9 +19,7 @@ namespace FileDBReader
         static String FILEFORMAT_DIRECTORY_NAME = "FileFormats";
 
         //FileDB
-        static FileReader reader_old = new FileReader();
         static XmlExporter exporter = new XmlExporter();
-        static FileWriter writer_old = new FileWriter();
         static XmlInterpreter interpreter = new XmlInterpreter();
         static ZlibFunctions zlib = new ZlibFunctions();
 
@@ -157,17 +155,6 @@ namespace FileDBReader
             File.WriteAllBytes(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "shittycompress.ctt"), zlib.Compress(Stream, 1));
         }*/
 
-        /// <summary>
-        /// decompresses the two files original.bin and recompressed.bin which are preextracted inner filedb files from gamedata_og.data
-        /// </summary>
-        public static void InnerFileDBTest() {
-            const String DIRECTORY_NAME = "filedb";
-
-            var reader = new FileReader();
-            reader.ReadFile(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "original.bin")).Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "original.xml"));
-            reader.ReadFile(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "recompressed.bin")).Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "recompressed.xml") );
-        }
-
         public static void GenericTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME, int FileVersion)
         {
             String INTERPRETER_FILE = Path.Combine(FILEFORMAT_DIRECTORY_NAME, INTERPREFER_FILE_NAME);
@@ -272,7 +259,7 @@ namespace FileDBReader
                 Console.WriteLine("File Test Done");
                 Console.WriteLine("--------------------------------------------------");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("Currently undergoing maintenance, please fuck off");
             }

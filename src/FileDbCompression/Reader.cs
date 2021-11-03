@@ -37,7 +37,7 @@ namespace FileDBReader.src
                     return Read_Version2(input);
                 }
             }
-            catch (InvalidFileDBException ex)
+            catch (InvalidFileDBException)
             {
                 Console.WriteLine("ERROR: Invalid FileDB file detected. Conversion was terminated");
             }

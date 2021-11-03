@@ -19,9 +19,6 @@ namespace FileDBReader
     /// </summary>
     public class FileReader
     {
-        #region Properties
-
-        #endregion Properties
 
         #region TopLevelMethods
         public XmlDocument ReadSpan(Span<byte> SpanToRead)

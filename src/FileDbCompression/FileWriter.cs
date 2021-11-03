@@ -15,9 +15,6 @@ namespace FileDBReader
     /// </summary>
     public class FileWriter
     {
-        public FileWriter() {
-
-        }
 
         public Stream Export(String path, String outputFileFormat, int FileVersion)
         {

@@ -12,22 +12,6 @@ namespace FileDBReader_Tests
     public class InterpreterTests
     {
 
-        //FileDB
-        static FileReader reader = new FileReader();
-        static XmlExporter exporter = new XmlExporter();
-        static FileWriter writer = new FileWriter();
-        static XmlInterpreter interpreter = new XmlInterpreter();
-        static ZlibFunctions zlib = new ZlibFunctions();
-
-        //Fc Files
-        static FcFileHelper FcFileHelper = new FcFileHelper();
-
-        [TestMethod]
-        public void TestMethod1()
-        {
-
-        }
-
         [TestMethod]
         public void InterpreterSerializing_DefaultType()
         {

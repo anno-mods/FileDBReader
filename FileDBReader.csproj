@@ -45,6 +45,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="src\FileDbCompression\FileReader.cs" />
+    <Compile Remove="src\FileDbCompression\FileWriter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
   </ItemGroup>
