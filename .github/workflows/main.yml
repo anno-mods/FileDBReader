@@ -33,7 +33,7 @@ jobs:
 
     - name: Package
       run: |
-        tar -c -a -f FileDBReader.zip -C  Build/**
+        tar -c -a -f FileDBReader.zip -C  Build/
         tar -c -a -f FileDBSerializer.zip -C  Build/FileDBSerializer.dll
 
     - name: Upload FileDBReader
