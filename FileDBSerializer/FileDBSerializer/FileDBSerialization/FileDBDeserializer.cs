@@ -207,10 +207,10 @@ namespace FileDBSerializing
 
             switch (ID)
             {
-                case > 32768:
+                case >= 32768:
                     _bytesize = reader.Read7BitEncodedInt(); 
                     return States.Attrib;
-                case <= 32768 when ID != 0:
+                case < 32768 when ID != 0:
                     return States.Tag;
                 case 0:
                     return States.Terminator;

@@ -63,6 +63,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\FileDBReader.csproj" />
+    <ProjectReference Include="..\..\FileDBSerializer\FileDBSerializer\FileDBSerializer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +71,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="unittest_interpreters\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="FileDBSerializer\Testfiles\testResult_v1.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="FileDBSerializer\Testfiles\testResult_v2.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -272,7 +272,7 @@ namespace FileDBReader_Tests
 
         #region HelpfulFunctions
 
-        public bool StreamsAreEqual(Stream StreamToCheck, Stream StreamCompare)
+        public static bool StreamsAreEqual(Stream StreamToCheck, Stream StreamCompare)
         {
             StreamToCheck.Position = 0;
             StreamCompare.Position = 0;

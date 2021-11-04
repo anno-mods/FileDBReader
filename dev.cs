@@ -51,8 +51,6 @@ namespace FileDBReader
             */
 
             //kek
-
-            IslandTestTMC();
         }
 
         #region GenericTestFcFile
@@ -75,6 +73,7 @@ namespace FileDBReader
         /// <summary>
         /// Test for the two island interpreters
         /// </summary>
+        /// 
         public static void IslandTest()
         {
             IslandTestGamedata();
