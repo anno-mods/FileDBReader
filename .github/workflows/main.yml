@@ -40,7 +40,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       with:
     # Artifact name
-        name: package
+        name: FileDBReader
         path: |
           FileDBReader.zip
           FileDBSerializer.zip
