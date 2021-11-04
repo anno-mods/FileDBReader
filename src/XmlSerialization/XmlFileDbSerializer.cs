@@ -66,32 +66,17 @@ namespace FileDBReader.src.XmlSerialization
             */
 
             var Content = HexHelper.StringToByteArray(n.InnerText);
-
-            ushort ID = ATTRIB_START;
-            if (!filedb.Tags.Attribs.ContainsValue(n.Name) && !n.Name.Equals("None"))
-            {
-                filedb.Tags.Attribs.Add(ID = AttribID, n.Name); 
-                AttribID++;
-            }
-            else
-                ID = filedb.Tags.Attribs.FirstOrDefault(x => x.Value == n.Name).Key;
-            return new Attrib() { ID = ID, Content = Content, Parent = parent, ParentDoc = filedb };
+            var Attrib = filedb.AddAttrib(n.Name);
+            Attrib.Content = Content;
+            Attrib.Parent = parent;
+            return Attrib;
         }
 
         private Tag DeserializeTag(XmlNode n, Tag parent)
         {
-            ushort ID = TAG_START;
-            if (!filedb.Tags.Tags.ContainsValue(n.Name) && !n.Name.Equals("None"))
-            {
-                
-                filedb.Tags.Tags.Add(ID = TagID, n.Name); 
-                TagID++;
-            }
-            else
-                ID = filedb.Tags.Tags.FirstOrDefault(x => x.Value == n.Name).Key;
-
-            var tag = new Tag() { ID = ID, Parent = parent, ParentDoc = filedb};
-
+            var tag = filedb.AddTag(n.Name);
+            tag.Parent = parent;
+            
             foreach (XmlNode child in n.ChildNodes)
             {
                 tag.Children.Add(DeserializeFileDBNode(child, tag));

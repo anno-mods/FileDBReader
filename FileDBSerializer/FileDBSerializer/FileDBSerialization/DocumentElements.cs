@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace FileDBSerializing
 {
@@ -15,6 +16,45 @@ namespace FileDBSerializing
         public int OFFSET_TO_OFFSETS { get; }
         public byte[] MAGIC_BYTES { get; }
         public int MAGIC_BYTE_COUNT { get; }
+        public ushort MAX_ATTRIB_ID { get; set; }
+        public ushort MAX_TAG_ID { get; set; }
+
+        public Tag AddTag(String Name)
+        {
+            //default -> none id
+            ushort IDOfThisTag = 0;
+            //if the tags don't contain this value, we need to add it to the tag section. also, filter out the None tag name.
+            if (!Tags.Tags.ContainsValue(Name) && !Name.Equals("None"))
+            {
+                MAX_TAG_ID++;
+                IDOfThisTag = MAX_TAG_ID;
+                Tags.Tags.Add(IDOfThisTag, Name);
+            }
+            else if (Tags.Tags.ContainsValue(Name))
+            { 
+                IDOfThisTag = Tags.Tags.FirstOrDefault(x => x.Value == Name).Key;
+            }
+
+            return new Tag() { ID = IDOfThisTag, ParentDoc = this };
+        }
+
+        public Attrib AddAttrib(String Name)
+        {
+            //default -> none id
+            ushort IDOfThisTag = 0;
+            //if the tags don't contain this value, we need to add it to the tag section. also, filter out the None tag name.
+            if (!Tags.Attribs.ContainsValue(Name) && !Name.Equals("None"))
+            {
+                MAX_ATTRIB_ID++;
+                IDOfThisTag = MAX_ATTRIB_ID;
+                Tags.Attribs.Add(IDOfThisTag, Name);
+            }
+            else if (Tags.Attribs.ContainsValue(Name))
+            {
+                IDOfThisTag = Tags.Attribs.FirstOrDefault(x => x.Value == Name).Key;
+            }
+            return new Attrib() { ID = IDOfThisTag, ParentDoc = this };
+        }
     }
 
     [DebuggerDisplay("[FileDB_Document: Version = 1, Count = {ELEMENT_COUNT}]")]
@@ -33,11 +73,18 @@ namespace FileDBSerializing
         public int VERSION { get; }
         public int OFFSET_TO_OFFSETS { get => _offset_to_offsets; }
 
+        public ushort MAX_TAG_ID { get => _max_tag_id; set => _max_tag_id = value; }
+        public ushort MAX_ATTRIB_ID { get => _max_attrib_id; set => _max_attrib_id = value; }
+
         //INTERNAL MEMBERS
 
         internal static int _offset_to_offsets = 4;
 
-        internal static byte[] _magic_bytes = new byte[0]; 
+        internal static byte[] _magic_bytes = new byte[0];
+
+        private ushort _max_tag_id = 1; //0x01 0x00
+
+        private ushort _max_attrib_id = 32768; //0x01 0x80
 
         //CONSTRUCTORS
         public FileDBDocument_V1()
@@ -62,6 +109,9 @@ namespace FileDBSerializing
         public byte[] MAGIC_BYTES { get => _magic_bytes; }
         public int MAGIC_BYTE_COUNT { get => _magic_byte_count; }
         public int OFFSET_TO_OFFSETS { get => _offset_to_offsets; }
+        public ushort MAX_TAG_ID { get => _max_tag_id; set => _max_tag_id = value; }
+
+        public ushort MAX_ATTRIB_ID {get => _max_attrib_id; set => _max_attrib_id = value; }
 
         //INTERNAL MEMBERS: Just for Binding the public ones.
 
@@ -72,6 +122,10 @@ namespace FileDBSerializing
         internal static byte[] _magic_bytes = { 0x08, 0x00, 0x00, 0x00, 0xFE, 0xFF, 0xFF, 0xFF };
 
         internal static int _magic_byte_count = _magic_bytes.Length;
+
+        private ushort _max_tag_id = 1; //0x01 0x00
+
+        private ushort _max_attrib_id = 32768; //0x01 0x80
 
         //CONSTRUCTORS
         public FileDBDocument_V2()
@@ -150,6 +204,11 @@ namespace FileDBSerializing
         {
             Bytesize = 0;
             NodeType = FileDBNodeType.Tag;
+        }
+
+        public void AddChild(FileDBNode node)
+        {
+            Children.Add(node);
         }
 
         public override String GetID()
