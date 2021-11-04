@@ -1,6 +1,7 @@
 # FileDBReader
 
 [![example workflow](https://github.com/anno-mods/FileDBReader/actions/workflows/main.yml/badge.svg)](https://github.com/anno-mods/FileDBReader/actions/workflows/main.yml)
+[![Create Release](https://github.com/anno-mods/FileDBReader/actions/workflows/release.yml/badge.svg)](https://github.com/anno-mods/FileDBReader/actions/workflows/release.yml)
 
 A simple command line unpacker, repacker and interpreter for proprietary Anno 1800 compression. Currently Work in Progress.
 
