@@ -112,7 +112,7 @@ namespace FileDBReader.src
                     {
                         result = exporter.Export(result, Interpr);
                     }
-                    using (Stream fs = SecureIoHandler.WriteHandle(s, overwrite))
+                    using (Stream fs = SecureIoHandler.WriteHandle( Path.ChangeExtension(s, OutputFileExtension), overwrite))
                     {
                         writer.Write(result, fs, CompressionVersion);
                     }
