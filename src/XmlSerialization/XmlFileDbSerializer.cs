@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace FileDBReader.src.XmlSerialization
 {
-    class XmlFileDbSerializer<T> where T : FileDBDocument, new()
+    public class XmlFileDbSerializer<T> where T : FileDBDocument, new()
     {
         T filedb;
         private ushort TagID;

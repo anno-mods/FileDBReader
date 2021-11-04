@@ -80,10 +80,8 @@ namespace FileDBSerializing.Tests
             Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));
         }
 
-        private void AreEqual(FileDBNode A, FileDBNode B)
+        public static void AreEqual(FileDBNode A, FileDBNode B)
         {
-            bool b = true;
-
             Assert.AreEqual (A.ID, B.ID);
             Assert.AreEqual(A.NodeType, B.NodeType);
             Assert.IsTrue((A is Attrib && B is Attrib) || (A is Tag && B is Tag));
@@ -103,7 +101,7 @@ namespace FileDBSerializing.Tests
             }
         }
 
-        private FileDBDocument buildDocument<T>() where T : FileDBDocument, new()
+        internal static FileDBDocument buildDocument<T>() where T : FileDBDocument, new()
         { 
             var filedb = new T();
 
@@ -118,7 +116,7 @@ namespace FileDBSerializing.Tests
             var child1 = filedb.AddTag("None");
             root1.AddChild(child1);
 
-                var root2 = filedb.AddAttrib("None");
+            var root2 = filedb.AddAttrib("None");
             root2.Content = new UnicodeEncoding().GetBytes("Modders are gonna take over the world");
 
             var root3 = filedb.AddAttrib("StringAttrib_Root");

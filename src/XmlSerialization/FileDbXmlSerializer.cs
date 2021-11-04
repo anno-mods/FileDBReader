@@ -11,7 +11,7 @@ using FileDBSerializing;
 
 namespace FileDBReader.src.XmlSerialization
 {
-    class FileDbXmlSerializer
+    public class FileDbXmlSerializer
     {
         XmlDocument doc; 
         public XmlDocument ToXml(FileDBDocument filedb)
