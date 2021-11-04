@@ -33,7 +33,7 @@ jobs:
 
     - name: Package
       run: |
-        tar -c -a -f FileDBReader.zip -C Build/ FileFormats/*.xml FileDBReader.exe FileDBReader.dll CommandLine.dll FileDBReader.runtime.json FileDBReader.deps.json ICSharpCode.SharpZipLib.dll FileDBSerializer.dll
+        tar -c -a -f FileDBReader.zip -C Build/ FileFormats/*.xml FileDBReader.exe FileDBReader.dll CommandLine.dll FileDBReader.runtimeconfig.json FileDBReader.deps.json ICSharpCode.SharpZipLib.dll FileDBSerializer.dll
         tar -c -a -f FileDBSerializer.zip -C Build/ FileDBSerializer.dll
     
     - name: Upload FileDBSerializer
