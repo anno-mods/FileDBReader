@@ -1,0 +1,6 @@
+on:
+  push:
+    tags:
+      - "v*"
+      
+name: Create Release
