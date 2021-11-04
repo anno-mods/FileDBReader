@@ -18,6 +18,7 @@ namespace FileDBReader.src
                     stream.Position = 0; 
                     MemoryStream fastStream = new MemoryStream();
                     stream.CopyTo(fastStream);
+                    fastStream.Position = 0; 
                     return fastStream;
                 }
             }

@@ -53,7 +53,7 @@ namespace FileDBReader {
             public int CompressionVersion { get; set; }
 
             //optional interpreter file. If provided, it will go directly from an interpreted file to final result
-            [Option('i', "interpreter", Required = true, HelpText = INTERPRETER_FILE_HELP + " | " + INTERPRETER_SKIP_HELP )]
+            [Option('i', "interpreter", Required = false, HelpText = INTERPRETER_FILE_HELP + " | " + INTERPRETER_SKIP_HELP )]
             public String Interpreter { get; set; }
 
             [Option('y', "overwrite", Required = false, Default = false)]
