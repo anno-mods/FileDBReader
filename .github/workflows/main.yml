@@ -31,18 +31,21 @@ jobs:
     - name: Publish
       run: dotnet publish -c Release -o Build
 
-    - name: Package
-      run: |
-        tar -c -a -f FileDBReader.zip -C  /Build/
-        tar -c -a -f FileDBSerializer.zip -C  /Build/FileDBSerializer.dll
-
     - name: Upload FileDBReader
       uses: actions/upload-artifact@v2.2.4
       with:
 
+    - name: Package
+        run: |
+          tar -c -a -f FileDBReader.zip -C Build/ FileFormats/ FileDBReader.exe FileDBReader.dll CommandLine.dll FileDBReader.runtime.json FileDBReader.deps.json ICSharpCode.SharpZipLib.dll FileDBSerializer.dll
+          tar -c -a -f FileDBSerializer.zip -C Build/ FileDBSerializer.dll
+    
+    - name: Upload FileDBSerializer
+      uses: actions/upload-artifact@v2.2.4
+      with:
     # Artifact name
-        name: FileDBReader
+        name: package
         path: |
           FileDBReader.zip
           FileDBSerializer.zip
-    
+        
