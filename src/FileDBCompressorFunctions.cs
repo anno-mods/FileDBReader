@@ -112,9 +112,14 @@ namespace FileDBReader.src
                     {
                         result = exporter.Export(result, Interpr);
                     }
-                    using (Stream fs = SecureIoHandler.WriteHandle( Path.ChangeExtension(s, OutputFileExtension), overwrite))
+                    //we first write to a memorystream here, then we let the secureIOHandler save that stream to a file.
+                    using (Stream fs = new MemoryStream())
                     {
-                        writer.Write(result, fs, CompressionVersion);
+                        SecureIoHandler.SaveHandle(
+                            Path.ChangeExtension(s, ext), 
+                            overwrite, 
+                            writer.Write(result, fs, CompressionVersion)
+                        );
                     }
                 }
                 catch (IOException)
