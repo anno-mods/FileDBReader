@@ -19,7 +19,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -34,7 +34,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
             # Artifact name
-          workflow: main.yml    
+          workflow: main.yml
           workflow_conclusion: success
           
       - name: Upload FileDBReader
@@ -44,7 +44,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: FileDBReader.zip
+          asset_path: FileDBReader/**
           asset_name: FileDBReader.zip
           asset_content_type: application/zip
           
@@ -55,6 +55,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: FileDBReader.zip
-          asset_name: FileDBReader.zip
+          asset_path: FileDBSerializer/**
+          asset_name: FileDBSerializer.zip
           asset_content_type: application/zip
