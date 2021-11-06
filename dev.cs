@@ -50,7 +50,7 @@ namespace FileDBReader
             Console.WriteLine("Finished Test File: file.db");
             */
 
-            //kek9
+            FcFileDevTest();
         }
 
         #region GenericTestFcFile
