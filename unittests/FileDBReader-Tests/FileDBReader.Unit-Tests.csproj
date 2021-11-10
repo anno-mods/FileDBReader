@@ -1,0 +1,87 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>FileDBReader_Tests</RootNamespace>
+
+    <IsPackable>false</IsPackable>
+
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <WarningLevel>2</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\FileFormats\a7tinfo.xml" Link="unittest_interpreters\a7tinfo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\ctt.xml" Link="unittest_interpreters\ctt.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\FcFile.xml" Link="unittest_interpreters\FcFile.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\FcFile_2070.xml" Link="unittest_interpreters\FcFile_2070.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\infotip.xml" Link="unittest_interpreters\infotip.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\internalfiledbtest.xml" Link="unittest_interpreters\internalfiledbtest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\Island_Gamedata.xml" Link="unittest_interpreters\Island_Gamedata.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\Island_RD3D.xml" Link="unittest_interpreters\Island_RD3D.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\listtest.xml" Link="unittest_interpreters\listtest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\map_Gamedata.xml" Link="unittest_interpreters\map_Gamedata.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\rdp.xml" Link="unittest_interpreters\rdp.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\FileFormats\tmc.xml" Link="unittest_interpreters\tmc.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+ 
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.1" />
+    <PackageReference Include="coverlet.collector" Version="1.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\FileDBReader.csproj" />
+    <ProjectReference Include="..\..\FileDBSerializer\FileDBSerializer\FileDBSerializer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="unittest_files\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="unittest_interpreters\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="FileDBSerializer\Testfiles\testResult_v1.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="FileDBSerializer\Testfiles\testResult_v2.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

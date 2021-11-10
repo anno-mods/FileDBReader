@@ -19,6 +19,7 @@ namespace FileDBReader
                 { typeof(long),   (s, Encoding) => long.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
                 { typeof(ulong),  (s, Encoding) => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
                 { typeof(float),  (s, Encoding) => HexHelper.ToFloat(HexHelper.flip(s)).ToString() },
+                { typeof(double), (s, Encoding) => HexHelper.ToDouble(HexHelper.flip(s)).ToString() },
                 { typeof(String), (s, Encoding) => HexHelper.FromHexString(s, Encoding) }
             };
 
@@ -26,7 +27,7 @@ namespace FileDBReader
             {
                 { typeof(bool),     (s, Encoding)   => BitConverter.GetBytes(bool.Parse(s))},
                 { typeof(byte),     (s, Encoding)   => new byte[] { byte.Parse(s) }},
-                { typeof(sbyte),    (s, Encoding)   => BitConverter.GetBytes(sbyte.Parse(s))},
+                { typeof(sbyte),    (s, Encoding)   => new byte[] { (byte)sbyte.Parse(s) }},
                 { typeof(short),    (s, Encoding)   => BitConverter.GetBytes(short.Parse(s))},
                 { typeof(ushort),   (s, Encoding)   => BitConverter.GetBytes(ushort.Parse(s))},
                 { typeof(int),      (s, Encoding)   => BitConverter.GetBytes(int.Parse(s))},
@@ -34,12 +35,13 @@ namespace FileDBReader
                 { typeof(long),     (s, Encoding)   => BitConverter.GetBytes(long.Parse(s))},
                 { typeof(ulong),    (s, Encoding)   => BitConverter.GetBytes(ulong.Parse(s))},
                 { typeof(float),    (s, Encoding)   => BitConverter.GetBytes(float.Parse(s))},
-                { typeof (String),  (s, Encoding)   => Encoding.GetBytes(s)}
+                { typeof(double),   (s, Encoding)   => BitConverter.GetBytes(double.Parse(s))},
+                { typeof(String),   (s, Encoding)   => Encoding.GetBytes(s)}
             };
 
         public static Dictionary<Type, Func<string, object>> ConversionRulesToObject = new Dictionary<Type, Func<string, object>>
             {
-                { typeof(bool),   s => HexHelper.ToBool(s).ToString()},
+                { typeof(bool),   s => HexHelper.ToBool(s)},
                 { typeof(byte),   s => byte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
                 { typeof(sbyte),  s => sbyte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
                 { typeof(short),  s => short.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
@@ -48,6 +50,7 @@ namespace FileDBReader
                 { typeof(uint),   s => uint.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
                 { typeof(long),   s => long.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
                 { typeof(ulong),  s => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(double), s => HexHelper.ToDouble(HexHelper.flip(s)) },
                 { typeof(float),  s => HexHelper.ToFloat(HexHelper.flip(s)) },
                 { typeof(String), s => HexHelper.FromHexString(s, new UnicodeEncoding()) }
             };

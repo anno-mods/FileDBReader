@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBReader.src;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,8 +9,8 @@ using System.Xml;
 
 namespace FileDBReader
 {
-    enum ConversionMode { Write, Read }
-    class FcFileHelper
+    public enum ConversionMode { Write, Read }
+    public class FcFileHelper
     {
         /// <summary>
         /// CDATA to Hex conversion.
@@ -20,15 +21,12 @@ namespace FileDBReader
         /// Value conversion happens with the usual XmlInterpreter/XmlExporters. 
         /// </summary>
         /// 
-        readonly private static String ContentNodeOpen = "<Content>";
-        readonly private static String ContentNodeClose = "</Content>";
         readonly private static String CdataOpener = "CDATA[";
 
         public FcFileHelper()
         {
 
         }
-
 
         public XmlDocument ReadFcFile(String Filename)
         {
@@ -37,6 +35,7 @@ namespace FileDBReader
 
         public XmlDocument StreamToXmlFile(Stream stream) {
             XmlDocument doc = new XmlDocument();
+            stream.Position = 0; 
             doc.Load(stream);
             return doc;
         }
@@ -60,6 +59,16 @@ namespace FileDBReader
 
         public Stream ConvertFile(Stream fs, ConversionMode mode)
         {
+            CorrectMultiRoots correctMultiRoots = new CorrectMultiRoots();
+            if (mode == ConversionMode.Read)
+            {
+                fs = correctMultiRoots.AddMultiRoot(fs);
+            }
+            else if (mode == ConversionMode.Write)
+            {
+                fs = correctMultiRoots.RemoveMultiRoot(fs);
+            }
+
             //initialize writer and reader
             var reader = new BinaryReader(fs);
             var Encoding = new UTF8Encoding();
@@ -70,18 +79,7 @@ namespace FileDBReader
             String LastSixChars = "";
             char CurrentChar;
 
-
-            //if read, add the content node, if write, remove it
-            if (mode == ConversionMode.Read)
-            {
-                //BinaryWriter writes length prefixed strings - this means we need to create a byte array from our encoding and let the BinaryWriter write that.
-                writer.Write(Encoding.GetBytes(ContentNodeOpen));
-                writer.Flush();
-            }
-            else if (mode == ConversionMode.Write)
-            { 
-                
-            }
+            fs.Position = 0;
 
             //basically take the stream, find all cdata sections and write a new stream that is a valid xml document.
             CorrectEmptyClosingTag correctClose = new CorrectEmptyClosingTag();
@@ -113,28 +111,8 @@ namespace FileDBReader
                     writer.Flush();
                 }
             }
-            //if read, add the content node, if write, remove it
-            if (mode == ConversionMode.Read)
-            {
-                writer.Write(Encoding.GetBytes(ContentNodeClose));
-                writer.Flush();
-                //reset position before returning the stream.
-                output.Position = 0;
-                return output;
-            }
-            else if (mode == ConversionMode.Write)
-            {
-                writer.BaseStream.SetLength(writer.BaseStream.Length - ContentNodeClose.Length);
-                MemoryStream copyStream = new MemoryStream();
-                writer.BaseStream.Position = ContentNodeOpen.Length;
-                writer.BaseStream.CopyTo(copyStream);
-                copyStream.Position = 0; 
-                return copyStream; 
-            }
 
-            //if we get here, our conversionmode is wrong
-            throw new ArgumentException();
-
+            return output;
         }
 
         private void HexToBinary(ref BinaryReader reader, ref BinaryWriter writer)

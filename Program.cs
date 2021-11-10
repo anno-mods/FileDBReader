@@ -9,80 +9,105 @@ namespace FileDBReader {
 
   internal class Program {
 
+        //VERB EXPLANATIONS
+        private const String DECOMPRESS_EXPL = "Decompress files from filedb compression to xml. Data will be represented as hex strings.";
+        private const String COMPRESS_EXPL = "Compress a file from xml to filedb. Expects data to be represented as hex strings.";
+        private const String INTERPRET_EXPL = "Interpret an xml file that uses hex strings as texts. An interpreter file is needed";
+        private const String REINTERPRET_EXPL = "Convert all text in an xml file to hex. An interpreter file is needed";
+        private const String VERSION_EXPL = "checks the compression version of each input file";
+
+        private const String INPUT_FILE_MESSAGE = "Input files";
+        private const String COMPRESSION_VERSION_MESSAGE = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12";
+        private const String INTERPRETER_FILE_HELP = "Interpreter Filepath";
+        private const String INTERPRETER_SKIP_HELP = "If provided, decompressing/reinterpreting is automatically done as a step-in-between and the program will print the interpreted/recompressed result.";
+        private const String OUTPUT_FILEFORMAT_HELP = "File extension for the output file";
+
         #region CmdLineOptions
-        [Verb("decompress", HelpText = "Decompress a file from filedb to xml. Data will be represented as hex strings.")]
+        [Verb("decompress", HelpText = DECOMPRESS_EXPL)]
         class DecompressOptions
         {
-            [Option('f', "file", Required = true, HelpText = "Required. Input files to be decompressed.")]
+            [Option('f', "files", Required = true, HelpText = INPUT_FILE_MESSAGE)]
             public IEnumerable<String> InputFiles { get; set; }
 
-            [Option('c', "CompressionVersion", Required = false, HelpText = "Optional. File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
+            [Option('c', "CompressionVersion", Required = false, HelpText = COMPRESSION_VERSION_MESSAGE)]
             public int CompressionVersion { get; set; }
 
             //optional interpreter file. If provided, it will directly interpret the decompressed file. 
-            [Option('i', "interpreter", Required = false, HelpText = "Optional. Interpreter file, if provided, the program will directly interpret the decompressed file and print the result.")]
+            [Option('i', "interpreter", Required = false, HelpText = INTERPRETER_FILE_HELP + ". " + INTERPRETER_SKIP_HELP)]
             public String Interpreter { get; set; }
+
+            [Option('y', "overwrite", Required = false, Default = false)]
+            public bool overwrite { get; set; }
         }
 
-        [Verb("compress", HelpText = "Recompress an xml file to filedb. Requires data to be represented as hex strings")]
+        [Verb("compress", HelpText = COMPRESS_EXPL)]
         class CompressOptions
         {
-            [Option('f', "file", Required = true, HelpText = "Required. Input files to be compressed")]
+            [Option('f', "files", Required = true, HelpText = INPUT_FILE_MESSAGE)]
             public IEnumerable<String> InputFiles { get; set; }
 
-            [Option('o', "outputFileExtension", Required = false, HelpText = "Optional. File Format of the output file")]
+            [Option('o', "outputFileExtension", Required = false, HelpText = OUTPUT_FILEFORMAT_HELP)]
             public String OutputFileExtension{ get; set; }
 
-            [Option('c', "CompressionVersion", Required = true, HelpText = "Required. File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
+            [Option('c', "CompressionVersion", Required = true, HelpText = COMPRESSION_VERSION_MESSAGE)]
             public int CompressionVersion { get; set; }
 
             //optional interpreter file. If provided, it will go directly from an interpreted file to final result
-            [Option('i', "interpreter", Required = true, HelpText = "Optional. Interpreter file, if provided, the program will directly compress an interpreted file and print the result.")]
+            [Option('i', "interpreter", Required = false, HelpText = INTERPRETER_FILE_HELP + " | " + INTERPRETER_SKIP_HELP )]
             public String Interpreter { get; set; }
+
+            [Option('y', "overwrite", Required = false, Default = false)]
+            public bool overwrite { get; set; }
         }
 
-        [Verb("interpret", HelpText = "Interpret an xml file that uses hex strings as texts. An interpreter file is needed")]
+        [Verb("interpret", HelpText = INTERPRET_EXPL)]
         class InterpretOptions
         {
-            [Option('f', "file", Required = true, HelpText = "Required. Input files")]
+            [Option('f', "files", Required = true, HelpText = INPUT_FILE_MESSAGE)]
             public IEnumerable<String> InputFiles { get; set; }
 
-            [Option('i', "interpreter", Required = true, HelpText = "Required. Interpreter file")]
+            [Option('i', "interpreter", Required = true, HelpText = INTERPRETER_FILE_HELP)]
             public String Interpreter { get; set; }
+
+            [Option('y', "overwrite", Required = false, Default = false)]
+            public bool overwrite { get; set; }
         }
 
-        [Verb("toHex", HelpText = "Convert all text in an xml file to hex. An interpreter file is needed")]
+        [Verb("toHex", HelpText = REINTERPRET_EXPL)]
         class toHexOptions
         {
-            [Option('f', "file", Required = true, HelpText = "Required. Input files")]
+            [Option('f', "files", Required = true, HelpText = INPUT_FILE_MESSAGE)]
             public IEnumerable<String> InputFiles { get; set; }
 
-            [Option('i', "interpreter", Required = true, HelpText = "Required. Interpreter file")]
+            [Option('i', "interpreter", Required = true, HelpText = INTERPRETER_FILE_HELP)]
             public String Interpreter { get; set; }
+
+            [Option('y', "overwrite", Required = false, Default = false)]
+            public bool overwrite { get; set; }
         }
 
-        [Verb("check_fileversion", HelpText = "Check the compression version of a file.")]
+        [Verb("check_fileversion", HelpText = VERSION_EXPL)]
         class FileCheck_Options
         {
-            [Option('f', "file", Required = true, HelpText = "Required. Input files")]
+            [Option('f', "files", Required = true, HelpText = INPUT_FILE_MESSAGE)]
             public IEnumerable<String> InputFiles { get; set; }
         }
 
         [Verb("fctohex", HelpText = "Import an FC file to valid XML")]
         class FcImportOptions
         {
-            [Option('f', "file", Required = true, HelpText = "Required. Input files")]
+            [Option('f', "files", Required = true, HelpText = INPUT_FILE_MESSAGE)]
             public IEnumerable<String> InputFiles { get; set; }
 
             //optional interpreter file. If provided, the program will directly interpret the validated file. 
-            [Option('i', "interpreter", Required = false, HelpText = "Optional. Interpreter file")]
+            [Option('i', "interpreter", Required = false, HelpText = INTERPRETER_FILE_HELP)]
             public String Interpreter { get; set; }
         }
 
         [Verb("hextofc", HelpText = "Reverse operation of fctohex.")]
         class FcExportOptions
         {
-            [Option('f', "file", Required = true, HelpText = "input files")]
+            [Option('f', "files", Required = true, HelpText = INPUT_FILE_MESSAGE)]
             public IEnumerable<String> InputFiles { get; set; }
 
             //optional interpreter file. If provided, the program will directly interpret the validated file. 
@@ -90,12 +115,11 @@ namespace FileDBReader {
             public String Interpreter { get; set; }
         }
 
-        //Functions starting from here are depracated
-
+        [Obsolete("decompress_Interpret has been merged with the verb decompress")]
         [Verb("decompress_interpret", HelpText = "DEPRACATED. decompress a filedb file and interpret it. An interpreter file is needed. ")]
         class Decompress_Interpret_Options
         {
-            [Option('f', "file", Required = true, HelpText = "input files")]
+            [Option('f', "files", Required = true, HelpText = "input files")]
             public IEnumerable<String> InputFiles { get; set; }
 
             [Option('i', "interpreter", Required = true, HelpText = "Interpreter file")]
@@ -104,10 +128,11 @@ namespace FileDBReader {
             [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
             public int CompressionVersion { get; set; }
         }
-        [Verb("recompress_export", HelpText = "DEPRACATED, WILL BE REMOVED IN THE FUTURE. reimport an xml file to filedb. An interpreter file is needed")]
+        [Obsolete("recompress_export has been merged with the verb recompress")]
+        [Verb("recompress_export", HelpText = "DEPRACATED. reimport an xml file to filedb. An interpreter file is needed")]
         class Recompress_Export_Options
         {
-            [Option('f', "file", Required = true, HelpText = "input files")]
+            [Option('f', "files", Required = true, HelpText = "input files")]
             public IEnumerable<String> InputFiles { get; set; }
 
             [Option('i', "interpreter", Required = true, HelpText = "Interpreter file")]
@@ -118,41 +143,12 @@ namespace FileDBReader {
 
             [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
             public int CompressionVersion { get; set; }
-        }
-
-        [Verb("fctohex_interpret", HelpText = "DEPRACATED. Import an FC file to valid XML and interpret it using an interpreter.")]
-        class FcImport_InterpretOptions
-        {
-            [Option('f', "file", Required = true, HelpText = "input files")]
-            public IEnumerable<String> InputFiles { get; set; }
-
-            [Option('i', "interpreter", Required = true, HelpText = "Interpreter file")]
-            public String Interpreter { get; set; }
-        }
-        [Verb("hextofc_export", HelpText = "DEPRACATED. Exports the xml version back to an fc file using an interpreter.")]
-        class FcExport_ExportOptions
-        {
-            [Option('f', "file", Required = true, HelpText = "input files")]
-            public IEnumerable<String> InputFiles { get; set; }
-
-            [Option('i', "interpreter", Required = true, HelpText = "Interpreter file")]
-            public String Interpreter { get; set; }
-
-            [Option('o', "outputFileExtension", Required = false, HelpText = "file Format of the output file")]
-            public String OutputFileExtension { get; set; }
         }
 
         #endregion
 
         #region MainMethod
         private static void Main(string[] args) {
-
-            //todo (taubenangriff) delete this when removing depracated functions
-            var reader = new FileReader();
-            var exporter = new XmlExporter();
-            var writer = new FileWriter();
-            var interpreter = new XmlInterpreter();
-            var FcFileHelper = new FcFileHelper();
 
             var Functions = new FileDBCompressorFunctions();
 
@@ -163,34 +159,33 @@ namespace FileDBReader {
                     CompressOptions, 
                     InterpretOptions, 
                     toHexOptions, 
+                    FileCheck_Options,
                     FcImportOptions, 
                     FcExportOptions, 
                     Decompress_Interpret_Options, 
-                    Recompress_Export_Options, 
-                    FcImport_InterpretOptions, 
-                    FcExport_ExportOptions
+                    Recompress_Export_Options
                 > 
                 (args).MapResult(
 
                 //OPTIONS FOR DECOMPRESSING
                 (DecompressOptions o) =>
                 {
-                    return Functions.Decompress(o.InputFiles, o.Interpreter);
+                    return Functions.Decompress(o.InputFiles, o.Interpreter, o.overwrite);
                 },
                 //OPTIONS FOR RECOMPRESSING
                 (CompressOptions o) =>
                 {
-                    return Functions.Compress(o.InputFiles, o.Interpreter, o.OutputFileExtension, o.CompressionVersion);
+                    return Functions.Compress(o.InputFiles, o.Interpreter, o.OutputFileExtension, o.CompressionVersion, o.overwrite);
                 },
                 //OPTIONS FOR INTERPRETATION ONLY
                 (InterpretOptions o) =>
                 {
-                    return Functions.Interpret(o.InputFiles, o.Interpreter);
+                    return Functions.Interpret(o.InputFiles, o.Interpreter, o.overwrite);
                 },
                 //OPTIONS FOR REINTERPRETATION ONLY
                 (toHexOptions o) =>
                 {
-                    return Functions.Reinterpret(o.InputFiles, o.Interpreter);
+                    return Functions.Reinterpret(o.InputFiles, o.Interpreter, o.overwrite);
                 },
                 //CHECK COMPRESSION VERSION
                 (FileCheck_Options o) =>
@@ -208,91 +203,15 @@ namespace FileDBReader {
                     return Functions.FcFileExport(o.InputFiles, o.Interpreter);
                 },
 
-                //DEPRACATED ARGUMENTS START HERE
 
-                //I don't want to rewrite this too :) will be removed anyway
-                (FcImport_InterpretOptions o) =>
+                //---------DEPRACATED FUNCTIONS---------//
+                (Decompress_Interpret_Options o ) =>
                 {
-                    foreach (String s in o.InputFiles)
-                    {
-                        try
-                        {
-                            var interpreterDoc = new XmlDocument();
-                            interpreterDoc.Load(o.Interpreter);
-                            var doc = interpreter.Interpret(FcFileHelper.ReadFcFile(s), interpreterDoc);
-                            doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, "_fc_i"), "xml"));
-                        }
-                        catch (IOException e)
-                        {
-                            Console.WriteLine("File Path wrong, File in use or does not exist.");
-                        }
-                    }
-
-                    return 0; 
-                },
-                (FcExport_ExportOptions o) =>
+                    return Functions.Decompress(o.InputFiles, o.Interpreter, false);
+                }, 
+                (Recompress_Export_Options o) => 
                 {
-                    var ext = "";
-                    if (o.OutputFileExtension != null)
-                    {
-                        ext = o.OutputFileExtension;
-                    }
-                    else
-                    {
-                        ext = ".filedb";
-                    }
-                    foreach (String s in o.InputFiles)
-                    {
-                        try
-                        {
-                            var exported = exporter.Export(s, o.Interpreter);
-                            var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(exported), ConversionMode.Write);
-                            FcFileHelper.SaveStreamToFile(Written, Path.ChangeExtension(HexHelper.AddSuffix(s, "_fc_e"), "xml"));
-                        }
-                        catch (IOException e)
-                        {
-                            Console.WriteLine("File Path wrong, File in use or does not exist.");
-                        }
-
-                    }
-                    return 0;
-                },
-
-
-                (Decompress_Interpret_Options o) =>
-                {
-                    foreach (String s in o.InputFiles)
-                    {
-                        var interpreterDoc = new XmlDocument();
-                        interpreterDoc.Load(o.Interpreter);
-                        var doc = interpreter.Interpret(reader.ReadFile(s), interpreterDoc);
-                        doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, "_d_i"), "xml"));
-                    }
-                    return 0;
-                },
-                (Recompress_Export_Options o) =>
-                {
-                    var ext = "";
-                    if (o.OutputFileExtension != null)
-                    {
-                        ext = o.OutputFileExtension;
-                    }
-                    else
-                    {
-                        ext = ".filedb";
-                    }
-                    foreach (String s in o.InputFiles)
-                    {
-                        try
-                        {
-                            writer.Export(exporter.Export(s, o.Interpreter), o.OutputFileExtension, s, o.CompressionVersion);
-                        }
-                        catch (IOException e)
-                        {
-                            Console.WriteLine("File Path wrong, File in use or does not exist.");
-                        }
-                    }
-                    return 0;
+                    return Functions.Compress(o.InputFiles, o.Interpreter, o.OutputFileExtension, o.CompressionVersion, false); 
                 },
                 e => 1
             ) ;

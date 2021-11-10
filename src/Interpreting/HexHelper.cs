@@ -11,8 +11,9 @@ namespace FileDBReader
     /// <summary>
     /// Static Library of helpers
     /// </summary>
-    static class HexHelper
+    public static class HexHelper
     {
+        readonly static String HexAlphabet = "0123456789ABCDEF";
         public static string FromHexString(string hexString, Encoding encoding)
         {
             var bytes = new byte[hexString.Length / 2];
@@ -22,7 +23,7 @@ namespace FileDBReader
                 {
                     bytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
                 }
-                catch (Exception e) {
+                catch (Exception) {
                     Console.WriteLine("Hex String not in correct format: {0}", hexString);
                 }
             }
@@ -45,6 +46,20 @@ namespace FileDBReader
 
             byte[] floatVals = BitConverter.GetBytes(num);
             float f = BitConverter.ToSingle(floatVals, 0);
+            return f;
+        }
+
+        /// <summary>
+        /// doubles are big endian meh
+        /// </summary>
+        /// <param name="hexString"></param>
+        /// <returns></returns>
+        public static double ToDouble(String hexString)
+        {
+            ulong num = ulong.Parse(hexString, System.Globalization.NumberStyles.AllowHexSpecifier);
+
+            byte[] doubleVals = BitConverter.GetBytes(num);
+            double f = BitConverter.ToDouble(doubleVals, 0);
             return f;
         }
 
@@ -101,7 +116,7 @@ namespace FileDBReader
                 {
                     bytes[i] = (T)ConverterFunctions.ConversionRulesToObject[t](s.Substring(i * size, size));
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine("Hex String not in correct format: {0}", s);
                 }
@@ -116,6 +131,30 @@ namespace FileDBReader
                 s.CopyTo(ms);
                 return ms.ToArray();
             }
+        }
+
+        public static String StreamToHexString(Stream s)
+        {
+            StringBuilder Result = new StringBuilder( (int) s.Length * 2);
+            s.Position = 0;
+            while (s.Position < s.Length - 1)
+            {
+                Result.Append(ByteToHex ((byte)s.ReadByte()));
+            }
+            return Result.ToString();
+        }
+
+        public static String ByteToHex(byte b)
+        {
+            StringBuilder Result = new StringBuilder(2);
+            Result.Append(HexAlphabet[b >> 4]);
+            Result.Append(HexAlphabet[b & 0xF]);
+            return Result.ToString();
+        }
+
+        public static string ByteArrayToString(byte[] ba)
+        {
+            return BitConverter.ToString(ba).Replace("-", "");
         }
 
         //copied from https://stackoverflow.com/questions/321370/how-can-i-convert-a-hex-string-to-a-byte-array/321404 because why not

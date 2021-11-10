@@ -12,7 +12,7 @@ namespace FileDBReader
     /// <summary>
     /// converts all text in an xml file into hex strings using conversion rules set up in an external xml file
     /// </summary>
-    class XmlExporter
+    public class XmlExporter
     {
         public XmlExporter() {
             
@@ -27,83 +27,48 @@ namespace FileDBReader
         public XmlDocument Export(String docpath, String interpreterPath) {
             XmlDocument doc = new XmlDocument();
             doc.Load(docpath);
-
-            XmlDocument interpreter = new XmlDocument();
-            interpreter.Load(interpreterPath);
-
-            return Export(doc, interpreter);
+            return Export(doc, new Interpreter(Interpreter.ToInterpreterDoc(interpreterPath)));
         }
 
-        public XmlDocument Export(XmlDocument doc, XmlDocument interpreter) {
-            //default type
-            XmlNode defaultAttrib = null;
-            defaultAttrib = interpreter.SelectSingleNode("/Converts/Default");
-            var converts = interpreter.SelectNodes("/Converts/Converts/Convert");
-            var internalFileDBs = interpreter.SelectNodes("/Converts/InternalCompression/Element");
-
-            //converts
-            foreach (XmlNode x in converts) {
-                try
-                {
-                    String Path = x.Attributes["Path"].Value;
-                    var Nodes = doc.SelectNodes(Path);
-                    ConvertNodeSet(Nodes, x);
-                }
-                catch (InvalidConversionException e)
-                {
-                    Console.WriteLine("Path causes conversion errors: {0} \n NodeName: {1} \n Text to Convert: {2}, Target Type: {3}", x.Attributes["Path"].Value, e.NodeName, e.ContentToConvert, e.TargetType);
-                }
-            }
-
-            //defaultType
-            if (defaultAttrib != null) {
-                //get a combined xpath of all
-                List<String> StringList = new List<string>();
-                foreach (XmlNode convert in converts)
-                    StringList.Add(convert.Attributes["Path"].Value);
-                foreach (XmlNode internalFileDB in internalFileDBs)
-                    StringList.Add(internalFileDB.Attributes["Path"].Value);
-                String xPath = String.Join(" | ", StringList);
-
-                //select all text not in combined path#
-                var Base = doc.SelectNodes("//*[text()]");
-                var toFilter = doc.SelectNodes(xPath);
-                var defaults = HexHelper.ExceptNodelists(Base, toFilter);
-
-                //convert that to default type
-                ConvertNodeSet(defaults, defaultAttrib);
-            }
-            //internal filedbs
-            foreach (XmlNode n in internalFileDBs)
+        public XmlDocument Export(XmlDocument doc, Interpreter Interpreter)
+        {
+            foreach (KeyValuePair<String, Conversion> k in Interpreter.Conversions)
             {
-                var nodes = doc.SelectNodes(n.Attributes["Path"].Value);
-                foreach (XmlNode node in nodes)
+                try {
+                    var Nodes = doc.SelectNodes(k.Key);
+                    ConvertNodeSet(Nodes.Cast<XmlNode>(), k.Value);
+                }
+                catch (IOException)
                 {
-                    //get internal document
+                    Console.WriteLine("I don't even know what this is for. This is an error message even dumber than the old one. Modders gonna take over the world!!");
+                }
+            }
+
+            if (Interpreter.HasDefaultType())
+            {
+                String Inverse = Interpreter.GetInverseXPath();
+                var Base = doc.SelectNodes("//*[text()]");
+                var toFilter = doc.SelectNodes(Inverse);
+                var defaults = HexHelper.ExceptNodelists(Base, toFilter);
+                ConvertNodeSet(defaults, Interpreter.DefaultType);
+            }
+
+            foreach (InternalCompression comp in Interpreter.InternalCompressions)
+            {
+                var Nodes = doc.SelectNodes(comp.Path);
+                foreach (XmlNode node in Nodes)
+                {
+                    Writer fileWriter = new Writer();
+
                     var contentNode = node.SelectSingleNode("./Content");
                     XmlDocument xmldoc = new XmlDocument();
                     XmlNode f = xmldoc.ImportNode(contentNode, true);
                     xmldoc.AppendChild(xmldoc.ImportNode(f, true));
 
-                    //compress the document
-                    FileWriter fileWriter = new FileWriter();
+                    var stream = fileWriter.Write(xmldoc, new MemoryStream(), comp.CompressionVersion);
 
-                    int FileVersion = 1;
-                    //get File Version of internal compression
-                    var VersionNode = n.Attributes["CompressionVersion"];
-                    if (!(VersionNode == null))
-                    {
-                        FileVersion = Int32.Parse(VersionNode.Value);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Your interpreter should specify a version for internal FileDBs. For this conversion, 1 was auto-chosen. Make sure your versions match up!");
-                    }
-
-                    var stream = fileWriter.Export(xmldoc, new MemoryStream(), FileVersion);
-
-                    //get this stream to hex 
-                    node.InnerText = ByteArrayToString(HexHelper.StreamToByteArray(stream));
+                    //Convert This String To Hex Data
+                    node.InnerText = HexHelper.StreamToHexString(stream);
 
                     //try to overwrite the bytesize since it's always exported the same way
                     var ByteSize = node.SelectSingleNode("./preceding-sibling::ByteCount");
@@ -111,87 +76,41 @@ namespace FileDBReader
                     {
                         long BufferSize = stream.Length;
                         Type type = typeof(int);
-                        ByteSize.InnerText = ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
+                        ByteSize.InnerText = HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
                     }
                 }
             }
 
-            return doc;
-            //doc.Save(Path.ChangeExtension(HexHelper.AddSuffix(docpath, "_e"), "xml"));
+            return doc; 
         }
 
-        private void ConvertNodeSet(XmlNodeList matches, XmlNode ConverterInfo)
+        private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)
         {
-            IEnumerable<XmlNode> cast = matches.Cast<XmlNode>();
-            ConvertNodeSet(cast, ConverterInfo);
-        }
-
-        private void ConvertNodeSet(IEnumerable<XmlNode> matches, XmlNode ConverterInfo) {
-            //get type the nodeset should be converted to
-            var type = Type.GetType("System." + ConverterInfo.Attributes["Type"].Value);
-            //get encoding
-            Encoding encoding = new UnicodeEncoding();
-            if (ConverterInfo.Attributes["Encoding"] != null)
-                encoding = Encoding.GetEncoding(ConverterInfo.Attributes["Encoding"].Value);
-            //get structure
-            String Structure = "Default";
-            if (ConverterInfo.Attributes["Structure"] != null)
-                Structure = ConverterInfo.Attributes["Structure"].Value;
-            //get Cdata
-            bool IsCdataNode = false;
-            if (ConverterInfo.Attributes["IsCdataNode"] != null)
-                IsCdataNode = true;
-
-            //getEnum
-            var EnumEntries = ConverterInfo.SelectNodes("./Enum/Entry");
-            RuntimeEnum Enum = new RuntimeEnum();
-            if (EnumEntries != null) {
-                foreach (XmlNode EnumEntry in EnumEntries)
+            foreach (XmlNode match in matches)
+            {
+                try
                 {
-                    try
+                    switch (Conversion.Structure)
                     {
-                        var Value = EnumEntry.Attributes["Value"];
-                        var Name = EnumEntry.Attributes["Name"];
-                        if (Value != null && Name != null)
-                        {
-                            Enum.AddValue(Name.Value, Value.Value);
-                        }
-                        else {
-                            Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
-                        }
-                    }
-                    catch (NullReferenceException ex)
-                    {
+                        case ContentStructure.List:
+                            exportAsList(match, Conversion.Type, Conversion.Encoding, false);
+                            break;
+                        case ContentStructure.Default:
+                            ExportSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
+                            break;
+                        case ContentStructure.Cdata:
+                            exportAsList(match, Conversion.Type, Conversion.Encoding, true);
+                            break;
                     }
                 }
-            }
-
-            foreach (XmlNode node in matches) {
-                switch (Structure)
+                catch (InvalidConversionException e)
                 {
-                    case "List":
-                        try
-                        {
-                            exportAsList(node, type, encoding, IsCdataNode);
-                        }
-                        catch (InvalidConversionException e)
-                        {
-                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                        }
-                        break;
-                    case "Default":
-                        try
-                        {
-                            ExportSingleNode(node, type, encoding, Enum, IsCdataNode);
-                        }
-                        catch (InvalidConversionException e)
-                        {
-                            Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                        }
-                        break;
+                    Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
                 }
+                
             }
         }
+
 
         private void exportAsList(XmlNode n, Type type, Encoding e, bool RespectCdata) {
             //don't do anything with empty nodes
@@ -210,9 +129,9 @@ namespace FileDBReader
                         String s = arr[i];
                         try
                         {
-                            sb.Append(ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
+                            sb.Append(HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             throw new InvalidConversionException(type, n.Name, "List Value");
                         }
@@ -233,7 +152,7 @@ namespace FileDBReader
 
             if (!Enum.IsEmpty())
             {
-                Text = Enum.GetValue(n.InnerText);
+                Text = Enum.GetKey(n.InnerText);
             }
             else 
             {
@@ -248,21 +167,16 @@ namespace FileDBReader
             {
                 converted = ConverterFunctions.ConversionRulesExport[type](Text, e);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new InvalidConversionException(type, n.Name, n.InnerText);
             }
-            String hex = ByteArrayToString(converted);
+            String hex = HexHelper.ByteArrayToString(converted);
 
             if (RespectCdata) 
-                hex = "CDATA[" + ByteArrayToString(BitConverter.GetBytes(hex.Length/2))+ hex + "]";
+                hex = "CDATA[" + HexHelper.ByteArrayToString(BitConverter.GetBytes(hex.Length/2))+ hex + "]";
 
             n.InnerText = hex;
-        }
-
-        public static string ByteArrayToString(byte[] ba)
-        {
-            return BitConverter.ToString(ba).Replace("-", "");
         }
     }
 }
