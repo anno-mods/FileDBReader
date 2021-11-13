@@ -1,0 +1,21 @@
+﻿<Converts>
+  <Default Type ="Int32" />
+  <InternalCompression>
+    <Element CompressionVersion = "2"/>
+  </InternalCompression>
+  <Converts>
+    <Convert Path ="//VegetationPropSetName" Type="String" Encoding="UTF-8" />
+    <Convert Path ="//GlobalAmbientName" />
+    <Conver Type="UInt16" Structure ="List" />
+    <Convert />
+
+    <Convert Path="//MapTemplate/TemplateElement/Element/Size" Type="Int16">
+      <Enum>
+        <Entry Value ="0" Name ="Small" />
+        <Entry Value ="1" Name ="Medium" />
+        <Entry Value ="2" Name ="Large" />
+        <Entry Value ="2" Name ="Large" />
+      </Enum>
+    </Convert>
+  </Converts>
+</Converts>

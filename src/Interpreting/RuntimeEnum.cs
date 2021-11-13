@@ -26,7 +26,7 @@ namespace FileDBReader.src
             }
             catch (ArgumentException)
             {
-                Console.WriteLine("Duplicate item in an enum: {0} <-> {1}. Please make sure that both are unique.", Key, Value);
+                Console.WriteLine("[ENUM]: Duplicate item in an enum: {0} <-> {1}. Please make sure that both are unique.", Key, Value);
             }
         }
 

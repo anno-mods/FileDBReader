@@ -16,8 +16,6 @@ namespace FileDBReader
     /// </summary>
     public static class HexHelper
     {
-        readonly static String HexAlphabet = "0123456789ABCDEF";
-
         public static String Flip(String BinHex)
         {
             String s = "";

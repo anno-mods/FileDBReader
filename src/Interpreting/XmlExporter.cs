@@ -32,6 +32,7 @@ namespace FileDBReader
 
         public XmlDocument Export(XmlDocument doc, Interpreter Interpreter)
         {
+            //queue all conversions
             foreach ( (String path, Conversion conv) in Interpreter.Conversions)
             {
                 try {
@@ -44,6 +45,7 @@ namespace FileDBReader
                 }
             }
 
+            //
             if (Interpreter.HasDefaultType())
             {
                 String Inverse = Interpreter.GetInverseXPath();

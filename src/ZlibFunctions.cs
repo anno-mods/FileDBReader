@@ -16,7 +16,7 @@ namespace FileDBReader.src
     {
         public ZlibFunctions() 
         {
-        
+
         }
 
         /// <summary>

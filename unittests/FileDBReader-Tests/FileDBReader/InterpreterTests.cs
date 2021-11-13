@@ -12,6 +12,23 @@ namespace FileDBReader_Tests
     [TestClass]
     public class InterpreterTests
     {
+        [TestMethod]
+        public void DoesNotCrashOnRetardedInterpreter()
+        {
+            //this just has to run. The interpreter is as broken as it can get, we just don't want to crash the application :D
+            String INPUT_FILENAME = "interpreter_broken.xml";
+            var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
+            Interpreter Interpr = new Interpreter(Interpreter.ToInterpreterDoc(path));
+        }
+
+        [TestMethod]
+        public void DoesNotCrashOnFaultyXmlInterpreter()
+        {
+            //this just has to run. The interpreter is as broken as it can get, we just want to see if it crashes the application :D
+            String INPUT_FILENAME = "interpreter_brokenxml.xml";
+            var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
+            Interpreter Interpr = new Interpreter(Interpreter.ToInterpreterDoc(path));
+        }
 
         [TestMethod]
         public void InterpreterSerializing_DefaultType()
