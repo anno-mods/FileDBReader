@@ -11,11 +11,11 @@ namespace FileDBReader.src
     /// <summary>
     /// Represents an InterpreterFile
     /// </summary>
-    public class Interpreter
+    public record Interpreter
     {
         //Attribs
         public List<InternalCompression> InternalCompressions = new List<InternalCompression>();
-        public Dictionary<string, Conversion> Conversions = new Dictionary<string, Conversion>();
+        public List<(String, Conversion)> Conversions = new List<(String, Conversion)>();
         public Conversion DefaultType;
 
         public static XmlDocument ToInterpreterDoc(String InterpreterPath) 
@@ -35,8 +35,8 @@ namespace FileDBReader.src
         public String GetInverseXPath()
         {
             List<String> StringList = new List<string>();
-            foreach (KeyValuePair<String, Conversion> k in Conversions)
-                StringList.Add(k.Key);
+            foreach ((String path, Conversion conv) in Conversions)
+                StringList.Add(path);
             foreach (InternalCompression internalFileDB in InternalCompressions)
                 StringList.Add(internalFileDB.Path);
             return String.Join(" | ", StringList);
@@ -61,7 +61,7 @@ namespace FileDBReader.src
                 Conversion c = new Conversion(Convert);
                 String Path = GetPath(Convert);
 
-                Conversions.Add(Path, c);
+                Conversions.Add( (Path, c) );
             }
 
             //Internal Compression Parsing
@@ -90,7 +90,7 @@ namespace FileDBReader.src
 
     }
 
-    public class Conversion
+    public record Conversion
     {
         public Type Type;
         public ContentStructure Structure;
@@ -186,7 +186,7 @@ namespace FileDBReader.src
         }
     }
 
-    public class InternalCompression
+    public record InternalCompression
     {
         public String Path;
         public int CompressionVersion;

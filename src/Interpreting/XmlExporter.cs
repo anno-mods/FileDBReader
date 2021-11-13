@@ -32,11 +32,11 @@ namespace FileDBReader
 
         public XmlDocument Export(XmlDocument doc, Interpreter Interpreter)
         {
-            foreach (KeyValuePair<String, Conversion> k in Interpreter.Conversions)
+            foreach ( (String path, Conversion conv) in Interpreter.Conversions)
             {
                 try {
-                    var Nodes = doc.SelectNodes(k.Key);
-                    ConvertNodeSet(Nodes.Cast<XmlNode>(), k.Value);
+                    var Nodes = doc.SelectNodes(path);
+                    ConvertNodeSet(Nodes.Cast<XmlNode>(), conv);
                 }
                 catch (IOException)
                 {
@@ -115,7 +115,6 @@ namespace FileDBReader
             }
         }
 
-
         private void exportAsList(XmlNode n, Type type, Encoding e, bool RespectCdata) {
             //don't do anything with empty nodes
             if (!n.InnerText.Equals("")) 
@@ -146,9 +145,6 @@ namespace FileDBReader
                     n.InnerText = result;
                 }
             }
-
-            
-            
         }
 
         private void ExportSingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum, bool RespectCdata) {

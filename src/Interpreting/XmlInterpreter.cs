@@ -24,7 +24,6 @@ namespace FileDBReader
     /// </summary>
     public class XmlInterpreter
     {
-
         public XmlInterpreter() {
 
         }
@@ -49,12 +48,12 @@ namespace FileDBReader
             }
 
             //Dictionary stores Path -> Conversion
-            foreach (KeyValuePair<String, Conversion> k in Interpreter.Conversions)
+            foreach ( (String path, Conversion conv) in Interpreter.Conversions)
             {
                 try
                 {
-                    var Nodes = doc.SelectNodes(k.Key);
-                    ConvertNodeSet(Nodes.Cast<XmlNode>(), k.Value);
+                    var Nodes = doc.SelectNodes(path);
+                    ConvertNodeSet(Nodes.Cast<XmlNode>(), conv);
                 }
                 catch (IOException)
                 {
