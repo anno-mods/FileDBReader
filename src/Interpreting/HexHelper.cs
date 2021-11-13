@@ -8,122 +8,27 @@ using System.Runtime.InteropServices;
 
 namespace FileDBReader
 {
+
+    //todo CLEAN THIS UP FFS
+
     /// <summary>
-    /// Static Library of helpers
+    /// Static Library of Methods that will help with BinHex, since System.Xml binhex has awful performance
     /// </summary>
     public static class HexHelper
     {
         readonly static String HexAlphabet = "0123456789ABCDEF";
-        public static string FromHexString(string hexString, Encoding encoding)
-        {
-            var bytes = new byte[hexString.Length / 2];
-            for (var i = 0; i < bytes.Length; i++)
-            {
-                try
-                {
-                    bytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
-                }
-                catch (Exception) {
-                    Console.WriteLine("Hex String not in correct format: {0}", hexString);
-                }
-            }
-            return encoding.GetString(bytes);
-        }
 
-        public static bool ToBool(String hexString)
-        {
-            return hexString.Equals("01");
-        }
-
-        /// <summary>
-        /// Floats are big endian meh
-        /// </summary>
-        /// <param name="hexString"></param>
-        /// <returns></returns>
-        public static float ToFloat(String hexString)
-        {
-            uint num = uint.Parse(hexString, System.Globalization.NumberStyles.AllowHexSpecifier);
-
-            byte[] floatVals = BitConverter.GetBytes(num);
-            float f = BitConverter.ToSingle(floatVals, 0);
-            return f;
-        }
-
-        /// <summary>
-        /// doubles are big endian meh
-        /// </summary>
-        /// <param name="hexString"></param>
-        /// <returns></returns>
-        public static double ToDouble(String hexString)
-        {
-            ulong num = ulong.Parse(hexString, System.Globalization.NumberStyles.AllowHexSpecifier);
-
-            byte[] doubleVals = BitConverter.GetBytes(num);
-            double f = BitConverter.ToDouble(doubleVals, 0);
-            return f;
-        }
-
-        public static String flip(String hex)
+        public static String Flip(String BinHex)
         {
             String s = "";
-            for (int i = hex.Length; i > 1; i -= 2)
+            for (int i = BinHex.Length; i > 1; i -= 2)
             {
-                s += hex.Substring(i - 2, 2);
+                s += BinHex.Substring(i - 2, 2);
             }
             return s;
         }
 
-        public static IEnumerable<XmlNode> ExceptNodelists(XmlNodeList Base, XmlNodeList ToFilter)
-        {
-            //ToFilter should get removed from Base
-            var castedBase = new List<XmlNode>();
-            var castedToFilter = new List<XmlNode>();
-
-            //Xpath 2.0 support when, jesus this exists since 2003
-            foreach (XmlNode node in Base)
-            {
-                castedBase.Add(node);
-            }
-            foreach (XmlNode node in ToFilter)
-            {
-                castedToFilter.Add(node);
-            }
-            return castedBase.Except(castedToFilter);
-        }
-
-        public static IEnumerable<string> Split(string str, int chunkSize)
-        {
-            return Enumerable.Range(0, str.Length / chunkSize)
-                .Select(i => str.Substring(i * chunkSize, chunkSize));
-        }
-
-        public static string AddSuffix(string filename, string suffix)
-        {
-            string fDir = Path.GetDirectoryName(filename);
-            string fName = Path.GetFileNameWithoutExtension(filename);
-            string fExt = Path.GetExtension(filename);
-            return Path.Combine(fDir, String.Concat(fName, suffix, fExt));
-        }
-
-        public static Span<T> toSpan<T>(String s) where T : struct
-        {
-            int size = Marshal.SizeOf(default(T)) * 2;
-            var bytes = new T[s.Length / size];
-            Type t = typeof(T);
-            for (var i = 0; i < bytes.Length; i++)
-            {
-                try
-                {
-                    bytes[i] = (T)ConverterFunctions.ConversionRulesToObject[t](s.Substring(i * size, size));
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Hex String not in correct format: {0}", s);
-                }
-            }
-            return bytes.AsSpan();
-        }
-        public static byte[] StreamToByteArray(Stream s)
+        public static byte[] ToBytes(Stream s)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -133,36 +38,22 @@ namespace FileDBReader
             }
         }
 
-        public static String StreamToHexString(Stream s)
+        public static String ToBinHex(Stream s)
         {
-            StringBuilder Result = new StringBuilder( (int) s.Length * 2);
-            s.Position = 0;
-            while (s.Position < s.Length - 1)
-            {
-                Result.Append(ByteToHex ((byte)s.ReadByte()));
-            }
-            return Result.ToString();
+            var bytes = ToBytes(s);
+            return ToBinHex(bytes);
         }
 
-        public static String ByteToHex(byte b)
-        {
-            StringBuilder Result = new StringBuilder(2);
-            Result.Append(HexAlphabet[b >> 4]);
-            Result.Append(HexAlphabet[b & 0xF]);
-            return Result.ToString();
-        }
-
-        public static string ByteArrayToString(byte[] ba)
+        public static String ToBinHex(byte[] ba)
         {
             return BitConverter.ToString(ba).Replace("-", "");
         }
 
-        //copied from https://stackoverflow.com/questions/321370/how-can-i-convert-a-hex-string-to-a-byte-array/321404 because why not
-        public static byte[] StringToByteArray(string hex)
+        public static byte[] BytesFromBinHex(string BinHex)
         {
-            return Enumerable.Range(0, hex.Length)
+            return Enumerable.Range(0, BinHex.Length)
                              .Where(x => x % 2 == 0)
-                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .Select(x => Convert.ToByte(BinHex.Substring(x, 2), 16))
                              .ToArray();
         }
 
@@ -173,5 +64,24 @@ namespace FileDBReader
             return String.Join<T>(" ", span);
         }
 
+        //Converts a Hex String to a span of bytes
+        public static Span<T> toSpan<T>(String BinHex) where T : struct
+        {
+            int size = Marshal.SizeOf(default(T)) * 2;
+            var bytes = new T[BinHex.Length / size];
+            Type t = typeof(T);
+            for (var i = 0; i < bytes.Length; i++)
+            {
+                try
+                {
+                    bytes[i] = (T)ConverterFunctions.ConversionRulesToObject[t](BinHex.Substring(i * size, size));
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("[HEX HELPER]: Could not convert to Span. Hex String not in correct format: {0}", BinHex);
+                }
+            }
+            return bytes.AsSpan();
+        }
     }
 }

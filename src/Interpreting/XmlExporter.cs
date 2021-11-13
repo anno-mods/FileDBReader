@@ -49,7 +49,7 @@ namespace FileDBReader
                 String Inverse = Interpreter.GetInverseXPath();
                 var Base = doc.SelectNodes("//*[text()]");
                 var toFilter = doc.SelectNodes(Inverse);
-                var defaults = HexHelper.ExceptNodelists(Base, toFilter);
+                var defaults = Base.FilterOut(toFilter);
                 ConvertNodeSet(defaults, Interpreter.DefaultType);
             }
 
@@ -68,7 +68,7 @@ namespace FileDBReader
                     var stream = fileWriter.Write(xmldoc, new MemoryStream(), comp.CompressionVersion);
 
                     //Convert This String To Hex Data
-                    node.InnerText = HexHelper.StreamToHexString(stream);
+                    node.InnerText = HexHelper.ToBinHex(stream);
 
                     //try to overwrite the bytesize since it's always exported the same way
                     var ByteSize = node.SelectSingleNode("./preceding-sibling::ByteCount");
@@ -76,7 +76,7 @@ namespace FileDBReader
                     {
                         long BufferSize = stream.Length;
                         Type type = typeof(int);
-                        ByteSize.InnerText = HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
+                        ByteSize.InnerText = HexHelper.ToBinHex(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
                     }
                 }
             }
@@ -133,7 +133,7 @@ namespace FileDBReader
                         String s = arr[i];
                         try
                         {
-                            sb.Append(HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[type](s, e)));
+                            sb.Append(HexHelper.ToBinHex(ConverterFunctions.ConversionRulesExport[type](s, e)));
                         }
                         catch (Exception)
                         {
@@ -175,10 +175,10 @@ namespace FileDBReader
             {
                 throw new InvalidConversionException(type, n.Name, n.InnerText);
             }
-            String hex = HexHelper.ByteArrayToString(converted);
+            String hex = HexHelper.ToBinHex(converted);
 
             if (RespectCdata) 
-                hex = "CDATA[" + HexHelper.ByteArrayToString(BitConverter.GetBytes(hex.Length/2))+ hex + "]";
+                hex = "CDATA[" + HexHelper.ToBinHex(BitConverter.GetBytes(hex.Length/2))+ hex + "]";
 
             n.InnerText = hex;
         }

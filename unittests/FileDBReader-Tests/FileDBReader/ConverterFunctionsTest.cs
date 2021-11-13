@@ -93,13 +93,13 @@ namespace FileDBReader_Tests
         public bool StringConversion_Test_Generic(Encoding e)
         {
             String Value = "Modder's gonna take over the world!!";
-            return TypeConversion_Test_Generic<string>(HexHelper.ByteArrayToString(e.GetBytes(Value)), e);
+            return TypeConversion_Test_Generic<string>(HexHelper.ToBinHex(e.GetBytes(Value)), e);
         }
 
         public bool TypeConversion_Test_Generic<T>(String Original, Encoding e)
         {
             String Converted = ConverterFunctions.ConversionRulesImport[typeof(T)] (Original, e);
-            String ConvertedBack = HexHelper.ByteArrayToString(ConverterFunctions.ConversionRulesExport[typeof(T)](Converted, e));
+            String ConvertedBack = HexHelper.ToBinHex(ConverterFunctions.ConversionRulesExport[typeof(T)](Converted, e));
 
             bool b = ConvertedBack.Equals(Original);
 

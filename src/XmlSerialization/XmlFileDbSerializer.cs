@@ -65,8 +65,8 @@ namespace FileDBReader.src.XmlSerialization
             }
             */
 
-            var Content = HexHelper.StringToByteArray(n.InnerText);
-            var Attrib = filedb.AddAttrib(n.Name);
+            var Content = HexHelper.BytesFromBinHex(n.InnerText);
+            var Attrib = filedb.AddAttrib(InvalidTagNameHelper.GetReverseCorrection(n.Name));
             Attrib.Content = Content;
             Attrib.Parent = parent;
             return Attrib;
@@ -74,7 +74,7 @@ namespace FileDBReader.src.XmlSerialization
 
         private Tag DeserializeTag(XmlNode n, Tag parent)
         {
-            var tag = filedb.AddTag(n.Name);
+            var tag = filedb.AddTag(InvalidTagNameHelper.GetReverseCorrection(n.Name));
             tag.Parent = parent;
             
             foreach (XmlNode child in n.ChildNodes)

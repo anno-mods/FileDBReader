@@ -37,7 +37,7 @@ namespace FileDBReader
                 var nodes = doc.SelectNodes(comp.Path);
                 foreach (XmlNode node in nodes)
                 {
-                    var bytearr = HexHelper.StringToByteArray(node.InnerText);
+                    var bytearr = HexHelper.BytesFromBinHex(node.InnerText);
                     var filereader = new Reader();
                     using (MemoryStream ms = new MemoryStream(bytearr))
                     {
@@ -67,7 +67,7 @@ namespace FileDBReader
                 String Inverse = Interpreter.GetInverseXPath();
                 var Base = doc.SelectNodes("//*[text()]");
                 var toFilter = doc.SelectNodes(Inverse);
-                var defaults = HexHelper.ExceptNodelists(Base, toFilter);
+                var defaults = Base.FilterOut(toFilter);
                 ConvertNodeSet(defaults, Interpreter.DefaultType);
             }
 
