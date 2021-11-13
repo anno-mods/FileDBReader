@@ -80,17 +80,20 @@ namespace FileDBReader
             {
                 try
                 {
-                    switch (Conversion.Structure)
+                    if (!match.InnerText.Equals(""))
                     {
-                        case ContentStructure.List:
-                            InterpretAsList(match, Conversion.Type, false);
-                            break;
-                        case ContentStructure.Default:
-                            InterpretSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
-                            break;
-                        case ContentStructure.Cdata:
-                            InterpretAsList(match, Conversion.Type, true);
-                            break;
+                        switch (Conversion.Structure)
+                        {
+                            case ContentStructure.List:
+                                InterpretAsList(match, Conversion.Type, false);
+                                break;
+                            case ContentStructure.Default:
+                                InterpretSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
+                                break;
+                            case ContentStructure.Cdata:
+                                InterpretAsList(match, Conversion.Type, true);
+                                break;
+                        }
                     }
                 }
                 catch (InvalidConversionException e)
@@ -129,7 +132,7 @@ namespace FileDBReader
             {
                 String BinaryData = n.InnerText;
                 //filter out CDATA from the string
-                if (BinaryData != "" && FilterCDATA) BinaryData = BinaryData.Substring(6, BinaryData.Length - 7);
+                if (!BinaryData.Equals("") && FilterCDATA) BinaryData = BinaryData.Substring(6, BinaryData.Length - 7);
 
                 //make a bytesize check
                 int ExpectedBytesize = 0;

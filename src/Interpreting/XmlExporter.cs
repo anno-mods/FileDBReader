@@ -90,18 +90,22 @@ namespace FileDBReader
             {
                 try
                 {
-                    switch (Conversion.Structure)
+                    if (!match.InnerText.Equals(""))
                     {
-                        case ContentStructure.List:
-                            exportAsList(match, Conversion.Type, Conversion.Encoding, false);
-                            break;
-                        case ContentStructure.Default:
-                            ExportSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
-                            break;
-                        case ContentStructure.Cdata:
-                            exportAsList(match, Conversion.Type, Conversion.Encoding, true);
-                            break;
+                        switch (Conversion.Structure)
+                        {
+                            case ContentStructure.List:
+                                exportAsList(match, Conversion.Type, Conversion.Encoding, false);
+                                break;
+                            case ContentStructure.Default:
+                                ExportSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
+                                break;
+                            case ContentStructure.Cdata:
+                                exportAsList(match, Conversion.Type, Conversion.Encoding, true);
+                                break;
+                        }
                     }
+                    
                 }
                 catch (InvalidConversionException e)
                 {
