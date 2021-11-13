@@ -58,13 +58,6 @@ namespace FileDBReader.src.XmlSerialization
 
         private Attrib DeserializeAttrib(XmlNode n, Tag parent)
         {
-            /* For whatever reason this doesn't work. XML is truly a shitshow
-            using (var reader = n.CreateNavigator().ReadSubtree())
-            {
-                reader.ReadContentAsBinHex(Content, 0, Content.Length);
-            }
-            */
-
             var Content = HexHelper.BytesFromBinHex(n.InnerText);
             var Attrib = filedb.AddAttrib(InvalidTagNameHelper.GetReverseCorrection(n.Name));
             Attrib.Content = Content;

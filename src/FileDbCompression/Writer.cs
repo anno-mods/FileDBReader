@@ -35,11 +35,11 @@ namespace FileDBReader.src
                     filedb = serializer.ToFileDb(doc);
                     return FileDBSerializer.Serialize(filedb, Stream);
                 }
-                else throw new ArgumentException("Supported FileVersions are 1 and 2!");
+                else throw new ArgumentException("[WRITER]: Supported FileVersions are 1 and 2!");
             }
             catch (InvalidXmlDocumentInputException) 
             {
-                Console.WriteLine("Invalid XML Document");
+                Console.WriteLine("[WRITER]: Invalid XML Document input");
             }
 
             return null;

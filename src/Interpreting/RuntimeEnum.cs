@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FileDBReader.src
 {
-    public class RuntimeEnum : IEnumerable
+    public record RuntimeEnum : IEnumerable
     {
         private Dictionary<String, String> Enum = new Dictionary<String, String>();
         public RuntimeEnum() 
@@ -22,7 +22,7 @@ namespace FileDBReader.src
         {
             try
             {
-                Enum.Add(Key, Value);
+                Enum.SafeAdd(Key, Value);
             }
             catch (ArgumentException)
             {

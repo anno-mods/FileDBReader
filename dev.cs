@@ -50,7 +50,7 @@ namespace FileDBReader
             Console.WriteLine("Finished Test File: file.db");
             */
 
-            FcFileDevTest();
+            RenamedTagsTest();
         }
 
         #region GenericTestFcFile
