@@ -33,44 +33,51 @@ namespace FileDBReader
             //Convert Internal FileDBs before conversion
             foreach (InternalCompression comp in Interpreter.InternalCompressions)
             {
-                var nodes = doc.SelectNodes(comp.Path);
-                foreach (XmlNode node in nodes)
-                {
-                    var bytearr = HexHelper.BytesFromBinHex(node.InnerText);
-                    var filereader = new Reader();
-                    using (MemoryStream ms = new MemoryStream(bytearr))
-                    {
-                        var decompressed = filereader.Read(ms);
-                        node.InnerText = "";
-                        node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
-                    }
-                }
+                InterpretInternalFileDB(comp, ref doc);
             }
 
             //Dictionary stores Path -> Conversion
             foreach ( (String path, Conversion conv) in Interpreter.Conversions)
             {
-                try
-                {
-                    var Nodes = doc.SelectNodes(path);
-                    ConvertNodeSet(Nodes.Cast<XmlNode>(), conv);
-                }
-                catch (IOException)
-                {
-                    Console.WriteLine("I don't even know what this is for. This is an error message even dumber than the old one. Modders gonna take over the world!!");
-                }
+                InterpretConversion(path, conv, ref doc);
             }
 
             if (Interpreter.HasDefaultType())
             {
-                String Inverse = Interpreter.GetInverseXPath();
-                var Base = doc.SelectNodes("//*[text()]");
-                var toFilter = doc.SelectNodes(Inverse);
-                var defaults = Base.FilterOut(toFilter);
-                ConvertNodeSet(defaults, Interpreter.DefaultType);
+                InterpretDefaultType(Interpreter, ref doc);
             }
-
             return doc;
+        }
+
+        private void InterpretDefaultType(Interpreter Interpreter, ref XmlDocument doc)
+        {
+            String Inverse = Interpreter.GetInverseXPath();
+            var Base = doc.SelectNodes("//*[text()]");
+            var toFilter = doc.SelectNodes(Inverse);
+            var defaults = Base.FilterOut(toFilter);
+            ConvertNodeSet(defaults, Interpreter.DefaultType);
+        }
+
+        private void InterpretConversion(String path, Conversion conv, ref XmlDocument doc)
+        {
+            var Nodes = doc.SelectNodes(path);
+            ConvertNodeSet(Nodes.Cast<XmlNode>(), conv);
+        }
+
+        private void InterpretInternalFileDB(InternalCompression comp, ref XmlDocument doc)
+        {
+            var nodes = doc.SelectNodes(comp.Path);
+            foreach (XmlNode node in nodes)
+            {
+                var bytearr = HexHelper.BytesFromBinHex(node.InnerText);
+                var filereader = new Reader();
+                using (MemoryStream ms = new MemoryStream(bytearr))
+                {
+                    var decompressed = filereader.Read(ms);
+                    node.InnerText = "";
+                    node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
+                }
+            }
         }
 
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)
@@ -130,39 +137,48 @@ namespace FileDBReader
             try
             {
                 String BinaryData = n.InnerText;
-                //filter out CDATA from the string
-                if (!BinaryData.Equals("") && FilterCDATA) BinaryData = BinaryData.Substring(6, BinaryData.Length - 7);
-
                 //make a bytesize check
-                int ExpectedBytesize = 0;
-                int StringSize = BinaryData.Length;
-                if (type != typeof(String))
+                if( BytesizeCheck(type, BinaryData.Length, n.Name))
                 {
-                    ExpectedBytesize = Marshal.SizeOf(type);
-                    if (type == typeof(Boolean)) {
-                        if (StringSize != 2) { 
-                            Console.WriteLine("Wrong Bytesize at {0}", n.Name);
-                        }
-                    }
-                    else if (ExpectedBytesize != (StringSize / 2))
-                    {
-                        Console.WriteLine("Wrong Bytesize at {0}, Interpreter says: {1}, Found in File: {2}", n.Name, ExpectedBytesize, StringSize/2);
-                    }
-                }
-                
-                String s = ConverterFunctions.ConversionRulesImport[type](BinaryData, e);
+                    //filter out CDATA from the string if needed!
+                    if (!BinaryData.Equals("") && FilterCDATA) BinaryData = BinaryData.Substring(6, BinaryData.Length - 7);
 
-                if (!Enum.IsEmpty()) {
-                    s = Enum.GetValue(s);
-                }
-                //readd cdata to the string
-                if (!BinaryData.Equals("") && FilterCDATA) s = "CDATA[" + s + "]";
-                n.InnerText = s;
+                    String s = ConverterFunctions.ConversionRulesImport[type](BinaryData, e);
+                    if (!Enum.IsEmpty())
+                    {
+                        s = Enum.GetValue(s);
+                    }
+                    //re-add cdata to the string if needed!
+                    if (!BinaryData.Equals("") && FilterCDATA) s = "CDATA[" + s + "]";
+                    n.InnerText = s;
+                }              
             }
             catch (Exception)
             { 
                 throw new InvalidConversionException(type, n.Name, "List Value");
             }
         }
+        private bool BytesizeCheck(Type t, int BinHexLength, String NodeNameForErrorMessage)
+        {
+            if (t != typeof(String))
+            {
+                var ExpectedBytesize = Marshal.SizeOf(t);
+                if (t == typeof(Boolean))
+                {
+                    if (BinHexLength != 2)
+                    {
+                        Console.WriteLine("Wrong Boolean Bytesize at: {0}. The node is ignored for that reason", NodeNameForErrorMessage);
+                        return false;
+                    }
+                }
+                else if (ExpectedBytesize != (BinHexLength / 2))
+                {
+                    Console.WriteLine("Wrong Bytesize at {0}, Bytesize according to Interpreter: {1}, Found in File: {2}. The node is ignored for that reason.", NodeNameForErrorMessage, ExpectedBytesize, BinHexLength / 2);
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }
 }

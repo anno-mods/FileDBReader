@@ -15,7 +15,7 @@ namespace FileDBReader
     public class XmlExporter
     {
         public XmlExporter() {
-            
+
         }
 
         /// <summary>
@@ -33,57 +33,65 @@ namespace FileDBReader
         public XmlDocument Export(XmlDocument doc, Interpreter Interpreter)
         {
             //queue all conversions
-            foreach ( (String path, Conversion conv) in Interpreter.Conversions)
+            foreach ((String path, Conversion conv) in Interpreter.Conversions)
             {
-                try {
-                    var Nodes = doc.SelectNodes(path);
-                    ConvertNodeSet(Nodes.Cast<XmlNode>(), conv);
-                }
-                catch (IOException)
-                {
-                    Console.WriteLine("I don't even know what this is for. This is an error message even dumber than the old one. Modders gonna take over the world!!");
-                }
+                ExportConversions(path, conv, ref doc);
             }
 
-            //
             if (Interpreter.HasDefaultType())
             {
-                String Inverse = Interpreter.GetInverseXPath();
-                var Base = doc.SelectNodes("//*[text()]");
-                var toFilter = doc.SelectNodes(Inverse);
-                var defaults = Base.FilterOut(toFilter);
-                ConvertNodeSet(defaults, Interpreter.DefaultType);
+                ExportDefaultType(Interpreter, ref doc);
             }
 
             foreach (InternalCompression comp in Interpreter.InternalCompressions)
             {
-                var Nodes = doc.SelectNodes(comp.Path);
-                foreach (XmlNode node in Nodes)
-                {
-                    Writer fileWriter = new Writer();
-
-                    var contentNode = node.SelectSingleNode("./Content");
-                    XmlDocument xmldoc = new XmlDocument();
-                    XmlNode f = xmldoc.ImportNode(contentNode, true);
-                    xmldoc.AppendChild(xmldoc.ImportNode(f, true));
-
-                    var stream = fileWriter.Write(xmldoc, new MemoryStream(), comp.CompressionVersion);
-
-                    //Convert This String To Hex Data
-                    node.InnerText = HexHelper.ToBinHex(stream);
-
-                    //try to overwrite the bytesize since it's always exported the same way
-                    var ByteSize = node.SelectSingleNode("./preceding-sibling::ByteCount");
-                    if (ByteSize != null)
-                    {
-                        long BufferSize = stream.Length;
-                        Type type = typeof(int);
-                        ByteSize.InnerText = HexHelper.ToBinHex(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
-                    }
-                }
+                ExportInternalCompression(comp, ref doc);
             }
 
-            return doc; 
+            return doc;
+        }
+
+        private void ExportDefaultType(Interpreter Interpreter, ref XmlDocument doc)
+        {
+            String Inverse = Interpreter.GetInverseXPath();
+            var Base = doc.SelectNodes("//*[text()]");
+            var toFilter = doc.SelectNodes(Inverse);
+            var defaults = Base.FilterOut(toFilter);
+            ConvertNodeSet(defaults, Interpreter.DefaultType);
+        }
+
+        private void ExportConversions(String path, Conversion conv, ref XmlDocument doc)
+        {
+            var Nodes = doc.SelectNodes(path);
+            ConvertNodeSet(Nodes.Cast<XmlNode>(), conv);
+        }
+
+        private void ExportInternalCompression(InternalCompression comp, ref XmlDocument doc)
+        {
+            var Nodes = doc.SelectNodes(comp.Path);
+            foreach (XmlNode node in Nodes)
+            {
+                Writer fileWriter = new Writer();
+
+                var contentNode = node.SelectSingleNode("./Content");
+                XmlDocument xmldoc = new XmlDocument();
+                XmlNode f = xmldoc.ImportNode(contentNode, true);
+                xmldoc.AppendChild(xmldoc.ImportNode(f, true));
+
+                var stream = fileWriter.Write(xmldoc, new MemoryStream(), comp.CompressionVersion);
+
+                //Convert This String To Hex Data
+                node.InnerText = HexHelper.ToBinHex(stream);
+
+                //try to overwrite the bytesize since it's always exported the same way
+                var ByteSize = node.SelectSingleNode("./preceding-sibling::ByteCount");
+                if (ByteSize != null)
+                {
+                    long BufferSize = stream.Length;
+                    Type type = typeof(int);
+                    ByteSize.InnerText = HexHelper.ToBinHex(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
+                }
+            }
         }
 
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)

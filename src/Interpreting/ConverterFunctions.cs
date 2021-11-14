@@ -7,6 +7,7 @@ namespace FileDBReader
 {
     public static class ConverterFunctions
     {
+        #region FunctionDictionaries
         public static Dictionary<Type, Func<string, Encoding, String>> ConversionRulesImport = new Dictionary<Type, Func<string, Encoding, String>>
             {
                 { typeof(bool),   (s, Encoding) => ToBool(s).ToString()},
@@ -54,6 +55,7 @@ namespace FileDBReader
                 { typeof(float),  s => ToFloat(HexHelper.Flip(s)) },
                 { typeof(String), s => ToString(s, new UnicodeEncoding())}
             };
+        
         public static Dictionary<Type, Func<String, String>> ListFunctionsInterpret = new Dictionary<Type, Func<String, String>>
             {
                 { typeof(bool),   s => HexHelper.Join<bool>(s)},
@@ -67,6 +69,7 @@ namespace FileDBReader
                 { typeof(ulong),  s => HexHelper.Join<ulong>(s) },
                 { typeof(float),  s => HexHelper.Join<float>(s) }
             };
+        #endregion
 
 
         public static string ToString(string hexString, Encoding encoding)
