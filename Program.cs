@@ -114,6 +114,9 @@ namespace FileDBReader {
             //optional interpreter file. If provided, the program will directly interpret the validated file. 
             [Option('i', "interpreter", Required = false, HelpText = INTERPRETER_FILE_HELP)]
             public String Interpreter { get; set; }
+
+            [Option('y', "overwrite", Required = false, Default = false)]
+            public bool overwrite { get; set; }
         }
 
         [Verb("hextofc", HelpText = "Reverse operation of fctohex.")]
@@ -125,6 +128,9 @@ namespace FileDBReader {
             //optional interpreter file. If provided, the program will directly interpret the validated file. 
             [Option('i', "interpreter", Required = false, HelpText = "Interpreter file")]
             public String Interpreter { get; set; }
+
+            [Option('y', "overwrite", Required = false, Default = false)]
+            public bool overwrite { get; set; }
         }
 
         [Obsolete("decompress_Interpret has been merged with the verb decompress")]
@@ -207,12 +213,12 @@ namespace FileDBReader {
                 //OPTIONS FOR FC FILE IMPORT
                 (FcImportOptions o) =>
                 {
-                    return Functions.FcFileImport(o.InputFiles, o.Interpreter);
+                    return Functions.FcFileImport(o.InputFiles, o.Interpreter, o.overwrite);
                 },
                 //OPTIONS FOR FC FILE EXPORT
                 (FcExportOptions o) =>
                 {
-                    return Functions.FcFileExport(o.InputFiles, o.Interpreter);
+                    return Functions.FcFileExport(o.InputFiles, o.Interpreter, o.overwrite);
                 },
 
 

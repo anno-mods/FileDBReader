@@ -51,7 +51,7 @@ namespace FileDBReader
 
         private void InterpretDefaultType(Interpreter Interpreter, ref XmlDocument doc)
         {
-            String Inverse = Interpreter.GetInverseXPath();
+            String Inverse = Interpreter.GetCombinedXPath();
             var Base = doc.SelectNodes("//*[text()]");
             var toFilter = doc.SelectNodes(Inverse);
             var defaults = Base.FilterOut(toFilter);

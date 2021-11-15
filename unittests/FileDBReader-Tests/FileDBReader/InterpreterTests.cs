@@ -6,6 +6,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace FileDBReader_Tests
 {
@@ -28,6 +30,31 @@ namespace FileDBReader_Tests
             String INPUT_FILENAME = "interpreter_brokenxml.xml";
             var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
             Interpreter Interpr = new Interpreter(Interpreter.ToInterpreterDoc(path));
+        }
+
+        [TestMethod]
+        public void GetsCorrectCombinedXpath()
+        {
+            Interpreter i = new Interpreter();
+            i.Conversions.Add(("//This/Is/A/Default/Path", new Conversion() { Type = typeof(int), Structure = ContentStructure.Default}));
+            i.Conversions.Add(("//This/Is/Another/Path", new Conversion() { Type = typeof(String), Structure = ContentStructure.Default }));
+            i.InternalCompressions.Add(new InternalCompression { Path = "./InternalCompression" });
+            String ExpectedInverseXpath = "//This/Is/A/Default/Path | //This/Is/Another/Path | ./InternalCompression";
+
+            String Combined = i.GetCombinedXPath();
+
+            Assert.AreEqual(ExpectedInverseXpath, Combined);
+        }
+
+        [TestMethod]
+        public void DetectsFaultyXpath()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml("<Convert Path = \" F a u lt y/ Xpath[ this =]\"/>");
+            var node = doc.FirstChild; 
+
+            Interpreter i = new Interpreter();
+            Assert.ThrowsException<XPathException>( () => i.GetPath(node));
         }
 
         [TestMethod]

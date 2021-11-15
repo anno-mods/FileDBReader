@@ -28,10 +28,12 @@ namespace FileDBReader
 
         public static byte[] ToBytes(Stream s)
         {
+            long lastPos = s.Position;
             using (MemoryStream ms = new MemoryStream())
             {
                 s.Position = 0;
                 s.CopyTo(ms);
+                s.Position = lastPos;
                 return ms.ToArray();
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 
 namespace FileDBReader.src
 {
@@ -35,9 +36,9 @@ namespace FileDBReader.src
             }
         }
 
-        public String GetInverseXPath()
+        public String GetCombinedXPath()
         {
-            List<String> StringList = new List<string>();
+            List<String> StringList = new List<String>();
             foreach ((String path, Conversion conv) in Conversions)
                 StringList.Add(path);
             foreach (InternalCompression internalFileDB in InternalCompressions)
@@ -57,6 +58,10 @@ namespace FileDBReader.src
                 Conversion c = new Conversion(Convert);
                 String Path = GetPath(Convert);
                 Conversions.Add((Path, c));
+            }
+            catch (XPathException e)
+            {
+                Console.WriteLine("[INTERPRETER]: Faulty Xpath Detected!");
             }
             catch
             {
@@ -117,9 +122,14 @@ namespace FileDBReader.src
             return DefaultType != null; 
         }
 
-        private String GetPath(XmlNode ConvertNode)
+        public String GetPath(XmlNode ConvertNode)
         {
-            return ConvertNode.Attributes["Path"].Value;
+            String Path = ConvertNode.Attributes["Path"].Value;
+
+            //this will throw an error that is caught later on if our xpath is not correct.
+            XPathExpression.Compile(Path);
+
+            return Path;
         }
     }
 

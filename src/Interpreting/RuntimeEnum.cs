@@ -38,7 +38,7 @@ namespace FileDBReader.src
             }
             else
             {
-                Console.WriteLine("An Enum did not contain a Value for the Key: {0}", Key);
+                Console.WriteLine("[ENUM]: An Enum did not contain a Value for the Key: {0}", Key);
                 throw new Exception();
             }
         }
@@ -50,12 +50,12 @@ namespace FileDBReader.src
                 return Enum.FirstOrDefault(x => x.Value == Value).Key;
             else
             {
-                Console.WriteLine("An Enum did not contain a Value for the Key: {0}", Value);
+                Console.WriteLine("[ENUM]: An Enum did not contain a Value for the Key: {0}", Value);
                 throw new Exception(); 
             }
         }
 
-        public bool IsEmpty() 
+        public bool IsEmpty()
         {
             return (Enum.Count() == 0);
         }

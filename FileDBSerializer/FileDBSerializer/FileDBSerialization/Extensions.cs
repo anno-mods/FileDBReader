@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FileDBSerializing
 {
-    static class BinaryExtensions
+    static class Extensions
     {
         #region BinaryReaderExtensions
         internal static String ReadString0(this BinaryReader reader)

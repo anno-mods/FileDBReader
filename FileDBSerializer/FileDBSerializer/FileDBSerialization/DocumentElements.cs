@@ -209,6 +209,8 @@ namespace FileDBSerializing
 
         public FileDBNodeType NodeType; 
         public abstract String GetID();
+
+        public abstract String GetName();
     }
 
     [DebuggerDisplay("[FileDB_Tag: ID = {ID}, ChildCount = {ChildCount}]")]
@@ -243,6 +245,11 @@ namespace FileDBSerializing
                 return value;
             else return "t_" + ID;
         }
+
+        public override string GetName()
+        {
+            return ParentDoc.Tags.Tags[(ushort)ID];
+        }
     }
 
     [DebuggerDisplay("[FileDB_Attrib: ID = {ID}, Size = {Bytesize}]")]
@@ -271,6 +278,11 @@ namespace FileDBSerializing
             if (ParentDoc.Tags.Attribs.TryGetValue((ushort)ID, out string value))
                 return value;
             else return "a_" + ID; 
+        }
+
+        public override string GetName()
+        {
+            return ParentDoc.Tags.Attribs[(ushort)ID];
         }
 
         public MemoryStream ContentToStream()
