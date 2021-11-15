@@ -21,6 +21,8 @@ namespace FileDBSerializing
 
         public Tag AddTag(String Name);
         public Attrib AddAttrib(String Attrib);
+
+        public List<FileDBNode> SelectNodes(String Lookup);
     }
 
     [DebuggerDisplay("[FileDB_Document: Version = 1, Count = {ELEMENT_COUNT}]")]
@@ -91,7 +93,10 @@ namespace FileDBSerializing
             }
             return new Attrib() { ID = IDOfThisTag, ParentDoc = this };
         }
-
+        public List<FileDBNode> SelectNodes(String Lookup)
+        {
+            return Roots.SelectNodes(Lookup);  
+        }
     }
     [DebuggerDisplay("[FileDB_Document: Version = 2, Count = {ELEMENT_COUNT}]")]
     public class FileDBDocument_V2 : FileDBDocument
@@ -175,7 +180,10 @@ namespace FileDBSerializing
             }
             return new Attrib() { ID = IDOfThisTag, ParentDoc = this };
         }
-
+        public List<FileDBNode> SelectNodes(String Lookup)
+        {
+            return Roots.SelectNodes(Lookup);
+        }
     }
 
     public class TagSection
@@ -249,6 +257,10 @@ namespace FileDBSerializing
         public override string GetName()
         {
             return ParentDoc.Tags.Tags[(ushort)ID];
+        }
+        public List<FileDBNode> SelectNodes(String Lookup)
+        {
+            return Children.SelectNodes(Lookup);
         }
     }
 

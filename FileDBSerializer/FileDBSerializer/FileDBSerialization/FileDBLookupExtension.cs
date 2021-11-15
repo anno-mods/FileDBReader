@@ -19,9 +19,12 @@ namespace FileDBSerializing
             //if we are not yet at the lookups end, we have to search the children and append the result of that.
             if (!Next.Equals(""))
             {
-                foreach (var x in tempResults)
+                foreach (FileDBNode x in tempResults)
                 {
-                    resultList.Concat(tempResults.SelectNodes(Next));
+                    if (x is Tag)
+                    {
+                        resultList.Concat(((Tag)x).SelectNodes(Next));
+                    }
                 }
             }
             //if we are at the final statement, we need to concat the result.
