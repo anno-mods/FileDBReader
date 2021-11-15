@@ -217,7 +217,7 @@ namespace FileDBReader.src
 
 
         //TODO IMPLEMENT SAFE FILE HANDLES
-        public int FcFileImport(IEnumerable<String> InputFiles, String InterpreterPath)
+        public int FcFileImport(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
         {
             int returncode = 0; 
             
@@ -245,7 +245,12 @@ namespace FileDBReader.src
                             returncode = -1;
                         }
                     }
-                    result.Save(Path.ChangeExtension(s, "xml"));
+
+                    String FileNameNew = Path.GetFileNameWithoutExtension(s) + FcImportedFileSuffix + ".xml";
+                    using (Stream fs = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
+                    {
+                        result.Save(fs);
+                    }
                 }
                 catch (IOException)
                 {
@@ -255,7 +260,7 @@ namespace FileDBReader.src
             return returncode; 
         }
 
-        public int FcFileExport(IEnumerable<String> InputFiles, String InterpreterPath)
+        public int FcFileExport(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
         {
             int returncode = 0;
             //Preload Interpreter
@@ -281,7 +286,7 @@ namespace FileDBReader.src
                         exported.Load(s);
                     }
                     var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(exported), ConversionMode.Write);
-                    FcFileHelper.SaveStreamToFile(Written, Path.ChangeExtension(s, "xml"));
+                    SecureIoHandler.SaveHandle(Path.ChangeExtension(Path.GetFileNameWithoutExtension(s) + FcExportedFileSuffix, "xml"), overwrite, Written);
                 }
                 catch (IOException)
                 {
