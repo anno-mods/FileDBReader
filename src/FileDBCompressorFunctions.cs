@@ -27,11 +27,6 @@ namespace FileDBReader.src
         private XmlInterpreter interpreter;
         private FcFileHelper FcFileHelper;
 
-        //use new serializer options for better performance in the future
-        private FileDBDeserializer<FileDBDocument_V2> FileDBDeserializer;
-        private FileDBSerializer FileDBSerializer;
-        private FileDbXmlSerializer XmlSerializer; 
-
 
         public FileDBCompressorFunctions()
         {
@@ -41,15 +36,12 @@ namespace FileDBReader.src
             writer = new Writer();
             interpreter = new XmlInterpreter();
             FcFileHelper = new FcFileHelper();
-
-            FileDBDeserializer = new FileDBDeserializer<FileDBDocument_V2>();
-            FileDBSerializer = new FileDBSerializer(); 
-            XmlSerializer = new FileDbXmlSerializer();
         }
 
-        public int Decompress(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
+        public int Decompress(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite, IEnumerable<String> ReplaceOps)
         {
             int returncode = 0;
+            InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
 
             //Preload Interpreter
             Interpreter Interpr = null; 
@@ -85,7 +77,7 @@ namespace FileDBReader.src
             return returncode;
         }
 
-        public int Compress(IEnumerable<String> InputFiles, String InterpreterPath, String OutputFileExtension, int CompressionVersion, bool overwrite)
+        public int Compress(IEnumerable<String> InputFiles, String InterpreterPath, String OutputFileExtension, int CompressionVersion, bool overwrite, IEnumerable<String> ReplaceOps)
         {
             int returncode = 0;
             //set output file extension
@@ -97,6 +89,7 @@ namespace FileDBReader.src
             {
                 Interpr = new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath));
             }
+            InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
 
             //convert all input files
             foreach (String s in InputFiles)
@@ -129,7 +122,7 @@ namespace FileDBReader.src
             }
             return returncode;
         }
-        public int Interpret(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
+        public int Interpret(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite, IEnumerable<String> ReplaceOps)
         {
             int returncode = 0;
             //Preload Interpreter
@@ -138,6 +131,7 @@ namespace FileDBReader.src
             {
                 Interpr = new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath));
             }
+            InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
 
             foreach (String s in InputFiles)
             {
@@ -164,7 +158,7 @@ namespace FileDBReader.src
             return returncode;
         }
 
-        public int Reinterpret(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
+        public int Reinterpret(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite, IEnumerable<String> ReplaceOps)
         {
             int returncode = 0;
 
@@ -174,6 +168,7 @@ namespace FileDBReader.src
             {
                 Interpr = new Interpreter(Interpreter.ToInterpreterDoc(InterpreterPath));
             }
+            InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
 
             foreach (String s in InputFiles)
             {
@@ -250,7 +245,7 @@ namespace FileDBReader.src
                             returncode = -1;
                         }
                     }
-                    result.Save(Path.ChangeExtension(HexHelper.AddSuffix(s, FcImportedFileSuffix), "xml"));
+                    result.Save(Path.ChangeExtension(s, "xml"));
                 }
                 catch (IOException)
                 {
@@ -286,7 +281,7 @@ namespace FileDBReader.src
                         exported.Load(s);
                     }
                     var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(exported), ConversionMode.Write);
-                    FcFileHelper.SaveStreamToFile(Written, Path.ChangeExtension(HexHelper.AddSuffix(s, FcExportedFileSuffix), "xml"));
+                    FcFileHelper.SaveStreamToFile(Written, Path.ChangeExtension(s, "xml"));
                 }
                 catch (IOException)
                 {

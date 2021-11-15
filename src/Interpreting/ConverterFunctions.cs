@@ -9,18 +9,18 @@ namespace FileDBReader
     {
         public static Dictionary<Type, Func<string, Encoding, String>> ConversionRulesImport = new Dictionary<Type, Func<string, Encoding, String>>
             {
-                { typeof(bool),   (s, Encoding) => HexHelper.ToBool(s).ToString()},
-                { typeof(byte),   (s, Encoding) => byte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(sbyte),  (s, Encoding) => sbyte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(short),  (s, Encoding) => short.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(ushort), (s, Encoding) => ushort.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(int),    (s, Encoding) => int.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(uint),   (s, Encoding) => uint.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(long),   (s, Encoding) => long.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(ulong),  (s, Encoding) => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier).ToString() },
-                { typeof(float),  (s, Encoding) => HexHelper.ToFloat(HexHelper.flip(s)).ToString() },
-                { typeof(double), (s, Encoding) => HexHelper.ToDouble(HexHelper.flip(s)).ToString() },
-                { typeof(String), (s, Encoding) => HexHelper.FromHexString(s, Encoding) }
+                { typeof(bool),   (s, Encoding) => ToBool(s).ToString()},
+                { typeof(byte),   (s, Encoding) => byte.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(sbyte),  (s, Encoding) => sbyte.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(short),  (s, Encoding) => short.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(ushort), (s, Encoding) => ushort.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(int),    (s, Encoding) => int.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(uint),   (s, Encoding) => uint.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(long),   (s, Encoding) => long.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(ulong),  (s, Encoding) => ulong.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier).ToString() },
+                { typeof(float),  (s, Encoding) => ToFloat(HexHelper.Flip(s)).ToString() },
+                { typeof(double), (s, Encoding) => ToDouble(HexHelper.Flip(s)).ToString() },
+                { typeof(String), (s, Encoding) => ToString(s, Encoding)}
             };
 
         public static Dictionary<Type, Func<String, Encoding, byte[]>> ConversionRulesExport = new Dictionary<Type, Func<String, Encoding, byte[]>>
@@ -41,18 +41,18 @@ namespace FileDBReader
 
         public static Dictionary<Type, Func<string, object>> ConversionRulesToObject = new Dictionary<Type, Func<string, object>>
             {
-                { typeof(bool),   s => HexHelper.ToBool(s)},
-                { typeof(byte),   s => byte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
-                { typeof(sbyte),  s => sbyte.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
-                { typeof(short),  s => short.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
-                { typeof(ushort), s => ushort.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
-                { typeof(int),    s => int.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
-                { typeof(uint),   s => uint.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
-                { typeof(long),   s => long.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
-                { typeof(ulong),  s => ulong.Parse(HexHelper.flip(s), NumberStyles.AllowHexSpecifier) },
-                { typeof(double), s => HexHelper.ToDouble(HexHelper.flip(s)) },
-                { typeof(float),  s => HexHelper.ToFloat(HexHelper.flip(s)) },
-                { typeof(String), s => HexHelper.FromHexString(s, new UnicodeEncoding()) }
+                { typeof(bool),   s => ToBool(s)},
+                { typeof(byte),   s => byte.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(sbyte),  s => sbyte.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(short),  s => short.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(ushort), s => ushort.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(int),    s => int.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(uint),   s => uint.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(long),   s => long.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(ulong),  s => ulong.Parse(HexHelper.Flip(s), NumberStyles.AllowHexSpecifier) },
+                { typeof(double), s => ToDouble(HexHelper.Flip(s)) },
+                { typeof(float),  s => ToFloat(HexHelper.Flip(s)) },
+                { typeof(String), s => ToString(s, new UnicodeEncoding())}
             };
         public static Dictionary<Type, Func<String, String>> ListFunctionsInterpret = new Dictionary<Type, Func<String, String>>
             {
@@ -67,5 +67,56 @@ namespace FileDBReader
                 { typeof(ulong),  s => HexHelper.Join<ulong>(s) },
                 { typeof(float),  s => HexHelper.Join<float>(s) }
             };
+
+
+        public static string ToString(string hexString, Encoding encoding)
+        {
+            var bytes = new byte[hexString.Length / 2];
+            for (var i = 0; i < bytes.Length; i++)
+            {
+                try
+                {
+                    bytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("[VALUE CONVERSION]: Hex String not in correct format: {0}", hexString);
+                }
+            }
+            return encoding.GetString(bytes);
+        }
+
+        public static bool ToBool(String hexString)
+        {
+            return hexString.Equals("01");
+        }
+
+        /// <summary>
+        /// Floats are big endian meh
+        /// </summary>
+        /// <param name="hexString"></param>
+        /// <returns></returns>
+        public static float ToFloat(String hexString)
+        {
+            uint num = uint.Parse(hexString, System.Globalization.NumberStyles.AllowHexSpecifier);
+
+            byte[] floatVals = BitConverter.GetBytes(num);
+            float f = BitConverter.ToSingle(floatVals, 0);
+            return f;
+        }
+
+        /// <summary>
+        /// doubles are big endian meh
+        /// </summary>
+        /// <param name="hexString"></param>
+        /// <returns></returns>
+        public static double ToDouble(String hexString)
+        {
+            ulong num = ulong.Parse(hexString, System.Globalization.NumberStyles.AllowHexSpecifier);
+
+            byte[] doubleVals = BitConverter.GetBytes(num);
+            double f = BitConverter.ToDouble(doubleVals, 0);
+            return f;
+        }
     }
 }

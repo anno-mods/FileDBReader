@@ -24,7 +24,7 @@ namespace FileDBReader.src
         {
             //first of all, get the document version
             int FileVersion = VersionDetector.GetCompressionVersion(input);
-            Console.WriteLine("Autodetected FileVersion = {0}", FileVersion);
+            Console.WriteLine("[READER]: Autodetected FileVersion = {0}", FileVersion);
             input.Position = 0;
             try
             {
@@ -39,9 +39,9 @@ namespace FileDBReader.src
             }
             catch (InvalidFileDBException)
             {
-                Console.WriteLine("ERROR: Invalid FileDB file detected. Conversion was terminated");
+                Console.WriteLine("[READER]: Invalid FileDB file detected. Conversion was terminated");
             }
-            Console.WriteLine("ERROR: Only Version 1 and 2 are supported");
+            Console.WriteLine("[READER]: Only Version 1 and 2 are supported");
             throw new InvalidFileDBException();
         }
 

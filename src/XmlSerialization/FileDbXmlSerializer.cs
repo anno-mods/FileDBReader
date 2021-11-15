@@ -44,7 +44,7 @@ namespace FileDBReader.src.XmlSerialization
         private XmlNode TagToXmlNode(Tag t)
         {
             String Name = t.GetID();
-            var node =  doc.CreateElement(Name);
+            var node =  doc.CreateElement(InvalidTagNameHelper.GetCorrection(Name));
 
             foreach (FileDBNode n in t.Children)
                 node.AppendChild(SerializeFileDBNode(n));
@@ -54,12 +54,12 @@ namespace FileDBReader.src.XmlSerialization
         private XmlNode AttribToXmlNode(Attrib a)
         {
             String Name = a.GetID();
-            var node = doc.CreateElement(Name);
+            var node = doc.CreateElement(InvalidTagNameHelper.GetCorrection(Name));
 
             //write empty attribs as <name></name> instead of <Name />
             if (a.Bytesize > 0)
             {
-                node.InnerText = HexHelper.ByteArrayToString(a.Content);
+                node.InnerText = HexHelper.ToBinHex(a.Content);
             }
             else node.InnerText = "";
             return node;

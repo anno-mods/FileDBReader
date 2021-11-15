@@ -1,7 +1,8 @@
 {
   "profiles": {
     "FileDBReader": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "compress -f fuck.xml -z \"StringAttrib_Root\" \"ItWorks\" \"y\" -y -c 1"
     }
   }
 }

@@ -125,7 +125,7 @@ namespace FileDBReader
                 s += CurrentChar;
             }
             //turn hex string into byte array
-            var bytes = HexHelper.StringToByteArray(s);
+            var bytes = HexHelper.BytesFromBinHex(s);
             //write the cdata section
             writer.Write('[');
             writer.Write(bytes.Length);

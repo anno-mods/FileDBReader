@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FileDBReader.src
 {
-    public class RuntimeEnum : IEnumerable
+    public record RuntimeEnum : IEnumerable
     {
         private Dictionary<String, String> Enum = new Dictionary<String, String>();
         public RuntimeEnum() 
@@ -22,11 +22,11 @@ namespace FileDBReader.src
         {
             try
             {
-                Enum.Add(Key, Value);
+                Enum.SafeAdd(Key, Value);
             }
             catch (ArgumentException)
             {
-                Console.WriteLine("Duplicate item in an enum: {0} <-> {1}. Please make sure that both are unique.", Key, Value);
+                Console.WriteLine("[ENUM]: Duplicate item in an enum: {0} <-> {1}. Please make sure that both are unique.", Key, Value);
             }
         }
 

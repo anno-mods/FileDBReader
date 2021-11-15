@@ -32,10 +32,10 @@ namespace FileDBReader.src
             {
                 doc.Load(inputDoc);
             } catch  {
-                Console.WriteLine("Input Document needs to be valid xml!!!!");
+                Console.WriteLine("[MULTIROOTS]: Input Document needs to be valid xml.");
             }
 
-            if (doc.FirstChild == null) throw new ArgumentException("The XML Document needs some actual content!!!");
+            if (doc.FirstChild == null) throw new ArgumentException("[MULTIROOTS]: The XML Document lacks some actual content.");
 
             Stream s = new MemoryStream();
             StreamWriter writer = new StreamWriter(s);

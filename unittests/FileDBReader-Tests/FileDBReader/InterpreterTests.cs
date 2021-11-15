@@ -5,12 +5,30 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace FileDBReader_Tests
 {
     [TestClass]
     public class InterpreterTests
     {
+        [TestMethod]
+        public void DoesNotCrashOnRetardedInterpreter()
+        {
+            //this just has to run. The interpreter is as broken as it can get, we just don't want to crash the application :D
+            String INPUT_FILENAME = "interpreter_broken.xml";
+            var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
+            Interpreter Interpr = new Interpreter(Interpreter.ToInterpreterDoc(path));
+        }
+
+        [TestMethod]
+        public void DoesNotCrashOnFaultyXmlInterpreter()
+        {
+            //this just has to run. The interpreter is as broken as it can get, we just want to see if it crashes the application :D
+            String INPUT_FILENAME = "interpreter_brokenxml.xml";
+            var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
+            Interpreter Interpr = new Interpreter(Interpreter.ToInterpreterDoc(path));
+        }
 
         [TestMethod]
         public void InterpreterSerializing_DefaultType()
@@ -48,26 +66,21 @@ namespace FileDBReader_Tests
 
             if (CompressionsManual.Count == CompressionsSerialized.Count)
             {
-                foreach (KeyValuePair<String, Conversion> k in CompressionsManual)
-                {
-                    if (CompressionsSerialized.ContainsKey(k.Key))
-                    {
-                        //right here we can already assume that the paths match. 
-                        Conversion ConversionManual = k.Value;
-                        Conversion ConversionSerialized = InterpreterSerialized.Conversions[k.Key];
-                        Assert.AreEqual(ConversionManual.Type, ConversionSerialized.Type);
-                        Assert.AreEqual(ConversionManual.Structure, ConversionSerialized.Structure);
-                        Assert.AreEqual(ConversionManual.Encoding, ConversionSerialized.Encoding);
+                for (int i = 0; i < CompressionsManual.Count; i++)
+                { 
+                    Conversion e_manual = CompressionsManual[i].Item2;
+                    Conversion e_serial = CompressionsSerialized[i].Item2;
 
-                        //Enum
-                        foreach (KeyValuePair<String, String> f in ConversionManual.Enum)
-                        {
-                            if (ConversionSerialized.Enum.ContainsKey(f.Key))
-                                Assert.AreEqual(f.Value, ConversionSerialized.Enum[f.Key]);
-                            else Assert.Fail();
-                        }
+                    Assert.AreEqual(e_manual.Type, e_serial.Type);
+                    Assert.AreEqual(e_manual.Structure, e_serial.Structure);
+                    Assert.AreEqual(e_manual.Encoding, e_serial.Encoding);
+
+                    foreach (KeyValuePair<String, String> f in e_manual.Enum)
+                    {
+                        if (e_serial.Enum.ContainsKey(f.Key))
+                            Assert.AreEqual(f.Value, e_serial.Enum[f.Key]);
+                        else Assert.Fail();
                     }
-                    else Assert.Fail();
                 }
             }
             else Assert.Fail();
@@ -114,6 +127,18 @@ namespace FileDBReader_Tests
             Assert.IsTrue(TestString.Equals(TestStringEnumValue_ToValue_ToKey));
         }
 
+        [TestMethod]
+        public void SafeAdd_Detects_Duplicate()
+        {
+            Dictionary<String, String> dict = new Dictionary<String, String>();
+            //Setup
+            RuntimeEnum TestEnum = new RuntimeEnum();
+            dict.Add("0", "ValueZero");
+            dict.Add("1", "ValueOne");
+            dict.Add("2", "ValueTwo");
+
+            Assert.ThrowsException<ArgumentException>(() => dict.SafeAdd("3","ValueTwo"));
+        }
 
         #region Helpful
         private Interpreter BuildTestInterpreter()
@@ -125,7 +150,7 @@ namespace FileDBReader_Tests
             list.Add(new InternalCompression() { CompressionVersion = 2, Path = "//AreaManagerData/None/Data" });
             InterpreterManual.InternalCompressions = list;
 
-            var Compressions = new Dictionary<string, Conversion>();
+            var Compressions = new List <(string, Conversion)> ();
 
             //SetupEnum for later use
             RuntimeEnum TestEnum = new RuntimeEnum();
@@ -133,48 +158,15 @@ namespace FileDBReader_Tests
             TestEnum.AddValue("1", "Medium");
             TestEnum.AddValue("2", "Large");
 
-            Compressions.Add("//VegetationPropSetName", new Conversion() { Type = typeof(String), Encoding = Encoding.GetEncoding("UTF-8") });
-            Compressions.Add("//GlobalAmbientName", new Conversion() { Type = typeof(String) });
-            Compressions.Add("//HeightMap/HeightMap", new Conversion() { Type = typeof(System.UInt16), Structure = ContentStructure.List });
-            Compressions.Add("//MapTemplate/TemplateElement/Element/Size", new Conversion() { Type = typeof(System.Int16), Enum = TestEnum });
+            Compressions.Add( ("//VegetationPropSetName", new Conversion() { Type = typeof(String), Encoding = Encoding.GetEncoding("UTF-8") } ));
+            Compressions.Add(("//GlobalAmbientName", new Conversion() { Type = typeof(String) }));
+            Compressions.Add(("//HeightMap/HeightMap", new Conversion() { Type = typeof(System.UInt16), Structure = ContentStructure.List }));
+            Compressions.Add(("//MapTemplate/TemplateElement/Element/Size", new Conversion() { Type = typeof(System.Int16), Enum = TestEnum }));
             InterpreterManual.Conversions = Compressions;
 
             InterpreterManual.DefaultType = new Conversion() { Type = typeof(System.Int32) };
             return InterpreterManual;
         }
-
-        /*
-        private void GenericFileTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME, int FileVersion)
-        {
-            String INTERPRETER_FILE = Path.Combine(Folders.FILEFORMAT_DIRECTORY_NAME, INTERPREFER_FILE_NAME);
-            String TESTFILE = Path.Combine(Folders.TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME);
-
-            String DECOMPRESSED_TESTFILE = Path.Combine(Folders.TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_decompressed.xml");
-            String INTERPRETED_TESTFILE = Path.Combine(Folders.TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_interpreted.xml");
-            String TOHEX_TESTFILE = Path.Combine(Folders.TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_reinterpreted.xml");
-            String EXPORTED_TESTFILE = Path.Combine(Folders.TEST_DIRECTORY_NAME, DIRECTORY_NAME, TESTFILE_NAME + "_recompressed" + Path.GetExtension(TESTFILE_NAME));
-
-            //decompress
-            var decompressed = reader.ReadFile(TESTFILE);
-            decompressed.Save(DECOMPRESSED_TESTFILE);
-
-            var interpreted = interpreter.Interpret(decompressed, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
-            interpreted.Save(INTERPRETED_TESTFILE);
-
-            //to hex 
-            var Hexed = exporter.Export(interpreted, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
-            Hexed.Save(TOHEX_TESTFILE);
-
-            //back to gamedata 
-            writer.Export(Hexed, EXPORTED_TESTFILE, FileVersion);
-
-            var OriginalInfo = new FileInfo(TESTFILE);
-            var DecompressedInfo = new FileInfo(DECOMPRESSED_TESTFILE);
-            var InterpretedInfo = new FileInfo(INTERPRETED_TESTFILE);
-            var RehexedInfo = new FileInfo(TOHEX_TESTFILE);
-            var ReexportedInfo = new FileInfo(EXPORTED_TESTFILE);
-        }
-        */
         #endregion
     }
 }

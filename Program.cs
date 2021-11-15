@@ -38,6 +38,9 @@ namespace FileDBReader {
 
             [Option('y', "overwrite", Required = false, Default = false)]
             public bool overwrite { get; set; }
+
+            [Option('z', "replace_Names", Required = false, HelpText = "String Tuples of names that should be replaced")]
+            public IEnumerable<String> ReplaceOperations { get; set; }
         }
 
         [Verb("compress", HelpText = COMPRESS_EXPL)]
@@ -58,6 +61,9 @@ namespace FileDBReader {
 
             [Option('y', "overwrite", Required = false, Default = false)]
             public bool overwrite { get; set; }
+
+            [Option('z', "replace_Names", Required = false, HelpText = "String Tuples of names that should be replaced")]
+            public IEnumerable<String> ReplaceOperations { get; set; }
         }
 
         [Verb("interpret", HelpText = INTERPRET_EXPL)]
@@ -71,6 +77,9 @@ namespace FileDBReader {
 
             [Option('y', "overwrite", Required = false, Default = false)]
             public bool overwrite { get; set; }
+
+            [Option('z', "replace_Names", Required = false, HelpText = "String Tuples of names that should be replaced")]
+            public IEnumerable<String> ReplaceOperations { get; set; }
         }
 
         [Verb("toHex", HelpText = REINTERPRET_EXPL)]
@@ -84,6 +93,9 @@ namespace FileDBReader {
 
             [Option('y', "overwrite", Required = false, Default = false)]
             public bool overwrite { get; set; }
+
+            [Option('z', "replace_Names", Required = false, HelpText = "String Tuples of names that should be replaced")]
+            public IEnumerable<String> ReplaceOperations { get; set; }
         }
 
         [Verb("check_fileversion", HelpText = VERSION_EXPL)]
@@ -170,22 +182,22 @@ namespace FileDBReader {
                 //OPTIONS FOR DECOMPRESSING
                 (DecompressOptions o) =>
                 {
-                    return Functions.Decompress(o.InputFiles, o.Interpreter, o.overwrite);
+                    return Functions.Decompress(o.InputFiles, o.Interpreter, o.overwrite, o.ReplaceOperations);
                 },
                 //OPTIONS FOR RECOMPRESSING
                 (CompressOptions o) =>
                 {
-                    return Functions.Compress(o.InputFiles, o.Interpreter, o.OutputFileExtension, o.CompressionVersion, o.overwrite);
+                    return Functions.Compress(o.InputFiles, o.Interpreter, o.OutputFileExtension, o.CompressionVersion, o.overwrite, o.ReplaceOperations);
                 },
                 //OPTIONS FOR INTERPRETATION ONLY
                 (InterpretOptions o) =>
                 {
-                    return Functions.Interpret(o.InputFiles, o.Interpreter, o.overwrite);
+                    return Functions.Interpret(o.InputFiles, o.Interpreter, o.overwrite, o.ReplaceOperations);
                 },
                 //OPTIONS FOR REINTERPRETATION ONLY
                 (toHexOptions o) =>
                 {
-                    return Functions.Reinterpret(o.InputFiles, o.Interpreter, o.overwrite);
+                    return Functions.Reinterpret(o.InputFiles, o.Interpreter, o.overwrite, o.ReplaceOperations);
                 },
                 //CHECK COMPRESSION VERSION
                 (FileCheck_Options o) =>
@@ -207,11 +219,11 @@ namespace FileDBReader {
                 //---------DEPRACATED FUNCTIONS---------//
                 (Decompress_Interpret_Options o ) =>
                 {
-                    return Functions.Decompress(o.InputFiles, o.Interpreter, false);
+                    return Functions.Decompress(o.InputFiles, o.Interpreter, false, null);
                 }, 
                 (Recompress_Export_Options o) => 
                 {
-                    return Functions.Compress(o.InputFiles, o.Interpreter, o.OutputFileExtension, o.CompressionVersion, false); 
+                    return Functions.Compress(o.InputFiles, o.Interpreter, o.OutputFileExtension, o.CompressionVersion, false, null); 
                 },
                 e => 1
             ) ;

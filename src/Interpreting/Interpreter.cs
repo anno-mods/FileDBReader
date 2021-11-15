@@ -11,11 +11,11 @@ namespace FileDBReader.src
     /// <summary>
     /// Represents an InterpreterFile
     /// </summary>
-    public class Interpreter
+    public record Interpreter
     {
         //Attribs
         public List<InternalCompression> InternalCompressions = new List<InternalCompression>();
-        public Dictionary<string, Conversion> Conversions = new Dictionary<string, Conversion>();
+        public List<(String, Conversion)> Conversions = new List<(String, Conversion)>();
         public Conversion DefaultType;
 
         public static XmlDocument ToInterpreterDoc(String InterpreterPath) 
@@ -24,19 +24,22 @@ namespace FileDBReader.src
             try
             {
                 doc.Load(InterpreterPath);
+                return doc;
             }
             catch (XmlException)
             {
-                Console.WriteLine("Could not load Interpreter at: {0}", InterpreterPath);
+                Console.WriteLine("[INTERPRETER]: Could not load Interpreter at {0} due to faulty xml.", InterpreterPath);
+                //return an empty interpreter document.
+                doc.LoadXml("<Converts></Converts>");
+                return doc;
             }
-            return doc; 
         }
 
         public String GetInverseXPath()
         {
             List<String> StringList = new List<string>();
-            foreach (KeyValuePair<String, Conversion> k in Conversions)
-                StringList.Add(k.Key);
+            foreach ((String path, Conversion conv) in Conversions)
+                StringList.Add(path);
             foreach (InternalCompression internalFileDB in InternalCompressions)
                 StringList.Add(internalFileDB.Path);
             return String.Join(" | ", StringList);
@@ -45,6 +48,44 @@ namespace FileDBReader.src
         public Interpreter()
         { 
         
+        }
+
+        public void AddConversion(XmlNode Convert)
+        {
+            try
+            {
+                Conversion c = new Conversion(Convert);
+                String Path = GetPath(Convert);
+                Conversions.Add((Path, c));
+            }
+            catch
+            {
+                Console.WriteLine("[INTERPRETER]: Faulty Conversion detected!");
+            }
+        }
+
+        public void AddInternalCompression(XmlNode InternalCompression)
+        {
+            try
+            {
+                InternalCompression Compression = new InternalCompression(InternalCompression);
+                InternalCompressions.Add(Compression);
+            }
+            catch
+            {
+                Console.WriteLine("[INTERPRETER]: Faulty Internal Compression!");
+            }
+        }
+
+        public void SetDefaultConversion(XmlNode DefaultAttribNode)
+        {
+            try {
+                DefaultType = new Conversion(DefaultAttribNode);
+            }
+            catch
+            {
+                Console.WriteLine("[INTERPRETER]: Faulty Default Conversion!");
+            }
         }
 
         public Interpreter(XmlDocument InterpreterDoc)
@@ -57,24 +98,17 @@ namespace FileDBReader.src
             //Conversions
             foreach (XmlNode Convert in ConvertNodes)
             {
-                //make a new dictionary entrance
-                Conversion c = new Conversion(Convert);
-                String Path = GetPath(Convert);
-
-                Conversions.Add(Path, c);
+                AddConversion(Convert);
             }
-
             //Internal Compression Parsing
             foreach (XmlNode InternalCompression in InternalCompressionNodes)
             {
-                InternalCompression Compression = new InternalCompression(InternalCompression);
-                InternalCompressions.Add(Compression);
+                AddInternalCompression(InternalCompression);
             }
-
             //default type
             if (DefaultAttribNode != null)
             {
-                DefaultType = new Conversion(DefaultAttribNode); 
+                SetDefaultConversion(DefaultAttribNode);
             }
         }
 
@@ -87,10 +121,9 @@ namespace FileDBReader.src
         {
             return ConvertNode.Attributes["Path"].Value;
         }
-
     }
 
-    public class Conversion
+    public record Conversion
     {
         public Type Type;
         public ContentStructure Structure;
@@ -98,7 +131,9 @@ namespace FileDBReader.src
         public Encoding Encoding = new UnicodeEncoding();
 
         public Conversion()
-        { }
+        { 
+        
+        }
 
         public Conversion(XmlNode ConvertNode)
         {
@@ -120,6 +155,8 @@ namespace FileDBReader.src
             {
                 this.Enum = ToEnum(EnumNode);
             }
+
+            if (Type is null) throw new Exception();
         }
 
         private Type ToType(string typeStr)
@@ -159,7 +196,7 @@ namespace FileDBReader.src
                         }
                         else
                         {
-                            Console.WriteLine("An XML Node Enum Entry was not defined correctly. Please check your interpreter file if every EnumEntry has an ID and a Name");
+                            Console.WriteLine("[ENUM CONVERSION]: An XML Node Enum Entry was not defined correctly. Please check your interpreter file whether every EnumEntry has an ID and a Name");
                         }
                     }
                     catch (NullReferenceException)
@@ -186,7 +223,7 @@ namespace FileDBReader.src
         }
     }
 
-    public class InternalCompression
+    public record InternalCompression
     {
         public String Path;
         public int CompressionVersion;
@@ -196,7 +233,6 @@ namespace FileDBReader.src
         
         }
 
-
         public InternalCompression(XmlNode CompressionNode)
         {
             Path = GetPath(CompressionNode);
@@ -205,20 +241,14 @@ namespace FileDBReader.src
 
         private String GetPath(XmlNode CompressionNode)
         {
-            return CompressionNode.Attributes["Path"].Value; 
+            return CompressionNode.Attributes["Path"].Value;
         }
 
         private int GetCompressionVersion(XmlNode CompressionNode)
         {
             int version = 1;
             if (CompressionNode.Attributes["CompressionVersion"] != null)
-            {
-                version = Int32.Parse(CompressionNode.Attributes["CompressionVersion"].Value);
-            }
-            else
-            {
-                Console.WriteLine("Your interpreter should specify a version for internal FileDBs. For this conversion, 1 was auto-chosen. Make sure your versions match up!");
-            }
+            version = Int32.Parse(CompressionNode.Attributes["CompressionVersion"].Value);
             return version; 
         }
     }

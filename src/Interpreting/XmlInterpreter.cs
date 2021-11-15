@@ -24,7 +24,6 @@ namespace FileDBReader
     /// </summary>
     public class XmlInterpreter
     {
-
         public XmlInterpreter() {
 
         }
@@ -37,7 +36,7 @@ namespace FileDBReader
                 var nodes = doc.SelectNodes(comp.Path);
                 foreach (XmlNode node in nodes)
                 {
-                    var bytearr = HexHelper.StringToByteArray(node.InnerText);
+                    var bytearr = HexHelper.BytesFromBinHex(node.InnerText);
                     var filereader = new Reader();
                     using (MemoryStream ms = new MemoryStream(bytearr))
                     {
@@ -49,12 +48,12 @@ namespace FileDBReader
             }
 
             //Dictionary stores Path -> Conversion
-            foreach (KeyValuePair<String, Conversion> k in Interpreter.Conversions)
+            foreach ( (String path, Conversion conv) in Interpreter.Conversions)
             {
                 try
                 {
-                    var Nodes = doc.SelectNodes(k.Key);
-                    ConvertNodeSet(Nodes.Cast<XmlNode>(), k.Value);
+                    var Nodes = doc.SelectNodes(path);
+                    ConvertNodeSet(Nodes.Cast<XmlNode>(), conv);
                 }
                 catch (IOException)
                 {
@@ -67,7 +66,7 @@ namespace FileDBReader
                 String Inverse = Interpreter.GetInverseXPath();
                 var Base = doc.SelectNodes("//*[text()]");
                 var toFilter = doc.SelectNodes(Inverse);
-                var defaults = HexHelper.ExceptNodelists(Base, toFilter);
+                var defaults = Base.FilterOut(toFilter);
                 ConvertNodeSet(defaults, Interpreter.DefaultType);
             }
 
@@ -80,17 +79,20 @@ namespace FileDBReader
             {
                 try
                 {
-                    switch (Conversion.Structure)
+                    if (!match.InnerText.Equals(""))
                     {
-                        case ContentStructure.List:
-                            InterpretAsList(match, Conversion.Type, false);
-                            break;
-                        case ContentStructure.Default:
-                            InterpretSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
-                            break;
-                        case ContentStructure.Cdata:
-                            InterpretAsList(match, Conversion.Type, true);
-                            break;
+                        switch (Conversion.Structure)
+                        {
+                            case ContentStructure.List:
+                                InterpretAsList(match, Conversion.Type, false);
+                                break;
+                            case ContentStructure.Default:
+                                InterpretSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
+                                break;
+                            case ContentStructure.Cdata:
+                                InterpretAsList(match, Conversion.Type, true);
+                                break;
+                        }
                     }
                 }
                 catch (InvalidConversionException e)
@@ -129,7 +131,7 @@ namespace FileDBReader
             {
                 String BinaryData = n.InnerText;
                 //filter out CDATA from the string
-                if (BinaryData != "" && FilterCDATA) BinaryData = BinaryData.Substring(6, BinaryData.Length - 7);
+                if (!BinaryData.Equals("") && FilterCDATA) BinaryData = BinaryData.Substring(6, BinaryData.Length - 7);
 
                 //make a bytesize check
                 int ExpectedBytesize = 0;
