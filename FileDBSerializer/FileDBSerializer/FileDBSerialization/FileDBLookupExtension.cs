@@ -8,9 +8,9 @@ namespace FileDBSerializing
 {
     public static class FileDBLookupExtension
     {
-        public static List<FileDBNode> SelectNodes(this IEnumerable<FileDBNode> Collection, String Lookup)
+        public static T SelectNodes<T>(this IEnumerable<FileDBNode> Collection, String Lookup) where T: IEnumerable<FileDBNode>, new()
         {
-            var resultList= new List<FileDBNode>();
+            var resultList= new T();
             var Next = GetNextNodeName(Lookup, out Lookup);
 
             //get the current results

@@ -95,7 +95,7 @@ namespace FileDBSerializing
         }
         public List<FileDBNode> SelectNodes(String Lookup)
         {
-            return Roots.SelectNodes(Lookup);  
+            return Roots.SelectNodes<List<FileDBNode>>(Lookup);  
         }
     }
     [DebuggerDisplay("[FileDB_Document: Version = 2, Count = {ELEMENT_COUNT}]")]
@@ -182,7 +182,7 @@ namespace FileDBSerializing
         }
         public List<FileDBNode> SelectNodes(String Lookup)
         {
-            return Roots.SelectNodes(Lookup);
+            return Roots.SelectNodes<List<FileDBNode>>(Lookup);
         }
     }
 
@@ -260,7 +260,7 @@ namespace FileDBSerializing
         }
         public List<FileDBNode> SelectNodes(String Lookup)
         {
-            return Children.SelectNodes(Lookup);
+            return Children.SelectNodes<List<FileDBNode>>(Lookup);
         }
     }
 
