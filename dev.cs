@@ -149,7 +149,7 @@ namespace FileDBReader
         /// </summary>
         
         
-        public static void zlibTest() {
+        /*public static void zlibTest() {
             const String DIRECTORY_NAME = "zlib";
 
             FileStream fs = File.OpenRead(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "0x1.ctt"));
@@ -157,7 +157,7 @@ namespace FileDBReader
             //Ubisoft uses 8 magic bytes at the start
             var doc = reader.Read(zlib.Decompress(fs, 8));
             doc.Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "decompressed.xml"));
-        }
+        }*/
 
         public static void GenericTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME, int FileVersion)
         {
