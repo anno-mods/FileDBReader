@@ -20,7 +20,7 @@ namespace FileDBReader_Tests
         //this does not need two versions because I am just comparing xml to object structure (which is sorta the same for both versions).
         public void XmlToFiledbTest()
         {
-            var workDoc = FileDBSerializingTest.buildDocument<FileDBDocument_V1>();
+            var workDoc = TestDataSources.BuildDocument<FileDBDocument_V1>();
 
             var Expected = new XmlDocument();
             Expected.Load(expectedPath);
@@ -34,7 +34,7 @@ namespace FileDBReader_Tests
         [TestMethod]
         private void FileDBToXmlTest_v2()
         {
-            var Expected = FileDBSerializingTest.buildDocument<FileDBDocument_V2>();
+            var Expected = TestDataSources.BuildDocument<FileDBDocument_V2>();
 
             XmlFileDbSerializer<FileDBDocument_V2> serial = new XmlFileDbSerializer<FileDBDocument_V2>();
             var workDoc = new XmlDocument();
@@ -52,7 +52,7 @@ namespace FileDBReader_Tests
         [TestMethod]
         private void FileDBToXmlTest_v1()
         {
-            var Expected = FileDBSerializingTest.buildDocument<FileDBDocument_V1>();
+            var Expected = TestDataSources.BuildDocument<FileDBDocument_V1>();
 
             XmlFileDbSerializer<FileDBDocument_V1> serial = new XmlFileDbSerializer<FileDBDocument_V1>();
             var workDoc = new XmlDocument();

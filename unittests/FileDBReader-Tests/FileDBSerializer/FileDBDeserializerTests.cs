@@ -16,7 +16,7 @@ namespace FileDBSerializing.Tests
         [TestMethod()]
         public void DeserializeTest_v2()
         {
-            var expected = buildDocument<FileDBDocument_V2>();
+            var expected = TestDataSources.BuildDocument<FileDBDocument_V2>();
 
             FileDBDeserializer<FileDBDocument_V2> deserializer = new FileDBDeserializer<FileDBDocument_V2>();
 
@@ -35,7 +35,7 @@ namespace FileDBSerializing.Tests
         [TestMethod()]
         public void DeserializeTest_v1()
         {
-            var expected = buildDocument<FileDBDocument_V1>();
+            var expected = TestDataSources.BuildDocument<FileDBDocument_V1>();
 
             FileDBDeserializer<FileDBDocument_V1> deserializer = new FileDBDeserializer<FileDBDocument_V1>();
 
@@ -59,7 +59,7 @@ namespace FileDBSerializing.Tests
 
             FileDBSerializer ser = new FileDBSerializer();
 
-            var docV1 = buildDocument<FileDBDocument_V1>();
+            var docV1 = TestDataSources.BuildDocument<FileDBDocument_V1>();
             var docstream = new MemoryStream();
             var result = ser.Serialize(docV1, docstream);
 
@@ -73,7 +73,7 @@ namespace FileDBSerializing.Tests
 
             FileDBSerializer ser = new FileDBSerializer();
 
-            var docV2 = buildDocument<FileDBDocument_V2>();
+            var docV2 = TestDataSources.BuildDocument<FileDBDocument_V2>();
             var docstream = new MemoryStream();
             var result = ser.Serialize(docV2, docstream);
 
@@ -101,31 +101,6 @@ namespace FileDBSerializing.Tests
             }
         }
 
-        internal static FileDBDocument buildDocument<T>() where T : FileDBDocument, new()
-        { 
-            var filedb = new T();
-
-            //lets create a few tags. 
-
-            Tag root1 = filedb.AddTag("TestRootOne");
-
-            var Attr = filedb.AddAttrib("FloatAttrib_Child");
-            Attr.Content = BitConverter.GetBytes(33.2f);
-            root1.AddChild(Attr);
-
-            var child1 = filedb.AddTag("None");
-            root1.AddChild(child1);
-
-            var root2 = filedb.AddAttrib("None");
-            root2.Content = new UnicodeEncoding().GetBytes("Modders are gonna take over the world");
-
-            var root3 = filedb.AddAttrib("StringAttrib_Root");
-            root3.Content = new UTF32Encoding().GetBytes("Anno 1800 will release on Stadia, Xbox and PS5. Get ready to open your wallets for Season 4.");
-
-            filedb.Roots.Add(root1);
-            filedb.Roots.Add(root2);
-            filedb.Roots.Add(root3);
-            return filedb;
-        }
+        
     }
 }
