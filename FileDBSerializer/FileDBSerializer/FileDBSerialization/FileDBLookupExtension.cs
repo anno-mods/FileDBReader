@@ -8,7 +8,19 @@ namespace FileDBSerializing
 {
     public static class FileDBLookupExtension
     {
+        public delegate bool LookupCondition(FileDBNode node);
+
+        public static bool LookupStandard(FileDBNode node)
+        {
+            return true;
+        }
+
         public static IEnumerable<FileDBNode> SelectNodes(this IEnumerable<FileDBNode> Collection, String Lookup)
+        { 
+            return SelectNodes(Collection, Lookup, LookupStandard);
+        }
+
+        public static IEnumerable<FileDBNode> SelectNodes(this IEnumerable<FileDBNode> Collection, String Lookup, LookupCondition condition)
         {
             IEnumerable<FileDBNode> resultList= new List<FileDBNode>();
             var Next = GetNextNodeName(Lookup, out Lookup);
@@ -21,7 +33,7 @@ namespace FileDBSerializing
             {
                 foreach (FileDBNode x in tempResults)
                 {
-                    if (x is Tag)
+                    if (x is Tag && condition(x))
                     {
                         resultList = resultList.Union(((Tag)x).SelectNodes(Lookup));
                     }
@@ -45,13 +57,12 @@ namespace FileDBSerializing
                     Remaining = LookupPath.Substring(charLocation + 1);
                     return LookupPath.Substring(0, charLocation);
                 }
-                
-                else { 
-                    Remaining = "";
+                else 
+                { 
+                    Remaining = String.Empty;
                     return LookupPath;
                 }
             }
-
             Remaining = String.Empty;
             return String.Empty;
         }
