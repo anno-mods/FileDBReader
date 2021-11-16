@@ -49,8 +49,16 @@ namespace FileDBReader
 
             Console.WriteLine("Finished Test File: file.db");
             */
+            A7TINFOTest();
+            NodelookupTest();
+        }
 
-            RenamedTagsTest();
+        private static void NodelookupTest()
+        {
+            FileDBDeserializer<FileDBDocument_V1> ser = new FileDBDeserializer<FileDBDocument_V1>();
+
+            var fdoc = ser.Deserialize(File.OpenRead("dev_files/a7tinfo/moderate_atoll_ll_01.a7tinfo"));
+            fdoc.SelectNodes("MapTemplate/Size");
         }
 
         #region GenericTestFcFile
@@ -140,19 +148,16 @@ namespace FileDBReader
         /// decompresses 0x1.ctt, ignoring the 8 magic bytes at the start, writes the result to decompressed.xml, then compresses it back.
         /// </summary>
         
-        /*
+        
         public static void zlibTest() {
             const String DIRECTORY_NAME = "zlib";
 
-            FileStream fs = File.OpenRead(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "data.a7s"));
+            FileStream fs = File.OpenRead(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "0x1.ctt"));
 
             //Ubisoft uses 8 magic bytes at the start
-            var doc = reader.ReadSpan(zlib.Decompress(fs, 0));
+            var doc = reader.Read(zlib.Decompress(fs, 8));
             doc.Save(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "decompressed.xml"));
-
-            var Stream = writer.Export(doc, ".bin", 1);
-            File.WriteAllBytes(Path.Combine(TEST_DIRECTORY_NAME, DIRECTORY_NAME, "shittycompress.ctt"), zlib.Compress(Stream, 1));
-        }*/
+        }
 
         public static void GenericTest(String DIRECTORY_NAME, String INTERPREFER_FILE_NAME, String TESTFILE_NAME, int FileVersion)
         {

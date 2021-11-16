@@ -8,29 +8,29 @@ namespace FileDBSerializing
 {
     public static class FileDBLookupExtension
     {
-        public static T SelectNodes<T>(this IEnumerable<FileDBNode> Collection, String Lookup) where T: IEnumerable<FileDBNode>, new()
+        public static IEnumerable<FileDBNode> SelectNodes(this IEnumerable<FileDBNode> Collection, String Lookup)
         {
-            var resultList= new T();
+            IEnumerable<FileDBNode> resultList= new List<FileDBNode>();
             var Next = GetNextNodeName(Lookup, out Lookup);
 
             //get the current results
             var tempResults = Collection.Where(node => node.GetName().Equals(Next));
 
             //if we are not yet at the lookups end, we have to search the children and append the result of that.
-            if (!Next.Equals(""))
+            if (!Lookup.Equals(""))
             {
                 foreach (FileDBNode x in tempResults)
                 {
                     if (x is Tag)
                     {
-                        resultList.Concat(((Tag)x).SelectNodes(Next));
+                        resultList = resultList.Union(((Tag)x).SelectNodes(Lookup));
                     }
                 }
             }
             //if we are at the final statement, we need to concat the result.
             else
             {
-                resultList.Concat(tempResults);
+                resultList = resultList.Union(tempResults);
             }
             return resultList;
         }
@@ -44,6 +44,11 @@ namespace FileDBSerializing
                 {
                     Remaining = LookupPath.Substring(charLocation + 1);
                     return LookupPath.Substring(0, charLocation);
+                }
+                
+                else { 
+                    Remaining = "";
+                    return LookupPath;
                 }
             }
 
