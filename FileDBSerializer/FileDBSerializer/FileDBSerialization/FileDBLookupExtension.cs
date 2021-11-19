@@ -8,22 +8,38 @@ namespace FileDBSerializing
 {
     public static class FileDBLookupExtension
     {
+        //Delegate for LookupFilters.
         public delegate bool LookupCondition(FileDBNode node);
-
-        public static bool LookupStandard(FileDBNode node)
-        {
-            return true;
-        }
 
         public static IEnumerable<FileDBNode> SelectNodes(this IEnumerable<FileDBNode> Collection, String Lookup)
         {
-            return SelectNodes(Collection, Lookup, LookupStandard);
+            return SelectNodes(Collection, Lookup, node => true);
         }
 
         public static FileDBNode SelectSingleNode(this IEnumerable<FileDBNode> Collection, String Lookup)
         {
-            return SelectSingleNode(Collection, Lookup, LookupStandard);
+            return SelectSingleNode(Collection, Lookup, node => true);
         }
+
+        public static Tag SelectSingleTag(this IEnumerable<FileDBNode> Collection, String Lookup)
+        {
+            return (Tag)SelectSingleNode(Collection, Lookup, node => node is Tag);
+        }
+
+        public static Attrib SelectSingleAttrib(this IEnumerable<FileDBNode> Collection, String Lookup)
+        {
+            return (Attrib)SelectSingleNode(Collection, Lookup, node => node is Attrib);
+        }
+
+        #region LookupMethods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Collection"></param>
+        /// <param name="Lookup"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
 
         public static IEnumerable<FileDBNode> SelectNodes(this IEnumerable<FileDBNode> Collection, String Lookup, LookupCondition condition)
         {
@@ -82,6 +98,8 @@ namespace FileDBSerializing
                 return null; 
             }
         }
+
+        #endregion
 
         private static String GetNextNodeName(String LookupPath, out String Remaining)
         {
