@@ -20,7 +20,7 @@ namespace FileDBSerializing
      * ///------------------################----------------------///
      */
 
-    public class FileDBDeserializer<T> where T : FileDBDocument, new()
+    public class FileDBDeserializer<T> where T : IFileDBDocument, new()
     {
         private BinaryReader reader;
         private T filedb;

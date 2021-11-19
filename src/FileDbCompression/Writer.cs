@@ -20,7 +20,7 @@ namespace FileDBReader.src
 
         public Stream Write(XmlDocument doc, Stream Stream, int FileVersion)
         {
-            FileDBDocument filedb;
+            IFileDBDocument filedb;
             try
             {
                 if (FileVersion == 1)

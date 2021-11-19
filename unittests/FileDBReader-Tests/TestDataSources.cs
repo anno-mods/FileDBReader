@@ -9,7 +9,7 @@ namespace FileDBReader_Tests
 {
     static class TestDataSources
     {
-        internal static FileDBDocument BuildDocument<T>() where T : FileDBDocument, new()
+        internal static IFileDBDocument BuildDocument<T>() where T : IFileDBDocument, new()
         {
             var filedb = new T();
 

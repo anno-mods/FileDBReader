@@ -16,8 +16,13 @@ namespace FileDBSerializing
         }
 
         public static IEnumerable<FileDBNode> SelectNodes(this IEnumerable<FileDBNode> Collection, String Lookup)
-        { 
+        {
             return SelectNodes(Collection, Lookup, LookupStandard);
+        }
+
+        public static FileDBNode SelectSingleNode(this IEnumerable<FileDBNode> Collection, String Lookup)
+        {
+            return SelectSingleNode(Collection, Lookup, LookupStandard);
         }
 
         public static IEnumerable<FileDBNode> SelectNodes(this IEnumerable<FileDBNode> Collection, String Lookup, LookupCondition condition)
@@ -45,6 +50,37 @@ namespace FileDBSerializing
                 resultList = resultList.Union(tempResults);
             }
             return resultList;
+        }
+
+        /// <summary>
+        /// Selects a single FileDBNode in a FileDBNode Enumerable.
+        /// </summary>
+        /// <param name="Collection"></param>
+        /// <param name="Lookup">Lookup Path of the node</param>
+        /// <param name="condition">Condition matching the delegate type LookupConditon. This condition is matched only for the resulting nodes (last element of the lookup path)!.</param>
+        /// <returns>The first FileDBNode matching the given condition and Lookup, or null, if no such node is found.</returns>
+        public static FileDBNode SelectSingleNode(this IEnumerable<FileDBNode> Collection, String Lookup, LookupCondition condition)
+        {
+            try
+            {
+                var Next = GetNextNodeName(Lookup, out var RemainingLookup);
+                //we are not at the end of the path -> lookup tags only 
+                if (!RemainingLookup.Equals(""))
+                {
+                    Tag tempResult = (Tag)Collection.First(node => node.GetName().Equals(Next) && node is Tag);
+                    return tempResult.Children.SelectSingleNode(RemainingLookup, condition);
+                }
+                //we are at the end of the path
+                else
+                {
+                    return Collection.First(node => node.GetName().Equals(Next) && condition(node));
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("[NODE LOOKUP]: Lookup failed: {0}. No nodes found, returned null.", Lookup);
+                return null; 
+            }
         }
 
         private static String GetNextNodeName(String LookupPath, out String Remaining)

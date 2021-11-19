@@ -7,7 +7,7 @@ using System.Linq;
 namespace FileDBSerializing
 {
     public enum FileDBNodeType { Tag, Attrib }
-    public interface FileDBDocument
+    public interface IFileDBDocument
     {
         public List<FileDBNode> Roots { get; set; }
         public TagSection Tags { get; set; }
@@ -23,10 +23,11 @@ namespace FileDBSerializing
         public Attrib AddAttrib(String Attrib);
 
         public IEnumerable<FileDBNode> SelectNodes(String Lookup);
+        public FileDBNode SelectSingleNode(String Lookup);
     }
 
     [DebuggerDisplay("[FileDB_Document: Version = 1, Count = {ELEMENT_COUNT}]")]
-    public class FileDBDocument_V1 : FileDBDocument
+    public class FileDBDocument_V1 : IFileDBDocument
     { 
         //PUBLIC MEMBERS
         public List<FileDBNode> Roots { get; set; }
@@ -97,9 +98,14 @@ namespace FileDBSerializing
         {
             return Roots.SelectNodes(Lookup);  
         }
+        public FileDBNode SelectSingleNode(String Lookup)
+        {
+            return Roots.SelectSingleNode(Lookup);
+        }
     }
+
     [DebuggerDisplay("[FileDB_Document: Version = 2, Count = {ELEMENT_COUNT}]")]
-    public class FileDBDocument_V2 : FileDBDocument
+    public class FileDBDocument_V2 : IFileDBDocument
     {
         //FIELDS 
         public List<FileDBNode> Roots { get; set; }
@@ -110,7 +116,6 @@ namespace FileDBSerializing
         public int MAGIC_BYTE_COUNT { get => _magic_byte_count; }
         public int OFFSET_TO_OFFSETS { get => _offset_to_offsets; }
         public ushort MAX_TAG_ID { get => _max_tag_id; set => _max_tag_id = value; }
-
         public ushort MAX_ATTRIB_ID {get => _max_attrib_id; set => _max_attrib_id = value; }
 
         //INTERNAL MEMBERS: Just for Binding the public ones.
@@ -184,6 +189,11 @@ namespace FileDBSerializing
         {
             return Roots.SelectNodes(Lookup);
         }
+
+        public FileDBNode SelectSingleNode(String Lookup)
+        {
+            return Roots.SelectSingleNode(Lookup);
+        }
     }
 
     public class TagSection
@@ -210,7 +220,7 @@ namespace FileDBSerializing
 
     public abstract class FileDBNode
     {
-        public FileDBDocument ParentDoc = null;
+        public IFileDBDocument ParentDoc = null;
         public Tag Parent = null;
         public int Bytesize = 0;
         public int ID = -1;
@@ -261,6 +271,10 @@ namespace FileDBSerializing
         public IEnumerable<FileDBNode> SelectNodes(String Lookup)
         {
             return Children.SelectNodes(Lookup);
+        }
+        public FileDBNode SelectSingleNode(String Lookup)
+        {
+            return Children.SelectSingleNode(Lookup);
         }
     }
 

@@ -14,7 +14,7 @@ namespace FileDBReader.src.XmlSerialization
     public class FileDbXmlSerializer
     {
         XmlDocument doc; 
-        public XmlDocument ToXml(FileDBDocument filedb)
+        public XmlDocument ToXml(IFileDBDocument filedb)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();

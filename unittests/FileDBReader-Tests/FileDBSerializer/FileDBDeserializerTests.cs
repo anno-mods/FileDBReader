@@ -20,7 +20,7 @@ namespace FileDBSerializing.Tests
 
             FileDBDeserializer<FileDBDocument_V2> deserializer = new FileDBDeserializer<FileDBDocument_V2>();
 
-            FileDBDocument deser;
+            IFileDBDocument deser;
             using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v2.bin"))
             {
                 deser = deserializer.Deserialize(s);
@@ -39,7 +39,7 @@ namespace FileDBSerializing.Tests
 
             FileDBDeserializer<FileDBDocument_V1> deserializer = new FileDBDeserializer<FileDBDocument_V1>();
 
-            FileDBDocument deser;
+            IFileDBDocument deser;
             using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v1.bin"))
             {
                 deser = deserializer.Deserialize(s);

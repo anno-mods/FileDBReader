@@ -30,7 +30,7 @@ namespace FileDBSerializing
         /// <param name="filedb"></param>
         /// <param name="s">The Stream that should be serialized to.</param>
         /// <returns>the UNCLOSED Stream that contains a serialized version of the document</returns>
-        public Stream Serialize (FileDBDocument filedb, Stream s)
+        public Stream Serialize (IFileDBDocument filedb, Stream s)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();

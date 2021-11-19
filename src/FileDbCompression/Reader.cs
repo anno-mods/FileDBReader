@@ -48,14 +48,14 @@ namespace FileDBReader.src
         private XmlDocument Read_Version2(Stream input)
         {
             var deserializer = new FileDBDeserializer<FileDBDocument_V2>();
-            FileDBDocument filedb = deserializer.Deserialize(input);
+            IFileDBDocument filedb = deserializer.Deserialize(input);
             return FileDbToXml.ToXml(filedb);
         }
 
         private XmlDocument Read_Version1(Stream input)
         {
             var deserializer = new FileDBDeserializer<FileDBDocument_V1>();
-            FileDBDocument filedb = deserializer.Deserialize(input);
+            IFileDBDocument filedb = deserializer.Deserialize(input);
             return FileDbToXml.ToXml(filedb);
         }
     }
