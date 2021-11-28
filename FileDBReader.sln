@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29326.143
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileDBReader", "FileDBReader.csproj", "{1CB40510-A10E-4637-B1B5-32DDDF4FB13C}"
 EndProject
@@ -31,12 +31,12 @@ Global
 		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Debug|x64.Build.0 = Debug|Any CPU
 		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{265AACA6-4471-4C5C-965F-CBAB72455E6E}.Release|x64.ActiveCfg = Release|Any CPU
-		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Debug|Any CPU.Build.0 = Debug|x64
 		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Debug|x64.ActiveCfg = Debug|x64
 		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Debug|x64.Build.0 = Debug|x64
-		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Release|Any CPU.ActiveCfg = Release|x64
+		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Release|Any CPU.Build.0 = Release|x64
 		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Release|x64.ActiveCfg = Release|x64
 		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
