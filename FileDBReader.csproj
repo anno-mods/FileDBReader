@@ -63,6 +63,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="dev_files\BrokenTags\gamedata.data">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="FileFormats\a7tinfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
