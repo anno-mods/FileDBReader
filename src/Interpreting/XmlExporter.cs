@@ -68,6 +68,8 @@ namespace FileDBReader
 
         private void ExportInternalCompression(InternalCompression comp, ref XmlDocument doc)
         {
+            InvalidTagNameHelper.RegisterReplaceOperations(comp.ReplacementOps);
+
             var Nodes = doc.SelectNodes(comp.Path);
             foreach (XmlNode node in Nodes)
             {
@@ -92,6 +94,8 @@ namespace FileDBReader
                     ByteSize.InnerText = HexHelper.ToBinHex(ConverterFunctions.ConversionRulesExport[type](BufferSize.ToString(), new UnicodeEncoding()));
                 }
             }
+
+            InvalidTagNameHelper.UnregisterReplaceOperations(comp.ReplacementOps);
         }
 
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)

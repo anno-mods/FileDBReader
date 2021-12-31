@@ -237,6 +237,7 @@ namespace FileDBReader.src
     {
         public String Path;
         public int CompressionVersion;
+        public Dictionary<string, string> ReplacementOps = new Dictionary<string, string>();
 
         public InternalCompression()
         { 
@@ -247,6 +248,12 @@ namespace FileDBReader.src
         {
             Path = GetPath(CompressionNode);
             CompressionVersion = GetCompressionVersion(CompressionNode);
+
+            var ReplacementOpsNode = CompressionNode.SelectSingleNode("./ReplaceTagNames");
+            if (ReplacementOpsNode is not null)
+            {
+                ParseReplaceOperations(ReplacementOpsNode);
+            }
         }
 
         private String GetPath(XmlNode CompressionNode)
@@ -260,6 +267,33 @@ namespace FileDBReader.src
             if (CompressionNode.Attributes["CompressionVersion"] != null)
             version = Int32.Parse(CompressionNode.Attributes["CompressionVersion"].Value);
             return version; 
+        }
+
+        private void ParseReplaceOperations(XmlNode ReplacingNode)
+        {
+            var Entries = ReplacingNode.SelectNodes("./Entry");
+            if (Entries != null)
+            {
+                foreach (XmlNode Entry in Entries)
+                {
+                    try
+                    {
+                        var Original = Entry.Attributes["Original"];
+                        var Replacement = Entry.Attributes["Replacement"];
+                        if (Original != null && Replacement != null)
+                        {
+                            ReplacementOps.SafeAdd(Original.Value, Replacement.Value);
+                        }
+                        else
+                        {
+                            Console.WriteLine("[TAG NAME REPLACEMENT]: An Entry was not defined correctly. Please check your interpreter file whether every Replacement Entry has an Original and a Replacement");
+                        }
+                    }
+                    catch (NullReferenceException)
+                    {
+                    }
+                }
+            }
         }
     }
 }

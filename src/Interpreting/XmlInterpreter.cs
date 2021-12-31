@@ -66,6 +66,9 @@ namespace FileDBReader
 
         private void InterpretInternalFileDB(InternalCompression comp, ref XmlDocument doc)
         {
+            //Register All the nodes by merging dictionaries
+            InvalidTagNameHelper.RegisterReplaceOperations(comp.ReplacementOps);
+
             var nodes = doc.SelectNodes(comp.Path);
             foreach (XmlNode node in nodes)
             {
@@ -78,6 +81,8 @@ namespace FileDBReader
                     node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
                 }
             }
+
+            InvalidTagNameHelper.UnregisterReplaceOperations(comp.ReplacementOps);
         }
 
         private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)

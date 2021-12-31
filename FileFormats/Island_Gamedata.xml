@@ -2,7 +2,11 @@
 <Converts>
   <Default Type ="Int32" />
   <InternalCompression>
-    <Element Path="//AreaManagerData/None/Data" CompressionVersion ="1"/>
+    <Element Path="//AreaManagerData/None/Data" CompressionVersion ="1">
+      <ReplaceTagNames>
+        <Entry Original="Delayed Construction" Replacement="DelayedConstruction"/>
+      </ReplaceTagNames>
+    </Element>
   </InternalCompression>
   <Converts>
     <Convert Path ="//VegetationPropSetName" Type="String" Encoding="UTF-8" />

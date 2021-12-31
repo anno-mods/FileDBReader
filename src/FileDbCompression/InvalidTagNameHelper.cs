@@ -34,6 +34,27 @@ namespace FileDBReader.src
             }
         }
 
+        public static void RemoveReplaceOp(String Key)
+        {
+            ReplaceOperations.Remove(Key);
+        }
+
+        public static void RegisterReplaceOperations(Dictionary<String, String> values)
+        {
+            foreach (KeyValuePair<string, string> pair in values)
+            {
+                AddReplaceOp(pair.Key, pair.Value);
+            }
+        }
+
+        public static void UnregisterReplaceOperations(Dictionary<String, String> values)
+        {
+            foreach (KeyValuePair<string, string> pair in values)
+            {
+                RemoveReplaceOp(pair.Key);
+            }
+        }
+
         public static String GetCorrection(String s)
         {
             if (ReplaceOperations.Count > 0 && ReplaceOperations.TryGetValue(s, out var fuck))
