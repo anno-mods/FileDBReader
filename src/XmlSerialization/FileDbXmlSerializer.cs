@@ -23,8 +23,7 @@ namespace FileDBReader.src.XmlSerialization
             var Root = doc.CreateElement("Content");
             doc.AppendChild(Root);
 
-            foreach (FileDBNode n in filedb.Roots)
-                Root.AppendChild(SerializeFileDBNode(n));
+            SerializeChildCollection(Root, filedb.Roots);                
 
             stopWatch.Stop();
             Console.WriteLine("FILEDB to XML conversion took: " + stopWatch.Elapsed.TotalMilliseconds);
@@ -32,37 +31,82 @@ namespace FileDBReader.src.XmlSerialization
             return doc; 
         }
 
-        private XmlNode SerializeFileDBNode(FileDBNode n)
+        /// <summary>
+        /// Serializes the single Node <paramref name="n"/> to an xml node. Returns
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="node">the XML node result, if provided. </param>
+        /// <returns>True if the serialization was successful</returns>
+        /// <exception cref="Exception"><paramref name="n"/> is of an unknown Node Type</exception>
+        private bool TrySerializeFileDBNode(FileDBNode n, out XmlNode node)
         {
             if (n.NodeType == FileDBNodeType.Attrib)
-                return AttribToXmlNode((Attrib)n);
+                return (node = AttribToXmlNode((Attrib)n)) is XmlNode;
             else if (n.NodeType == FileDBNodeType.Tag)
-                return TagToXmlNode((Tag)n);
-            throw new Exception(); 
+                return (node = TagToXmlNode((Tag)n)) is XmlNode;
+            throw new InvalidOperationException(); 
         }
 
-        private XmlNode TagToXmlNode(Tag t)
+        /// <summary>
+        /// Serializes a Collection of FileDBNodes and adds them to their <paramref name="parent">parent XML node</paramref>
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="children"></param>
+        private void SerializeChildCollection(XmlNode parent, IEnumerable<FileDBNode> children)
         {
-            String Name = t.GetID();
-            var node =  doc.CreateElement(InvalidTagNameHelper.GetCorrection(Name));
-
-            foreach (FileDBNode n in t.Children)
-                node.AppendChild(SerializeFileDBNode(n));
-            return node;
+            foreach (FileDBNode n in children)
+            {
+                if (TrySerializeFileDBNode(n, out var childxmlnode))
+                    parent.AppendChild(childxmlnode);
+            }
         }
 
-        private XmlNode AttribToXmlNode(Attrib a)
+        private XmlNode? AttribToXmlNode(Attrib a)
         {
             String Name = a.GetID();
-            var node = doc.CreateElement(InvalidTagNameHelper.GetCorrection(Name));
-
-            //write empty attribs as <name></name> instead of <Name />
-            if (a.Bytesize > 0)
+            if (TryCreateNode(Name, out var node))
             {
-                node.InnerText = HexHelper.ToBinHex(a.Content);
+                //write empty attribs as <name></name> instead of <Name />
+                if (a.Bytesize > 0)
+                {
+                    node.InnerText = HexHelper.ToBinHex(a.Content);
+                }
+                else node.InnerText = "";
+                return node;
             }
-            else node.InnerText = "";
-            return node;
+            else return null;             
+        }
+
+        /// <summary>
+        /// Tries to create a new XmlElement in the Serializers document with the given <paramref name="Nodename"/>. 
+        /// </summary>
+        /// <param name="Nodename"></param>
+        /// <param name="node"></param>
+        /// <returns>True if the creation was successful.</returns>
+        private bool TryCreateNode(String Nodename, out XmlNode node)
+        {
+            try
+            {
+                node = doc.CreateElement(InvalidTagNameHelper.GetCorrection(Nodename));
+                return true;
+            }
+            catch (XmlException e)
+            {
+                Console.WriteLine($"Could not create Node: {Nodename}. The Node and it's children are ignored for this reason. You can replace the Nodename using the -z option.");
+                node = null;
+                return false;
+            }
+        }
+
+        private XmlNode? TagToXmlNode(Tag t)
+        {
+            String Name = t.GetID();
+            if (TryCreateNode(Name, out var node))
+            {
+                SerializeChildCollection(node, t.Children);
+                return node;
+            }
+            return null;            
         }
 
     }
