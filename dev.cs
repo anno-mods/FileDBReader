@@ -49,8 +49,7 @@ namespace FileDBReader
 
             Console.WriteLine("Finished Test File: file.db");
             */
-            A7TINFOTest();
-            NodelookupTest();
+            BrokenTagsTest(); 
         }
 
         private static void NodelookupTest()
@@ -82,6 +81,12 @@ namespace FileDBReader
         /// Test for the two island interpreters
         /// </summary>
         /// 
+
+        public static void BrokenTagsTest()
+        {
+            GenericTest("BrokenTags", "Island_Gamedata.xml", "gamedata.data", 1);
+        }
+
         public static void IslandTest()
         {
             IslandTestGamedata();
