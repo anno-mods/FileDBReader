@@ -49,7 +49,7 @@ namespace FileDBReader
 
             Console.WriteLine("Finished Test File: file.db");
             */
-            BrokenTagsTest(); 
+            GGJTest(); 
         }
 
         private static void NodelookupTest()
@@ -81,6 +81,13 @@ namespace FileDBReader
         /// Test for the two island interpreters
         /// </summary>
         /// 
+
+        public static void GGJTest()
+        {
+            InvalidTagNameHelper.AddReplaceOp("Bus Activation", "BusActivation");
+            GenericTest("GGJ", "Island_Gamedata_V2.xml", "gamedata.data", 2);
+            InvalidTagNameHelper.RemoveReplaceOp("BusActivation");
+        }
 
         public static void BrokenTagsTest()
         {

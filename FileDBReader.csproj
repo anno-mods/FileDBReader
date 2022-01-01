@@ -66,6 +66,9 @@
     <None Update="dev_files\BrokenTags\gamedata.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="dev_files\GGJ\gamedata.data">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="FileFormats\a7tinfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -74,6 +77,9 @@
     </None>
     <None Update="FileFormats\FcFile.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="FileFormats\Island_Gamedata_V2.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="FileFormats\rdp.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

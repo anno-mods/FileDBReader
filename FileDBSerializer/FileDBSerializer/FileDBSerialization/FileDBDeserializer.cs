@@ -183,36 +183,34 @@ namespace FileDBSerializing
             ushort ID = (ushort)reader.ReadInt32();
             _bytesize = bytesize;
             _id = ID; 
-
-            switch (bytesize)
-            {
-                //we found attrib
-                case > 0:
-                    return States.Attrib;
-                //we found tag
-                case <= 0 when ID != 0:
-                    return States.Tag;
-                //we found terminator
-                case <= 0 when ID == 0:
-                    return States.Terminator;
-            }
-            return States.Undefined; 
+            return DetermineState(ID); 
         }
 
         private States ReadOperation_VERSION1(out int _bytesize, out ushort _id)
         {
             ushort ID = reader.ReadUInt16();
             _id = ID;
-            _bytesize = 0; 
+            _bytesize = 0;
+            States State = DetermineState(ID);
+            if (State == States.Attrib)
+            { 
+                _bytesize=reader.Read7BitEncodedInt();
+            }
+            return State;
+        }
 
+        private States DetermineState(int ID)
+        {
             switch (ID)
             {
+                //we found attrib
                 case >= 32768:
-                    _bytesize = reader.Read7BitEncodedInt(); 
                     return States.Attrib;
+                //we found tag
                 case < 32768 when ID != 0:
                     return States.Tag;
-                case 0:
+                //we found terminator
+                case <= 0:
                     return States.Terminator;
             }
             return States.Undefined;
