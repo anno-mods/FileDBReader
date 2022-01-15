@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBSerializing.LookUps;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -41,13 +42,6 @@ namespace FileDBSerializing
         {
             return ParentDoc.Tags.Tags[(ushort)ID];
         }
-        public IEnumerable<FileDBNode> SelectNodes(String Lookup)
-        {
-            return Children.SelectNodes(Lookup);
-        }
-        public FileDBNode SelectSingleNode(String Lookup)
-        {
-            return Children.SelectSingleNode(Lookup);
-        }
+        
     }
 }
