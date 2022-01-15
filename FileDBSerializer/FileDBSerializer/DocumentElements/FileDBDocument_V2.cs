@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBSerializing.LookUps;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -42,62 +43,6 @@ namespace FileDBSerializing
         public static int GetBlockSpace(int bytesize)
         {
             return ((bytesize / FileDBDocument_V2.ATTRIB_BLOCK_SIZE) * FileDBDocument_V2.ATTRIB_BLOCK_SIZE + FileDBDocument_V2.ATTRIB_BLOCK_SIZE * Math.Clamp(bytesize % FileDBDocument_V2.ATTRIB_BLOCK_SIZE, 0, 1));
-        }
-
-        public static byte[] GetBytesInBlocks(byte[] attrib, int bytesize)
-        {
-            int ContentSize = GetBlockSpace(bytesize);
-            Array.Resize<byte>(ref attrib, ContentSize);
-            return attrib;
-        }
-        public static Int64 GetNodeTerminator()
-        {
-            return (Int64)0;
-        }
-
-        public Tag AddTag(String Name)
-        {
-            //default -> none id
-            ushort IDOfThisTag = 0;
-            //if the tags don't contain this value, we need to add it to the tag section. also, filter out the None tag name.
-            if (!Tags.Tags.ContainsValue(Name) && !Name.Equals("None"))
-            {
-                MAX_TAG_ID++;
-                IDOfThisTag = MAX_TAG_ID;
-                Tags.Tags.Add(IDOfThisTag, Name);
-            }
-            else if (Tags.Tags.ContainsValue(Name))
-            {
-                IDOfThisTag = Tags.Tags.FirstOrDefault(x => x.Value == Name).Key;
-            }
-
-            return new Tag() { ID = IDOfThisTag, ParentDoc = this };
-        }
-        public Attrib AddAttrib(String Name)
-        {
-            //default -> none id
-            ushort IDOfThisTag = 0;
-            //if the tags don't contain this value, we need to add it to the tag section. also, filter out the None tag name.
-            if (!Tags.Attribs.ContainsValue(Name) && !Name.Equals("None"))
-            {
-                MAX_ATTRIB_ID++;
-                IDOfThisTag = MAX_ATTRIB_ID;
-                Tags.Attribs.Add(IDOfThisTag, Name);
-            }
-            else if (Tags.Attribs.ContainsValue(Name))
-            {
-                IDOfThisTag = Tags.Attribs.FirstOrDefault(x => x.Value == Name).Key;
-            }
-            return new Attrib() { ID = IDOfThisTag, ParentDoc = this };
-        }
-        public IEnumerable<FileDBNode> SelectNodes(String Lookup)
-        {
-            return Roots.SelectNodes(Lookup);
-        }
-
-        public FileDBNode SelectSingleNode(String Lookup)
-        {
-            return Roots.SelectSingleNode(Lookup);
         }
     }
 }

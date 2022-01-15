@@ -17,11 +17,45 @@ namespace FileDBSerializing
         public int MAGIC_BYTE_COUNT { get; }
         public ushort MAX_ATTRIB_ID { get; set; }
         public ushort MAX_TAG_ID { get; set; }
+    }
 
-        public Tag AddTag(String NodeName);
-        public Attrib AddAttrib(String NodeName);
+    public static class IFileDBDocumentExtensions
+    {
+        public static Tag AddTag(this IFileDBDocument doc, String Name)
+        {
+            //default -> none id
+            ushort IDOfThisTag = 0;
+            //if the tags don't contain this value, we need to add it to the tag section. also, filter out the None tag name.
+            if (!doc.Tags.Tags.ContainsValue(Name) && !Name.Equals("None"))
+            {
+                doc.MAX_TAG_ID++;
+                IDOfThisTag = doc.MAX_TAG_ID;
+                doc.Tags.Tags.Add(IDOfThisTag, Name);
+            }
+            else if (doc.Tags.Tags.ContainsValue(Name))
+            {
+                IDOfThisTag = doc.Tags.Tags.FirstOrDefault(x => x.Value == Name).Key;
+            }
 
-        public IEnumerable<FileDBNode> SelectNodes(String Lookup);
-        public FileDBNode SelectSingleNode(String Lookup);
+            return new Tag() { ID = IDOfThisTag, ParentDoc = doc };
+        }
+
+        public static Attrib AddAttrib(this IFileDBDocument doc, String Name)
+        {
+            //default -> none id
+            ushort IDOfThisTag = 0;
+            //if the tags don't contain this value, we need to add it to the tag section. also, filter out the None tag name.
+            if (!doc.Tags.Attribs.ContainsValue(Name) && !Name.Equals("None"))
+            {
+                doc.MAX_ATTRIB_ID++;
+                IDOfThisTag = doc.MAX_ATTRIB_ID;
+                doc.Tags.Attribs.Add(IDOfThisTag, Name);
+            }
+            else if (doc.Tags.Attribs.ContainsValue(Name))
+            {
+                IDOfThisTag = doc.Tags.Attribs.FirstOrDefault(x => x.Value == Name).Key;
+            }
+            return new Attrib() { ID = IDOfThisTag, ParentDoc = doc };
+        }
     }
 }
