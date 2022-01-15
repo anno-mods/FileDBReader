@@ -4,11 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FileDBSerializing.Tests.TestData;
 
 namespace FileDBReader_Tests
 {
     static class TestDataSources
     {
+        internal static RootObject GetTestAsset()
+        {
+            RootObject root = new RootObject();
+
+            root.RootCount = 5;
+            ChildElement Child = new ChildElement() { ID = 1337 };
+            root.DumbChild = Child;
+
+            SomethingManager manager = new SomethingManager() { Child = Child, SomethingCount = 69420, SomethingValue = 3.1415f };
+            root.DumbManager = manager;
+
+            root.Map = new int[5] { 1337, 42, 69, 420, 31 };
+
+            return root;
+        }
+
         internal static IFileDBDocument BuildDocument<T>() where T : IFileDBDocument, new()
         {
             var filedb = new T();

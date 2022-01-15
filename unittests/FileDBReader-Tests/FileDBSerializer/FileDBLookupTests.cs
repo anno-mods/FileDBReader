@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FileDBSerializing;
 using FileDBReader_Tests;
+using FileDBSerializing.LookUps;
 
 namespace FileDBSerializing.Tests
 {
