@@ -59,7 +59,7 @@ jobs:
           asset_name: FileDBSerializer.zip
           asset_content_type: application/zip
 
-        - name: Upload FileDBReader (Linux)
+      - name: Upload FileDBReader (Linux)
         id: upload_serializer
         uses: actions/upload-release-asset@v1
         env:
