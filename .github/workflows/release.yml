@@ -60,7 +60,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload FileDBReader (Linux)
-        id: upload_serializer
+        id: upload_linux_package
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
