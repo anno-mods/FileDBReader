@@ -31,7 +31,7 @@ jobs:
       run: dotnet publish -c Release -o FileDBReader
 
     - name: Publish Linux
-      run : dotnet public -c Release -o FileDBReader-Linux -r linux-x64
+      run : dotnet publish -c Release -o FileDBReader-Linux -r linux-x64
 
     - name: Package
       run: |
