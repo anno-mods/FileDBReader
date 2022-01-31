@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
@@ -24,17 +23,21 @@ jobs:
       
     - name: Build
       run: dotnet build --no-restore
-      
+     
     - name: Test
       run: dotnet test --no-build --verbosity normal
     
-    - name: Publish
-      run: dotnet publish -c Release -o Build
+    - name: Publish Windows
+      run: dotnet publish -c Release -o FileDBReader
+
+    - name: Publish Linux
+      run : dotnet public -c Release -o FileDBReader-Linux -r linux-x64
 
     - name: Package
       run: |
-        tar -c -a -f FileDBReader.zip -C Build/ FileFormats/*.xml FileDBReader.exe FileDBReader.dll CommandLine.dll FileDBReader.runtimeconfig.json FileDBReader.deps.json ICSharpCode.SharpZipLib.dll FileDBSerializer.dll
-        tar -c -a -f FileDBSerializer.zip -C Build/ FileDBSerializer.dll
+        tar --exclude='*.pdb' --exclude='./dev_files' --exclude='./ref' --exclude='*.runtimeconfig.dev.json' -caf FileDBReader-Linux.zip FileDBReader-Linux
+        tar --exclude='*.pdb' --exclude='./dev_files' --exclude='./ref' --exclude='*.runtimeconfig.dev.json' -caf FileDBReader.zip FileDBReader
+        tar -caf FileDBSerializer-Windows.zip -C FileDBReader-Windows/ FileDBSerializer.dll
     
     - name: Upload FileDBSerializer
       uses: actions/upload-artifact@v2.2.4
@@ -44,4 +47,5 @@ jobs:
         path: |
           FileDBReader.zip
           FileDBSerializer.zip
+          FileDBReader-Linux.zip
         
