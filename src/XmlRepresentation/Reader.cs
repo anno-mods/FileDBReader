@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using FileDBSerializing;
-using FileDBReader.src;
 using System.IO;
-using FileDBReader.src.XmlSerialization;
 
-namespace FileDBReader.src
+namespace FileDBReader.src.XmlRepresentation
 {
     public class Reader
     {
-        FileDbXmlSerializer FileDbToXml = new FileDbXmlSerializer();
+        FileDbXmlConverter FileDbToXml = new FileDbXmlConverter();
 
         public Reader()
         { 
@@ -23,16 +17,16 @@ namespace FileDBReader.src
         public XmlDocument Read(Stream input)
         {
             //first of all, get the document version
-            int FileVersion = VersionDetector.GetCompressionVersion(input);
+            FileDBDocumentVersion FileVersion = VersionDetector.GetCompressionVersion(input);
             Console.WriteLine("[READER]: Autodetected FileVersion = {0}", FileVersion);
             input.Position = 0;
             try
             {
-                if (FileVersion == 1)
+                if (FileVersion == FileDBDocumentVersion.Version1)
                 {
                     return Read_Version1(input);
                 }
-                else if (FileVersion == 2)
+                else if (FileVersion == FileDBDocumentVersion.Version2)
                 {
                     return Read_Version2(input);
                 }
@@ -47,15 +41,15 @@ namespace FileDBReader.src
 
         private XmlDocument Read_Version2(Stream input)
         {
-            var deserializer = new FileDBDeserializer<FileDBDocument_V2>();
-            IFileDBDocument filedb = deserializer.Deserialize(input);
+            var deserializer = new DocumentParser<FileDBDocument_V2>();
+            IFileDBDocument filedb = deserializer.LoadFileDBDocument(input);
             return FileDbToXml.ToXml(filedb);
         }
 
         private XmlDocument Read_Version1(Stream input)
         {
-            var deserializer = new FileDBDeserializer<FileDBDocument_V1>();
-            IFileDBDocument filedb = deserializer.Deserialize(input);
+            var deserializer = new DocumentParser<FileDBDocument_V1>();
+            IFileDBDocument filedb = deserializer.LoadFileDBDocument(input);
             return FileDbToXml.ToXml(filedb);
         }
     }

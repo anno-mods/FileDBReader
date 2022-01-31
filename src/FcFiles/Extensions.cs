@@ -7,7 +7,7 @@ using System.Xml;
 namespace FileDBReader
 {
 
-    public static class BinaryExtensions
+    public static class Extensions
     {
         #region Methods
 

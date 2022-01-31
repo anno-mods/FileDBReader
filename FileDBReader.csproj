@@ -3,9 +3,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <StartupObject>FileDBReader.Program</StartupObject>
+    <StartupObject>FileDBReader.CommandLineHandler</StartupObject>
     <Platforms>AnyCPU;x64</Platforms>
-    <Version>2.0.2</Version>
+    <Version>2.0.5</Version>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageId></PackageId>
   </PropertyGroup>
@@ -46,11 +46,6 @@
     <None Remove="FileDBSerializer\**" />
     <None Remove="FileFormatDoc\**" />
     <None Remove="unittests\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="src\FileDbCompression\FileReader.cs" />
-    <Compile Remove="src\FileDbCompression\FileWriter.cs" />
   </ItemGroup>
 
   <ItemGroup>

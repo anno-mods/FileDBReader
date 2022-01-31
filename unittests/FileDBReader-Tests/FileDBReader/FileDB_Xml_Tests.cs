@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FileDBSerializing;
 using FileDBSerializing.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FileDBReader.src.XmlSerialization;
+using FileDBReader.src.XmlRepresentation;
 using System.Xml;
 
 namespace FileDBReader_Tests
@@ -25,7 +25,7 @@ namespace FileDBReader_Tests
             var Expected = new XmlDocument();
             Expected.Load(expectedPath);
 
-            FileDbXmlSerializer ser = new FileDbXmlSerializer();
+            FileDbXmlConverter ser = new FileDbXmlConverter();
             var x = ser.ToXml(workDoc);
 
             XmlDocumentEqual(Expected, x);
@@ -36,7 +36,7 @@ namespace FileDBReader_Tests
         {
             var Expected = TestDataSources.BuildDocument<FileDBDocument_V2>();
 
-            XmlFileDbSerializer<FileDBDocument_V2> serial = new XmlFileDbSerializer<FileDBDocument_V2>();
+            XmlFileDbConverter<FileDBDocument_V2> serial = new XmlFileDbConverter<FileDBDocument_V2>();
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
 
@@ -54,7 +54,7 @@ namespace FileDBReader_Tests
         {
             var Expected = TestDataSources.BuildDocument<FileDBDocument_V1>();
 
-            XmlFileDbSerializer<FileDBDocument_V1> serial = new XmlFileDbSerializer<FileDBDocument_V1>();
+            XmlFileDbConverter<FileDBDocument_V1> serial = new XmlFileDbConverter<FileDBDocument_V1>();
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
 

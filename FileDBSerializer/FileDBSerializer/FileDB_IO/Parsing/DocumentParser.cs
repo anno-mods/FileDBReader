@@ -15,17 +15,7 @@ namespace FileDBSerializing
     /// </summary>
     public enum States { Undefined, Tag, Attrib, Terminator }
 
-    /*
-     * ///------------------################----------------------///
-     * This deserializer holds an Instance of BinaryReader and FileDBDocument.
-     * with each call of Deserialize<typeparamref name="T"/>(Stream s), those variables are newly initialized with fresh BinaryReader and FileDBDocument
-     * 
-     * Modifying those variables outside of the intended deserializing functions will break the entire deserializer. 
-     * 
-     * ///------------------################----------------------///
-     */
-
-    public class FileDBDeserializer<T> where T : IFileDBDocument, new()
+    public class DocumentParser<T> where T : IFileDBDocument, new()
     {
         private BinaryReader reader;
         private T filedb;
@@ -35,7 +25,7 @@ namespace FileDBSerializing
         Tag CurrentTag = null;
 
         //Main Deserialize Function
-        public T Deserialize(Stream s)
+        public T LoadFileDBDocument(Stream s)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -45,8 +35,8 @@ namespace FileDBSerializing
 
             switch (filedb.VERSION)
             {
-                case 1: parser = new FileDBParser_V1(reader, filedb); break;
-                case 2: parser = new FileDBParser_V2(reader, filedb); break;
+                case FileDBDocumentVersion.Version1: parser = new FileDBParser_V1(reader, filedb); break;
+                case FileDBDocumentVersion.Version2: parser = new FileDBParser_V2(reader, filedb); break;
             }
 
             CurrentLevel = 0;
@@ -66,7 +56,7 @@ namespace FileDBSerializing
                 switch (State)
                 {
                     case States.Attrib:
-                        var attrib = parser.ReadAttrib(bytesize, ID);
+                        var attrib = parser.ReadAttrib(bytesize, ID, CurrentTag);
                         AddNode(attrib);
                         break;
                     case States.Tag:

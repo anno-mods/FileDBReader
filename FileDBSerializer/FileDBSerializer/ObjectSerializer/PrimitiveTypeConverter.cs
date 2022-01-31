@@ -9,8 +9,8 @@ namespace FileDBSerializing.ObjectSerializer
         {
 
         }
-        //dictionary that maps type to functions that return byte arrays
 
+        //dictionary that maps type to functions that return byte arrays
         private static Dictionary<Type, Func<object, byte[]>> PrimitiveTypes = new Dictionary<Type, Func<object, byte[]>>
         {
             { typeof(bool),     s => BitConverter.GetBytes((bool)s)},

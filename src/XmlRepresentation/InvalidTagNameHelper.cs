@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileDBReader.src
+namespace FileDBReader.src.XmlRepresentation
 {
     /// <summary>
     /// Provides functions that can be used to replace invalid tag names like "Delayed Construction".

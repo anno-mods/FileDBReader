@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Xml;
 using CommandLine;
 using FileDBReader.src;
 
 namespace FileDBReader {
 
-  internal class Program {
+  internal class CommandLineHandler {
 
         //VERB EXPLANATIONS
         private const String DECOMPRESS_EXPL = "Decompress files from filedb compression to xml. Data will be represented as hex strings.";
@@ -168,7 +166,7 @@ namespace FileDBReader {
         #region MainMethod
         private static void Main(string[] args) {
 
-            var Functions = new FileDBCompressorFunctions();
+            var Functions = new ToolFunctions();
 
             //todo make this pretty by adjusting writing to reading flow.
             CommandLine.Parser.Default.ParseArguments
@@ -179,9 +177,9 @@ namespace FileDBReader {
                     toHexOptions, 
                     FileCheck_Options,
                     FcImportOptions, 
-                    FcExportOptions, 
-                    Decompress_Interpret_Options, 
-                    Recompress_Export_Options
+                    FcExportOptions
+                    //Decompress_Interpret_Options, 
+                    //Recompress_Export_Options
                 > 
                 (args).MapResult(
 

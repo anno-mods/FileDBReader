@@ -19,7 +19,7 @@ namespace FileDBSerializing
 
         //Version 1 does not have magic bytes, so MAGIC_BYTE_COUNT is automatically 0!
         public int MAGIC_BYTE_COUNT { get => 0; }
-        public int VERSION { get; }
+        public FileDBDocumentVersion VERSION { get; }
         public int OFFSET_TO_OFFSETS { get => _offset_to_offsets; }
         public ushort MAX_TAG_ID { get => _max_tag_id; set => _max_tag_id = value; }
         public ushort MAX_ATTRIB_ID { get => _max_attrib_id; set => _max_attrib_id = value; }
@@ -35,7 +35,7 @@ namespace FileDBSerializing
         {
             Roots = new List<FileDBNode>();
             Tags = new TagSection();
-            VERSION = 1;
+            VERSION = FileDBDocumentVersion.Version1;
         }
     }
 }

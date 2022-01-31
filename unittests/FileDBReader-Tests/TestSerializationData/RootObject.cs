@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Runtime.Serialization;
+using FileDBSerializer.EncodingAwareStrings;
 
 namespace FileDBSerializing.Tests.TestData
 {
@@ -14,6 +15,11 @@ namespace FileDBSerializing.Tests.TestData
         public SomethingManager DumbManager { get; set; }
         public ChildElement DumbChild { get; set; }
 
-        public int[] Map { get; set; }
+        public int[] PrimitiveArray { get; set; }
+
+        public ChildElement[] RefArray { get; set; }
+        public UnicodeString SimpleString { get; set; }
+        public String[] StringArray { get; set; }
+
     }
 }

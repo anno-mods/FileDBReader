@@ -38,9 +38,11 @@ namespace FileDBSerializing
             return dictionary;
         }
 
-        public Attrib ReadAttrib(int bytesize, int ID)
+        public Attrib ReadAttrib(int bytesize, int ID, Tag ParentTag)
         {
-            return this.CreateAttrib(bytesize, ID, TargetDocument);
+            Attrib a = this.CreateAttrib(bytesize, ID, TargetDocument);
+            a.Parent = ParentTag;
+            return a;
         }
 
         public byte[] ReadAttribContent(int bytesize)

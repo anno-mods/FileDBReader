@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Serialization;
 using FileDBSerializing;
 
-namespace FileDBReader.src.XmlSerialization
+namespace FileDBReader.src.XmlRepresentation
 {
-    public class FileDbXmlSerializer
+    public class FileDbXmlConverter
     {
         XmlDocument doc; 
         public XmlDocument ToXml(IFileDBDocument filedb)
@@ -23,7 +18,7 @@ namespace FileDBReader.src.XmlSerialization
             var Root = doc.CreateElement("Content");
             doc.AppendChild(Root);
 
-            SerializeChildCollection(Root, filedb.Roots);                
+            ConvertCollection(Root, filedb.Roots);                
 
             stopWatch.Stop();
             Console.WriteLine("FILEDB to XML conversion took: " + stopWatch.Elapsed.TotalMilliseconds);
@@ -38,7 +33,7 @@ namespace FileDBReader.src.XmlSerialization
         /// <param name="node">the XML node result, if provided. </param>
         /// <returns>True if the serialization was successful</returns>
         /// <exception cref="Exception"><paramref name="n"/> is of an unknown Node Type</exception>
-        private bool TrySerializeFileDBNode(FileDBNode n, out XmlNode node)
+        private bool TryConstructXmlNodeFromFileDBNode(FileDBNode n, out XmlNode node)
         {
             if (n.NodeType == FileDBNodeType.Attrib)
                 return (node = AttribToXmlNode((Attrib)n)) is XmlNode;
@@ -52,29 +47,13 @@ namespace FileDBReader.src.XmlSerialization
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="children"></param>
-        private void SerializeChildCollection(XmlNode parent, IEnumerable<FileDBNode> children)
+        private void ConvertCollection(XmlNode parent, IEnumerable<FileDBNode> children)
         {
             foreach (FileDBNode n in children)
             {
-                if (TrySerializeFileDBNode(n, out var childxmlnode))
+                if (TryConstructXmlNodeFromFileDBNode(n, out var childxmlnode))
                     parent.AppendChild(childxmlnode);
             }
-        }
-
-        private XmlNode? AttribToXmlNode(Attrib a)
-        {
-            String Name = a.GetID();
-            if (TryCreateNode(Name, out var node))
-            {
-                //write empty attribs as <name></name> instead of <Name />
-                if (a.Bytesize > 0)
-                {
-                    node.InnerText = HexHelper.ToBinHex(a.Content);
-                }
-                else node.InnerText = "";
-                return node;
-            }
-            else return null;             
         }
 
         /// <summary>
@@ -103,10 +82,21 @@ namespace FileDBReader.src.XmlSerialization
             String Name = t.GetID();
             if (TryCreateNode(Name, out var node))
             {
-                SerializeChildCollection(node, t.Children);
+                ConvertCollection(node, t.Children);
                 return node;
             }
             return null;            
+        }
+
+        private XmlNode? AttribToXmlNode(Attrib a)
+        {
+            String Name = a.GetID();
+            if (TryCreateNode(Name, out var node))
+            {
+                node.InnerText = a.Bytesize > 0 ? node.InnerText = HexHelper.ToBinHex(a.Content) : "";
+                return node;
+            }
+            else return null;
         }
 
     }

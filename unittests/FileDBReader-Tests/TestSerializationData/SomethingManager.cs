@@ -12,5 +12,7 @@ namespace FileDBSerializing.Tests.TestData
         public int SomethingCount { get; set; }
         public float SomethingValue { get; set; }
         public ChildElement Child { get; set; }
+
+        
     }
 }

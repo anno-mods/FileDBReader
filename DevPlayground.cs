@@ -1,4 +1,5 @@
 ﻿using FileDBReader.src;
+using FileDBReader.src.XmlRepresentation;
 using FileDBSerializing;
 using FileDBSerializing.LookUps;
 using System;
@@ -10,7 +11,7 @@ using System.Xml;
 
 namespace FileDBReader
 {
-    class dev {
+    class DevPlayground {
 
         static String TEST_DIRECTORY_NAME = "dev_files";
         static String FILEFORMAT_DIRECTORY_NAME = "FileFormats";
@@ -50,9 +51,9 @@ namespace FileDBReader
 
         private static void NodelookupTest()
         {
-            FileDBDeserializer<FileDBDocument_V1> ser = new FileDBDeserializer<FileDBDocument_V1>();
+            DocumentParser<FileDBDocument_V1> ser = new DocumentParser<FileDBDocument_V1>();
 
-            var fdoc = ser.Deserialize(File.OpenRead("dev_files/a7tinfo/moderate_atoll_ll_01.a7tinfo"));
+            var fdoc = ser.LoadFileDBDocument(File.OpenRead("dev_files/a7tinfo/moderate_atoll_ll_01.a7tinfo"));
             fdoc.SelectNodes("MapTemplate/Size");
         }
 

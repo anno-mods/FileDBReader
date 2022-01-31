@@ -1,18 +1,13 @@
 ﻿using FileDBSerializing;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Xml;
-using FileDBReader.src.XmlSerialization;
 
-namespace FileDBReader.src
+namespace FileDBReader.src.XmlRepresentation
 {
     public class Writer
     {
-        FileDBSerializer FileDBSerializer = new FileDBSerializer(); 
+        DocumentWriter DocumentWriter = new DocumentWriter(); 
         public Writer()
         { 
         
@@ -25,15 +20,15 @@ namespace FileDBReader.src
             {
                 if (FileVersion == 1)
                 {
-                    XmlFileDbSerializer<FileDBDocument_V1> serializer = new XmlFileDbSerializer<FileDBDocument_V1>();
+                    XmlFileDbConverter<FileDBDocument_V1> serializer = new XmlFileDbConverter<FileDBDocument_V1>();
                     filedb = serializer.ToFileDb(doc);
-                    return FileDBSerializer.Serialize(filedb, Stream);
+                    return DocumentWriter.WriteFileDBToStream(filedb, Stream);
                 }
                 else if (FileVersion == 2)
                 {
-                    XmlFileDbSerializer<FileDBDocument_V2> serializer = new XmlFileDbSerializer<FileDBDocument_V2>();
+                    XmlFileDbConverter<FileDBDocument_V2> serializer = new XmlFileDbConverter<FileDBDocument_V2>();
                     filedb = serializer.ToFileDb(doc);
-                    return FileDBSerializer.Serialize(filedb, Stream);
+                    return DocumentWriter.WriteFileDBToStream(filedb, Stream);
                 }
                 else throw new ArgumentException("[WRITER]: Supported FileVersions are 1 and 2!");
             }

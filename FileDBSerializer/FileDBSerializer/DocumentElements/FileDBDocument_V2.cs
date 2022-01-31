@@ -15,7 +15,7 @@ namespace FileDBSerializing
         public List<FileDBNode> Roots { get; set; }
         public TagSection Tags { get; set; }
         public int ELEMENT_COUNT { get => Roots.Count; }
-        public int VERSION { get; }
+        public FileDBDocumentVersion VERSION { get; }
         public byte[] MAGIC_BYTES { get => _magic_bytes; }
         public int MAGIC_BYTE_COUNT { get => _magic_byte_count; }
         public int OFFSET_TO_OFFSETS { get => _offset_to_offsets; }
@@ -36,7 +36,7 @@ namespace FileDBSerializing
         {
             Roots = new List<FileDBNode>();
             Tags = new TagSection();
-            VERSION = 2;
+            VERSION = FileDBDocumentVersion.Version2;
         }
 
         //STATIC FUNCTIONS

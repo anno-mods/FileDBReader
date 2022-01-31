@@ -13,25 +13,21 @@ namespace FileDBReader_Tests
         internal static RootObject GetTestAsset()
         {
             RootObject root = new RootObject();
-
             root.RootCount = 5;
             ChildElement Child = new ChildElement() { ID = 1337 };
             root.DumbChild = Child;
-
-            SomethingManager manager = new SomethingManager() { Child = Child, SomethingCount = 69420, SomethingValue = 3.1415f };
-            root.DumbManager = manager;
-
-            root.Map = new int[5] { 1337, 42, 69, 420, 31 };
-
+            root.DumbManager = new SomethingManager() { Child = Child, SomethingCount = 69420, SomethingValue = 3.1415f };
+            root.PrimitiveArray = new int[5] { 1337, 42, 69, 420, 31 };
+            root.RefArray = new ChildElement[2] { new ChildElement() { ID = 69420 }, new ChildElement() { ID = 1234 } };
+            root.SimpleString = "Modders gonna take over the world!";
+            root.StringArray = new string[] { "There are no plans for a console version of Anno 1800, or to support controllers in the PC version of the game", "We only made this complete Console UI for fun" };
             return root;
         }
 
         internal static IFileDBDocument BuildDocument<T>() where T : IFileDBDocument, new()
         {
             var filedb = new T();
-
-            //lets create a few tags. 
-
+            //lets create a few tags.
             Tag root1 = filedb.AddTag("TestRootOne");
 
             var Attr = filedb.AddAttrib("FloatAttrib_Child");

@@ -4,11 +4,11 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
 using FileDBSerializing;
-using FileDBReader.src.XmlSerialization; 
+using FileDBReader.src.XmlRepresentation; 
 
 namespace FileDBReader.src
 {
-    public class FileDBCompressorFunctions
+    public class ToolFunctions
     {
         //file formats and names
         private static readonly String DefaultFileFormat = "filedb";
@@ -28,7 +28,7 @@ namespace FileDBReader.src
         private FcFileHelper FcFileHelper;
 
 
-        public FileDBCompressorFunctions()
+        public ToolFunctions()
         {
             reader = new Reader();
             exporter = new XmlExporter();

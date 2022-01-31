@@ -18,12 +18,12 @@ namespace FileDBSerializing.Tests
         {
             var expected = TestDataSources.BuildDocument<FileDBDocument_V2>();
 
-            FileDBDeserializer<FileDBDocument_V2> deserializer = new FileDBDeserializer<FileDBDocument_V2>();
+            DocumentParser<FileDBDocument_V2> deserializer = new DocumentParser<FileDBDocument_V2>();
 
             IFileDBDocument deser;
             using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v2.bin"))
             {
-                deser = deserializer.Deserialize(s);
+                deser = deserializer.LoadFileDBDocument(s);
             }
 
             for (int i = 0; i < deser.Roots.Count && i < expected.Roots.Count; i++)
@@ -37,12 +37,12 @@ namespace FileDBSerializing.Tests
         {
             var expected = TestDataSources.BuildDocument<FileDBDocument_V1>();
 
-            FileDBDeserializer<FileDBDocument_V1> deserializer = new FileDBDeserializer<FileDBDocument_V1>();
+            DocumentParser<FileDBDocument_V1> deserializer = new DocumentParser<FileDBDocument_V1>();
 
             IFileDBDocument deser;
             using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v1.bin"))
             {
-                deser = deserializer.Deserialize(s);
+                deser = deserializer.LoadFileDBDocument(s);
             }
 
             for (int i = 0; i < deser.Roots.Count && i < expected.Roots.Count; i++)
@@ -57,11 +57,11 @@ namespace FileDBSerializing.Tests
         {
             var expected = File.OpenRead("FileDBSerializer/Testfiles/testResult_v1.bin");
 
-            FileDBSerializer ser = new FileDBSerializer();
+            DocumentWriter ser = new DocumentWriter();
 
             var docV1 = TestDataSources.BuildDocument<FileDBDocument_V1>();
             var docstream = new MemoryStream();
-            var result = ser.Serialize(docV1, docstream);
+            var result = ser.WriteFileDBToStream(docV1, docstream);
 
             Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));
         }
@@ -71,11 +71,11 @@ namespace FileDBSerializing.Tests
         {
             var expected = File.OpenRead("FileDBSerializer/Testfiles/testResult_v2.bin");
 
-            FileDBSerializer ser = new FileDBSerializer();
+            DocumentWriter ser = new DocumentWriter();
 
             var docV2 = TestDataSources.BuildDocument<FileDBDocument_V2>();
             var docstream = new MemoryStream();
-            var result = ser.Serialize(docV2, docstream);
+            var result = ser.WriteFileDBToStream(docV2, docstream);
 
             Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));
         }

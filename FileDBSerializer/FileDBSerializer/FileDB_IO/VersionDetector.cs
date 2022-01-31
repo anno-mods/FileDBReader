@@ -9,7 +9,7 @@ namespace FileDBSerializing
 {
     public static class VersionDetector
     {
-        public static int GetCompressionVersion(Stream fs)
+        public static FileDBDocumentVersion GetCompressionVersion(Stream fs)
         {
             long Position = fs.Position;
             int magicByteSize = FileDBDocument_V2._magic_byte_count;
@@ -19,9 +19,11 @@ namespace FileDBSerializing
             fs.Read(magics, 0, magicByteSize);
             fs.Position = Position;
             if (magics.SequenceEqual<byte>(FileDBDocument_V2._magic_bytes))
-                return 2;
+                return FileDBDocumentVersion.Version2;
+
+            //how can we determine Version 1 from Unknown here? :(
             else
-                return 1;
+                return FileDBDocumentVersion.Version1;
         }
     }
 }

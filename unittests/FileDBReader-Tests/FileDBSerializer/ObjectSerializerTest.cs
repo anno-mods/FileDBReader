@@ -20,19 +20,21 @@ namespace FileDBSerializing.Tests
             var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version1.filedb");
 
             var obj = TestDataSources.GetTestAsset();
-            FileDBDocumentBuilder<RootObject> objectserializer = new FileDBDocumentBuilder<RootObject>(FileDBDocumentVersion.Version1);
+            FileDBSerializer<RootObject> objectserializer = new FileDBSerializer<RootObject>(FileDBDocumentVersion.Version1);
+            
             Stream result = new MemoryStream();
             objectserializer.Serialize(result, obj);
 
             Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));
         }
 
+        [TestMethod]
         public void SerializeTest_V2()
         {
             var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
 
             var obj = TestDataSources.GetTestAsset();
-            FileDBDocumentBuilder<RootObject> objectserializer = new FileDBDocumentBuilder<RootObject>(FileDBDocumentVersion.Version2);
+            FileDBSerializer<RootObject> objectserializer = new FileDBSerializer<RootObject>(FileDBDocumentVersion.Version2);
             Stream result = new MemoryStream();
             objectserializer.Serialize(result, obj);
 

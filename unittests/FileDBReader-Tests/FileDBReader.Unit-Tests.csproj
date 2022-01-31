@@ -97,6 +97,9 @@
     <None Update="FileDBSerializer\Testfiles\objectserializing\version1.filedb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="FileDBSerializer\Testfiles\objectserializing\version2.filedb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="FileDBSerializer\Testfiles\testResult_v1.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
