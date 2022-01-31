@@ -37,7 +37,7 @@ jobs:
       run: |
         tar --exclude='*.pdb' --exclude='./dev_files' --exclude='./ref' --exclude='*.runtimeconfig.dev.json' -caf FileDBReader-Linux.zip FileDBReader-Linux
         tar --exclude='*.pdb' --exclude='./dev_files' --exclude='./ref' --exclude='*.runtimeconfig.dev.json' -caf FileDBReader.zip FileDBReader
-        tar -caf FileDBSerializer-Windows.zip -C FileDBReader-Windows/ FileDBSerializer.dll
+        tar -caf FileDBSerializer-Windows.zip -C FileDBReader/ FileDBSerializer.dll
     
     - name: Upload FileDBSerializer
       uses: actions/upload-artifact@v2.2.4
