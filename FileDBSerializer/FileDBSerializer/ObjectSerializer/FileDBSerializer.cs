@@ -39,7 +39,7 @@ namespace FileDBSerializing.ObjectSerializer
         //serializes an object into a filedb document
         public void Serialize(Stream serializationStream, object graph)
         {
-            FileDBDocumentBuilder builder = new FileDBDocumentBuilder(Options.Version);
+            FileDBDocumentSerializer builder = new FileDBDocumentSerializer(Options);
             var doc = builder.WriteObjectStructureToFileDBDocument(graph);
             DocumentWriter GenericSerializer = new DocumentWriter();
             GenericSerializer.WriteFileDBToStream(doc, serializationStream);

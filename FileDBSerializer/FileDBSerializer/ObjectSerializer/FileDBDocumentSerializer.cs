@@ -10,24 +10,24 @@ using System.Text;
 namespace FileDBSerializing.ObjectSerializer
 {
     //Loads an object structure into a FileDBDocument
-    public class FileDBDocumentBuilder
+    public class FileDBDocumentSerializer
     {
         public Encoding StringEncoding { get; set; }
-        private FileDBDocumentVersion _version;
+        private FileDBSerializerOptions Options;
         private IFileDBDocument TargetDocument;
         private PrimitiveTypeConverter PrimitiveConverter = new PrimitiveTypeConverter();
 
         #region Constructor
-        public FileDBDocumentBuilder(FileDBDocumentVersion version)
+        public FileDBDocumentSerializer(FileDBSerializerOptions options)
         {
-            _version = version;
+            Options = options;
             StringEncoding = new UTF8Encoding();
             InitTargetDocument();
         }
 
         private void InitTargetDocument()
         {
-            switch (_version)
+            switch (Options.Version)
             {
                 case FileDBDocumentVersion.Version1: TargetDocument = new FileDBDocument_V1(); break;
                 case FileDBDocumentVersion.Version2: TargetDocument = new FileDBDocument_V2(); break;
