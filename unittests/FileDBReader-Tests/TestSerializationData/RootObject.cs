@@ -9,7 +9,7 @@ using FileDBSerializer.EncodingAwareStrings;
 
 namespace FileDBSerializing.Tests.TestData
 {
-    public class RootObject
+    public record RootObject
     {
         public int RootCount { get; set; }
         public SomethingManager DumbManager { get; set; }
@@ -20,14 +20,14 @@ namespace FileDBSerializing.Tests.TestData
         public String[] StringArray { get; set; }
     }
 
-    public class SomethingManager
+    public record SomethingManager
     {
         public int SomethingCount { get; set; }
         public float SomethingValue { get; set; }
         public ChildElement Child { get; set; }
     }
 
-    public class ChildElement
+    public record ChildElement
     {
         public uint ID { get; set; }
     }

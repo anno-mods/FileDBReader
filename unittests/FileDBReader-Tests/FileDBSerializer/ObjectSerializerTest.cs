@@ -8,6 +8,7 @@ using FileDBReader_Tests;
 using FileDBSerializing.ObjectSerializer;
 using FileDBSerializing.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
 
 namespace FileDBSerializing.Tests
 {
@@ -53,7 +54,7 @@ namespace FileDBSerializing.Tests
 
             var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
 
-            int i = 0;
+            DeserializedDocument.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
         }
 
         [TestMethod]
@@ -68,7 +69,7 @@ namespace FileDBSerializing.Tests
 
             var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
 
-            int i = 0;
+            DeserializedDocument.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
         }
     }
 }
