@@ -4,7 +4,7 @@ using System.IO;
 
 namespace FileDBSerializing
 {
-    [DebuggerDisplay("[FileDB_Attrib: ID = {ID}, Size = {Bytesize}]")]
+    [DebuggerDisplay("[FileDB_Attrib: ID = {ID}, Name = {Name}, Size = {Bytesize}]")]
     public class Attrib : FileDBNode
     {
         private byte[] _content;

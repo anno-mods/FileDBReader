@@ -12,7 +12,6 @@ namespace FileDBSerializing.ObjectSerializer
     //Loads an object structure into a FileDBDocument
     public class FileDBDocumentSerializer
     {
-        public Encoding StringEncoding { get; set; }
         private FileDBSerializerOptions Options;
         private IFileDBDocument TargetDocument;
         private PrimitiveTypeConverter PrimitiveConverter = new PrimitiveTypeConverter();
@@ -21,7 +20,6 @@ namespace FileDBSerializing.ObjectSerializer
         public FileDBDocumentSerializer(FileDBSerializerOptions options)
         {
             Options = options;
-            StringEncoding = new UTF8Encoding();
             InitTargetDocument();
         }
 
@@ -63,7 +61,7 @@ namespace FileDBSerializing.ObjectSerializer
             //Note: IsPrimitive is the extension method, which does NOT match with the property IsPrimitive!!!!
             if (PropertyType.IsPrimitiveOrString())
             {
-                //if primitive -> attrib, content to bytes, done
+                //if primitive -> attrib, content to bytes, doneu
                 return BuildSingleValueAttrib(parentObject, property);
             }
             //Arrays
@@ -134,7 +132,7 @@ namespace FileDBSerializing.ObjectSerializer
         {
             if (PrimitiveObjectInstance.GetType().IsStringType())
             {
-                AttribInject.Content = PrimitiveObjectInstance is EncodingAwareString ? ((EncodingAwareString)PrimitiveObjectInstance).GetBytes() : StringEncoding.GetBytes((String)PrimitiveObjectInstance);
+                AttribInject.Content = PrimitiveObjectInstance is EncodingAwareString ? ((EncodingAwareString)PrimitiveObjectInstance).GetBytes() : Options.DefaultEncoding.GetBytes((String)PrimitiveObjectInstance);
             }
             else if (PrimitiveObjectInstance.GetType().IsPrimitiveType())
             {

@@ -15,6 +15,8 @@ namespace FileDBSerializing
         public int Bytesize = 0;
         public int ID = -1;
 
+        public String Name { get => GetName(); }
+
         public FileDBNodeType NodeType;
         public abstract String GetID();
 

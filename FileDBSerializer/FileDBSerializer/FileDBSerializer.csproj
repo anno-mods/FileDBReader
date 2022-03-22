@@ -37,6 +37,7 @@
   
   <PropertyGroup>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   
 </Project>

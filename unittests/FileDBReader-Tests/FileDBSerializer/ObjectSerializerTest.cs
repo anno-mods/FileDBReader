@@ -40,5 +40,35 @@ namespace FileDBSerializing.Tests
 
             Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));
         }
+
+        [TestMethod]
+        public void DeserializeTest_V1()
+        {
+            var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version1.filedb");
+
+            DocumentParser<FileDBDocument_V1> parser = new();
+            IFileDBDocument doc = parser.LoadFileDBDocument(x);
+
+            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+
+            var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
+
+            int i = 0;
+        }
+
+        [TestMethod]
+        public void DeserializeTest_V2()
+        {
+            var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
+
+            DocumentParser<FileDBDocument_V2> parser = new();
+            IFileDBDocument doc = parser.LoadFileDBDocument(x);
+
+            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+
+            var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
+
+            int i = 0;
+        }
     }
 }

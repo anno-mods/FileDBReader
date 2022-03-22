@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace FileDBSerializing.ObjectSerializer
 {
     //simple combination that can 
-    public class FileDBSerializer<T> : IFormatter
+    public class FileDBSerializer<T> : IFormatter where T : class, new()
     {
         public SerializationBinder Binder { get; set; }
         public StreamingContext Context { get; set; }
@@ -19,7 +19,6 @@ namespace FileDBSerializing.ObjectSerializer
         FileDBSerializerOptions Options;
 
         private Type _type;
-
 
         #region Constructor
         public FileDBSerializer(FileDBDocumentVersion version)
@@ -49,8 +48,26 @@ namespace FileDBSerializing.ObjectSerializer
         //serializes from a filedb document into an object
         public object Deserialize(Stream serializationStream)
         {
-            Console.WriteLine("I am too lazy to write this right now. To be added!");
-            throw new NotImplementedException();
+            IFileDBDocument? doc = null; 
+
+            //autodetect version?
+            var Version = VersionDetector.GetCompressionVersion(serializationStream);
+
+            if (Version == FileDBDocumentVersion.Version1)
+            {
+                var parser = new DocumentParser<FileDBDocument_V1>();
+                doc = parser.LoadFileDBDocument(serializationStream);
+            }
+            else if (Version == FileDBDocumentVersion.Version2)
+            {
+                var parser = new DocumentParser<FileDBDocument_V2>();
+                doc = parser.LoadFileDBDocument(serializationStream);
+            }
+
+            if (doc is null) throw new Exception();
+             
+            FileDBDocumentDeserializer<T> deserializer = new FileDBDocumentDeserializer<T>(Options);            
+            return deserializer.GetObjectStructureFromFileDBDocument(doc);
         }
         #endregion
     }

@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace FileDBSerializing
 {
-    [DebuggerDisplay("[FileDB_Tag: ID = {ID}, ChildCount = {ChildCount}]")]
+    [DebuggerDisplay("[FileDB_Tag: ID = {ID}, Name = {Name}, ChildCount = {ChildCount}]")]
     public class Tag : FileDBNode
     {
         public List<FileDBNode> Children = new List<FileDBNode>();

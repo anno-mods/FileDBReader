@@ -8,7 +8,10 @@ namespace FileDBSerializing.ObjectSerializer
 {
     public class FileDBSerializerOptions
     {
-        public FileDBDocumentVersion Version;
+        public FileDBDocumentVersion Version { get; set; }
+        public String NoneTag { get; } = "None";
+        public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
+
 
         public FileDBSerializerOptions()
         {
