@@ -54,13 +54,9 @@ namespace FileDBSerializing.ObjectSerializer
             Type PropertyType = propertyInfo.PropertyType;
 
             if (PropertyType.IsArray())
-            {
                 BuildArrayProperty(node, propertyInfo as PropertyInfo, parentObject);
-            }
             else
-            {
                 BuildSingleValue(node, propertyInfo as PropertyInfo, parentObject);
-            }
         }
 
         private void BuildSingleValue(FileDBNode node, PropertyInfo PropertyInfo, object parentObject)
@@ -90,29 +86,15 @@ namespace FileDBSerializing.ObjectSerializer
             Type ArrayContentType = PropertyInfo.PropertyType.GetElementType()!;
 
             Array? ArrayInstance = null;
-            //should be a single value
-            if (node is Attrib)
-            {
-                ArrayInstance = BuildPrimitiveArray(((Attrib)node).Content, ArrayContentType);
-            }
+            if (node is Attrib) ArrayInstance = BuildPrimitiveArray(((Attrib)node).Content, ArrayContentType);
+
             else if (node is Tag)
             {
                 Tag Tag = (Tag)node;
-                if (ArrayContentType.IsStringType())
-                {
-                    ArrayInstance = BuildStringArray(Tag.Children, ArrayContentType);
-                }
-                else
-                {
-                    ArrayInstance = BuildReferenceArray(Tag.Children, ArrayContentType);
-                }
+                ArrayInstance = ArrayContentType.IsStringType() ? BuildStringArray(Tag.Children, ArrayContentType) : BuildReferenceArray(Tag.Children, ArrayContentType);
             }
 
-            if (ArrayInstance is not null)
-            {
-                PropertyInfo.SetArray(parentObject, ArrayInstance);
-            }
-
+            if (ArrayInstance is not null) PropertyInfo.SetArray(parentObject, ArrayInstance);
         }
 
         private Array BuildPrimitiveArray(byte[] content, Type ContentType)
@@ -127,7 +109,6 @@ namespace FileDBSerializing.ObjectSerializer
             for (int i = 0; i < ArrayLength; i++)
             {
                 byte[] SpanSlice = ContentSpan.Slice(i * contentSize, contentSize).ToArray();
-
                 var ArrayEntry = PrimitiveConverter.GetObject(ContentType, SpanSlice);
                 ArrayInstance.SetValue(ArrayEntry, i);
             }
@@ -135,14 +116,14 @@ namespace FileDBSerializing.ObjectSerializer
             return ArrayInstance;
         }
 
-        private Array BuildMultiNodeArray(IEnumerable<FileDBNode> Nodes, Func<FileDBNode, object> ChildCreationFunction, Type ArrayContentType)
+        private Array BuildMultiNodeArray(IEnumerable<FileDBNode> Nodes, Func<FileDBNode, object?> ChildCreationFunction, Type ArrayContentType)
         {
             int ArrayLength = Nodes.Count();
 
             Array ArrayInstance = Array.CreateInstance(ArrayContentType, ArrayLength);
             for (int i = 0; i < ArrayLength; i++)
             {
-                object ArrayEntry = ChildCreationFunction.Invoke(Nodes.ElementAt(i));
+                object? ArrayEntry = ChildCreationFunction.Invoke(Nodes.ElementAt(i));
                 ArrayInstance.SetValue(ArrayEntry, i);
             }
             return ArrayInstance;
@@ -153,24 +134,10 @@ namespace FileDBSerializing.ObjectSerializer
             return BuildMultiNodeArray(Nodes,
                 node => {
                     if (node is Tag) throw new FileDBSerializationException($"Cannot create Array Entry from Tag: {node.GetName()}");
-                    return MakeString(((Attrib)node).Content);
+                    return InstanceString(TargetType, ((Attrib)node).Content);
                 },
                 TargetType
             );
-
-            //my god this is awful
-            object MakeString(byte[] Content)
-            {
-                if (TargetType.IsStringType())
-                {
-                    if (TargetType.IsSubclassOf(typeof(EncodingAwareString)))
-                    {
-                        return Activator.CreateInstance(TargetType, Content);
-                    }
-                    return Options.DefaultEncoding.GetString(Content);
-                }
-                return null;
-            }
         }
 
         private Array BuildReferenceArray(IEnumerable<FileDBNode> Nodes, Type TargetType)
@@ -187,7 +154,6 @@ namespace FileDBSerializing.ObjectSerializer
         private object MakeInstanceFromTag(Tag Tag, Type PropertyType)
         {
             if (PropertyType.IsPrimitiveType()) throw new FileDBSerializationException("Cannot instantiate primitive from tag");
-
             try
             {
                 //this is for a single reference instance
@@ -211,7 +177,6 @@ namespace FileDBSerializing.ObjectSerializer
             object PropertyInstance = MakeInstanceFromTag(tag, PropertyType);
             //set the value
             Property.SetValue(parentObject, PropertyInstance);
-
         }
 
         private void BuildSinglePropertyFromAttrib(Attrib attrib, object parentObject, PropertyInfo Property)
@@ -219,24 +184,28 @@ namespace FileDBSerializing.ObjectSerializer
             //target type
             var PropertyType = Property.PropertyType;
 
+            object? PropertyInstance = null;
+
             if (PropertyType.IsPrimitiveType())
-            {
-                Property.SetValue(parentObject, PrimitiveConverter.GetObject(PropertyType, attrib.Content));
-            }
+                PropertyInstance = PrimitiveConverter.GetObject(PropertyType, attrib.Content);
             else if (PropertyType.IsStringType())
+                PropertyInstance = InstanceString(PropertyType, attrib.Content);
+
+            Property.SetValue(parentObject, PropertyInstance);
+        }
+
+        private object? InstanceString(Type PropertyType, byte[] StringBytes)
+        {
+            //special strings
+            if (PropertyType.IsSubclassOf(typeof(EncodingAwareString)))
             {
-                //special strings
-                if (PropertyType.IsSubclassOf(typeof(EncodingAwareString)))
-                {
-                    var awareString = Activator.CreateInstance(PropertyType, attrib.Content);
-                    Property.SetValue(parentObject, awareString);
-                }
-                //dumbfuckistan strings
-                else
-                {
-                    Property.SetValue(parentObject, Options.DefaultEncoding.GetString(attrib.Content));
-                }
+                return Activator.CreateInstance(PropertyType, StringBytes);
             }
+            else if (PropertyType.Equals(typeof(String)))
+            {
+                return Options.DefaultEncoding.GetString(StringBytes);
+            }
+            return null;
         }
     }
 }

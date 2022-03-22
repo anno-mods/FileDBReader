@@ -36,7 +36,7 @@ namespace FileDBSerializing.Tests
 
             var obj = TestDataSources.GetTestAsset();
             FileDBSerializer<RootObject> objectserializer = new FileDBSerializer<RootObject>(FileDBDocumentVersion.Version2);
-            Stream result = new MemoryStream();
+            MemoryStream result = new MemoryStream();
             objectserializer.Serialize(result, obj);
 
             Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));
@@ -70,6 +70,27 @@ namespace FileDBSerializing.Tests
             var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
 
             DeserializedDocument.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
+        }
+
+        [TestMethod]
+        public void StaticConvertTest_Serialize()
+        {
+            var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
+
+            var obj = TestDataSources.GetTestAsset();
+
+            Stream Result = FileDBConvert.SerializeObject(obj, new() { Version = FileDBDocumentVersion.Version2 });
+
+            Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, Result));
+        }
+
+        [TestMethod]
+        public void StaticConvertTest_Deserialize()
+        {
+            var source = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
+            RootObject? result = FileDBConvert.DeserializeObject<RootObject>(source, new() { Version = FileDBDocumentVersion.Version2 });
+
+            result.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
         }
     }
 }
