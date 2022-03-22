@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileDBSerializer.EncodingAwareStrings
+namespace FileDBSerializing.EncodingAwareStrings
 {
     /// <summary>
     /// Represents a String in UTF8 encoding

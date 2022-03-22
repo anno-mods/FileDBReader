@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System.Runtime.Serialization;
-using FileDBSerializer.EncodingAwareStrings;
+using FileDBSerializing.EncodingAwareStrings;
 
 namespace FileDBSerializing.Tests.TestData
 {

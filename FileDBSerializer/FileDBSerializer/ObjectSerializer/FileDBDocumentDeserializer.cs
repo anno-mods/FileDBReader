@@ -1,4 +1,4 @@
-﻿using FileDBSerializer.EncodingAwareStrings;
+﻿using FileDBSerializing.EncodingAwareStrings;
 using System;
 using System.Collections.Generic;
 using System.IO;

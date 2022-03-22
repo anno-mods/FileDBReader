@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileDBSerializer.EncodingAwareStrings
+namespace FileDBSerializing.EncodingAwareStrings
 {
     public abstract class EncodingAwareString
     {
