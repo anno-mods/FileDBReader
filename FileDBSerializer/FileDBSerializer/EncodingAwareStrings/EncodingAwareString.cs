@@ -25,5 +25,10 @@ namespace FileDBSerializer.EncodingAwareStrings
                 return s.ToString();
             return String.Empty;
         }
+
+        public UTF8String ToUTF8() => new UTF8String(this.ToString());
+        public UnicodeString ToUnicode() => new UnicodeString(this.ToString());
+        public UTF32String ToUTF32() => new UTF32String(this.ToString());
+        public ASCIIString ToAscii() => new ASCIIString(this.ToString());
     }
 }
