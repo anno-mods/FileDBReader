@@ -54,7 +54,7 @@ namespace FileDBReader.src.XmlRepresentation
 
         private Attrib XmlNodeToAttrib(XmlNode n, Tag parent)
         {
-            var Content = HexHelper.BytesFromBinHex(n.InnerText);
+            var Content = HexHelper.ToBytes(n.InnerText);
             var Attrib = filedb.AddAttrib(InvalidTagNameHelper.GetReverseCorrection(n.Name));
             Attrib.Content = Content;
             Attrib.Parent = parent;

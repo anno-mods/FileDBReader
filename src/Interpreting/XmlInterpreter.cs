@@ -73,7 +73,7 @@ namespace FileDBReader
             var nodes = doc.SelectNodes(comp.Path);
             foreach (XmlNode node in nodes)
             {
-                var bytearr = HexHelper.BytesFromBinHex(node.InnerText);
+                var bytearr = HexHelper.ToBytes(node.InnerText);
                 var filereader = new Reader();
                 using (MemoryStream ms = new MemoryStream(bytearr))
                 {

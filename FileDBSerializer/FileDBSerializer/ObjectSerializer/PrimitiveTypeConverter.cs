@@ -11,7 +11,7 @@ namespace FileDBSerializing.ObjectSerializer
 
         }
         //----- ########################### -----//
-        //      Make sure that the types are the same in both dictionaries!!!!
+        //      Make sure that the set of keys is identical in both dictionaries!!!!
         //      Else this will mess with SupportsType() and lead to fuckwhat-types of errors.
         //      Future self, thank me in advance :) 
         //----- ########################### -----//
@@ -21,7 +21,7 @@ namespace FileDBSerializing.ObjectSerializer
         {
             { typeof(bool), s => BitConverter.GetBytes((bool)s) },
             { typeof(byte), s => new byte[] { (byte)s } },
-            { typeof(sbyte), s => new byte[] { (byte)s } },
+            { typeof(sbyte), s => (byte[]) ((Array)new sbyte[]{ (sbyte)s }) }, //good lord, what the fuck
             { typeof(short), s => BitConverter.GetBytes((short)s) },
             { typeof(ushort), s => BitConverter.GetBytes((ushort)s) },
             { typeof(int), s => BitConverter.GetBytes((int)s) },
@@ -50,10 +50,11 @@ namespace FileDBSerializing.ObjectSerializer
 
         public byte[] GetBytes(object t)
         {
-            if (SupportsType(t.GetType()))
-                return PrimitiveTypes[t.GetType()](t);
+            Type _type = t.GetType();
+            if (SupportsType(_type))
+                return PrimitiveTypes[_type](t);
             else
-                throw new InvalidOperationException(t.GetType() + " is not a primitive type!");
+                throw new InvalidOperationException(_type + " is not a primitive type!");
         }
 
         public object GetObject(Type TargetType, byte[] b)

@@ -54,7 +54,7 @@ namespace FileDBReader_Tests
             var expected = new byte[] { 3, 5, 1, 187, 6, 13, 2, 5, 61, 3, 3, 55, 33, 11, 42, 13, 37 };
 
             String BinHexBytes = "030501BB060D02053D030337210B2A0D25";
-            var bytesByHexHelper = HexHelper.BytesFromBinHex(BinHexBytes);
+            var bytesByHexHelper = HexHelper.ToBytes(BinHexBytes);
 
             CollectionAssert.AreEqual(expected, bytesByHexHelper);
         }
