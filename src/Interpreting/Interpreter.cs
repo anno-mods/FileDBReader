@@ -27,9 +27,9 @@ namespace FileDBReader.src
                 doc.Load(InterpreterPath);
                 return doc;
             }
-            catch (XmlException)
+            catch (Exception e)
             {
-                Console.WriteLine("[INTERPRETER]: Could not load Interpreter at {0} due to faulty xml.", InterpreterPath);
+                Console.WriteLine("[INTERPRETER]: Could not load Interpreter at {0}, {1}", InterpreterPath, e.Message);
                 //return an empty interpreter document.
                 doc.LoadXml("<Converts></Converts>");
                 return doc;
