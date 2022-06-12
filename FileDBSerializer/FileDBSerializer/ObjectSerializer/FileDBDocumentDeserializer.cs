@@ -40,6 +40,9 @@ namespace FileDBSerializing.ObjectSerializer
             {
                 BuildProperty(node, parentObject);
             }
+            //get OnSerialized Method of parentObject
+            MethodInfo? on_serialized = parentObject.GetType().GetMethod("OnSerialized", new Type[0]);
+            if (on_serialized is not null) on_serialized?.Invoke(parentObject, new object[0]);
         }
 
         private void BuildProperty(FileDBNode node, object parentObject)
@@ -49,9 +52,14 @@ namespace FileDBSerializing.ObjectSerializer
             //try to find the property this needs to go for
             Type parentType = parentObject!.GetType();
             PropertyInfo? propertyInfo = parentType.GetProperty(PropertyName);
-            if (propertyInfo is null) throw new FileDBSerializationException($"Property not found: {PropertyName}");
 
-            Type PropertyType = propertyInfo.PropertyType;
+            if (propertyInfo is null)
+            {
+                if (Options.IgnoreMissingProperties) return;
+                throw new FileDBSerializationException($"Property not found: {PropertyName}");
+            }
+
+            Type PropertyType = propertyInfo.GetNullablePropertyType();
 
             if (PropertyType.IsArray())
                 BuildArrayProperty(node, propertyInfo as PropertyInfo, parentObject);
@@ -83,15 +91,17 @@ namespace FileDBSerializing.ObjectSerializer
         /// <param name="parentObject"></param>
         private void BuildArrayProperty(FileDBNode node, PropertyInfo PropertyInfo, object parentObject)
         {
-            Type ArrayContentType = PropertyInfo.PropertyType.GetElementType()!;
+            Type ArrayContentType = PropertyInfo.GetNullablePropertyType().GetElementType()!;
 
             Array? ArrayInstance = null;
             if (node is Attrib) ArrayInstance = BuildPrimitiveArray(((Attrib)node).Content, ArrayContentType);
 
             else if (node is Tag)
             {
-                Tag Tag = (Tag)node;
-                ArrayInstance = ArrayContentType.IsStringType() ? BuildStringArray(Tag.Children, ArrayContentType) : BuildReferenceArray(Tag.Children, ArrayContentType);
+                bool is_flat = PropertyInfo.HasAttribute<FlatArrayAttribute>();
+
+                IEnumerable<FileDBNode> collection = is_flat ? node.Siblings.Where(s => s.ID == node.ID) : ((Tag)node).Children;
+                ArrayInstance = ArrayContentType.IsStringType() ? BuildStringArray(collection, ArrayContentType) : BuildReferenceArray(collection, ArrayContentType);
             }
 
             if (ArrayInstance is not null) PropertyInfo.SetArray(parentObject, ArrayInstance);
@@ -159,7 +169,7 @@ namespace FileDBSerializing.ObjectSerializer
                 //this is for a single reference instance
                 object? PropertyInstance = Activator.CreateInstance(PropertyType);
 
-                if (PropertyInstance is null) throw new FileDBSerializationException($"Could not create instance of Type {PropertyType.Name}");
+                if (PropertyInstance is null) throw new FileDBSerializationException($"Could not create instance of Type {PropertyType.Name}. Missing a parameterless constructor.");
 
                 //deserialize the children into the property instance
                 DeserializeNodeCollection(Tag.Children, PropertyInstance);
@@ -167,13 +177,13 @@ namespace FileDBSerializing.ObjectSerializer
             }
             catch (Exception e)
             {
-                throw new FileDBSerializationException($"Could not create instance of Type {PropertyType.Name}", e);
+                throw new FileDBSerializationException($"Could not create instance of Type {PropertyType.Name}. Missing a parameterless constructor.", e);
             }
         }
 
         private void BuildSinglePropertyFromTag(Tag tag, object parentObject, PropertyInfo Property)
         {
-            Type PropertyType = Property.PropertyType;
+            Type PropertyType = Property.GetNullablePropertyType();
             object PropertyInstance = MakeInstanceFromTag(tag, PropertyType);
             //set the value
             Property.SetValue(parentObject, PropertyInstance);
@@ -182,7 +192,7 @@ namespace FileDBSerializing.ObjectSerializer
         private void BuildSinglePropertyFromAttrib(Attrib attrib, object parentObject, PropertyInfo Property)
         {
             //target type
-            var PropertyType = Property.PropertyType;
+            var PropertyType = Property.GetNullablePropertyType();
 
             object? PropertyInstance = null;
 

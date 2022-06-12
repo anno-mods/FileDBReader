@@ -21,5 +21,7 @@ namespace FileDBSerializing
         public abstract String GetID();
 
         public abstract String GetName();
+
+        public IEnumerable<FileDBNode> Siblings => Parent is null ? ParentDoc.Roots : Parent.Children;
     }
 }

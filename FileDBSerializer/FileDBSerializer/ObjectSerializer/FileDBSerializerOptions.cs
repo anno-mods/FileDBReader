@@ -12,6 +12,8 @@ namespace FileDBSerializing.ObjectSerializer
         public String NoneTag { get; } = "None";
         public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
 
+        public bool IgnoreMissingProperties { get; set; } = false;
+
 
         public FileDBSerializerOptions()
         {

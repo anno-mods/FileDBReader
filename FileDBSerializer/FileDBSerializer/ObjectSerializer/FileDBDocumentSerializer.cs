@@ -49,20 +49,26 @@ namespace FileDBSerializing.ObjectSerializer
         {
             foreach (var property in properties)
             {
-                yield return BuildNode(property, parentObject);
+                foreach (var _ in BuildNode(property, parentObject))
+                {
+                    yield return _;
+                }
             }
         }
 
         //parent switch for node types
-        private FileDBNode BuildNode(PropertyInfo property, object parentObject)
+        private IEnumerable<FileDBNode> BuildNode(PropertyInfo property, object parentObject)
         {
-            Type PropertyType = property.PropertyType;
+            Type PropertyType = property.GetNullablePropertyType();
+
+            object? property_instance = property.GetValue(parentObject);
+            if (property_instance is not null && property_instance.Equals(PropertyType.GetDefault())) return Enumerable.Empty<FileDBNode>();
 
             //Note: IsPrimitive is the extension method, which does NOT match with the property IsPrimitive!!!!
             if (PropertyType.IsPrimitiveOrString())
             {
                 //if primitive -> attrib, content to bytes, doneu
-                return BuildSingleValueAttrib(parentObject, property);
+                return new FileDBNode[] { BuildSingleValueAttrib(parentObject, property) };
             }
             //Arrays
             else if (PropertyType.IsArray())
@@ -73,31 +79,44 @@ namespace FileDBSerializing.ObjectSerializer
             else if(!PropertyType.IsEnumerable())
             {
                 //if reference type -> build tag with child properties
-                return BuildTagFromProperty(parentObject, property);
+                return new FileDBNode[] { BuildTagFromProperty(parentObject, property) };
             }
 
+            //we should not get here.
             throw new InvalidOperationException($"PropertyType {PropertyType.Name} could not be resolved to a FileDB document element.");
         }
 
-        private FileDBNode BuildArray(PropertyInfo property, object graph)
+        private IEnumerable<FileDBNode> BuildArray(PropertyInfo property, object graph)
         {
-            Type ArrayContentType = property.PropertyType.GetElementType();
+            Type ArrayContentType = property.GetNullablePropertyType().GetElementType();
 
             //primitive arrays
             if (ArrayContentType.IsPrimitiveType())
             {
                 //if array -> attrib, array content to bytes, done
-                return BuildPrimitiveArrayAttrib(graph, property);
+                yield return BuildPrimitiveArrayAttrib(graph, property);
             }
             //string arrays
             else if (ArrayContentType.IsStringType())
             {
-                return BuildStringArray(graph, property);
+                yield return BuildStringArray(graph, property);
             }
             //reference type array
             else
             {
-                return BuildReferenceArray(graph, property);
+                Tag ArrayOfShit = BuildReferenceArray(graph, property);
+                bool is_flat = property.HasAttribute<FlatArrayAttribute>();
+
+                if (is_flat)
+                {
+                    foreach (FileDBNode fuck in ArrayOfShit.Children)
+                    {
+                        yield return fuck;
+                    }
+                }
+                else
+                    yield return ArrayOfShit;
+                
             }
         }
 
@@ -114,6 +133,12 @@ namespace FileDBSerializing.ObjectSerializer
         {
             var PrimitiveObjectInstance = ObjectProperty.GetValue(graph);
             Attrib attr = TargetDocument.AddAttrib(ObjectProperty.Name);
+
+            if (PrimitiveObjectInstance is null)
+            {
+                attr.Content = new byte[0];
+                return attr;
+            } 
             return ConstructAttrib(PrimitiveObjectInstance, attr);
         }
 
@@ -156,6 +181,9 @@ namespace FileDBSerializing.ObjectSerializer
             //Get the instance of the property for our specific object as well as the properties of its type.
             var ValueObjectInstance = ObjectProperty.GetValue(graph);
             Tag t = TargetDocument.AddTag(ObjectProperty.Name);
+
+            if (ValueObjectInstance is null) return t;
+
             return ConstructTag(ValueObjectInstance, t);
         }
 
@@ -177,9 +205,10 @@ namespace FileDBSerializing.ObjectSerializer
         private Tag ConstructTag(object ValueObjectInstance, Tag TagInject)
         {
             PropertyInfo[] properties = ValueObjectInstance.GetType().GetProperties();
+
             foreach (var property in properties)
             {
-                TagInject.AddChild(BuildNode(property, ValueObjectInstance));
+                TagInject.AddChildren(BuildNode(property, ValueObjectInstance));
             }
             return TagInject;
         }
@@ -189,8 +218,9 @@ namespace FileDBSerializing.ObjectSerializer
         private Attrib BuildPrimitiveArrayAttrib(object ArrayObjectInstance, PropertyInfo ObjectProperty)
         {
             Attrib attr = TargetDocument.AddAttrib(ObjectProperty.Name);
-            Array arrayObject = (Array)ObjectProperty.GetValue(ArrayObjectInstance);
-            attr.Content = BuildPrimitiveArrayContent(arrayObject);
+            Array? arrayObject = ObjectProperty.GetValue(ArrayObjectInstance) as Array;
+
+            attr.Content = arrayObject is not null ? BuildPrimitiveArrayContent(arrayObject) : new byte[0];
             return attr;
         }
 

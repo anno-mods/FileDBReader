@@ -31,6 +31,14 @@ namespace FileDBSerializing
             Children.Add(node);
         }
 
+        public void AddChildren(IEnumerable<FileDBNode> nodes)
+        {
+            foreach (var _ in nodes)
+            {
+                AddChild(_);
+            }
+        }
+
         public override String GetID()
         {
             if (ParentDoc.Tags.Tags.TryGetValue((ushort)ID, out string value))

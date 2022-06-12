@@ -18,6 +18,12 @@ namespace FileDBSerializing.ObjectSerializer
         public static bool IsPrimitiveOrString(this Type type) => type.IsPrimitiveType() || type.IsStringType();
 
         public static bool IsArray(this Type type) => type.IsArray;
+
+        public static object? GetDefault(this Type type)
+        {
+            if (type.IsValueType) return Activator.CreateInstance(type);
+            return null;
+        }
     }
 
     internal static class IEnumerableExtensions
@@ -31,6 +37,18 @@ namespace FileDBSerializing.ObjectSerializer
         {
             var PropertyType = PropertyInfo.PropertyType;
             PropertyInfo.SetValue(ParentObject, Convert.ChangeType(Array, PropertyType));
+        }
+
+        internal static bool HasAttribute<T>(this PropertyInfo that) where T : Attribute => that.GetCustomAttribute<T>() is not null;
+
+        internal static Type GetNullablePropertyType(this PropertyInfo that)
+        {
+            Type? _nulltype;
+            if ((_nulltype = Nullable.GetUnderlyingType(that.PropertyType)) is not null)
+            {
+                return _nulltype;
+            }
+            return that.PropertyType;
         }
     }
 }
