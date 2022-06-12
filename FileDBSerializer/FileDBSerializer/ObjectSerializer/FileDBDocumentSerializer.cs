@@ -61,8 +61,9 @@ namespace FileDBSerializing.ObjectSerializer
         {
             Type PropertyType = property.GetNullablePropertyType();
 
+            //skip if ignore default
             object? property_instance = property.GetValue(parentObject);
-            if (property_instance is not null && property_instance.Equals(PropertyType.GetDefault())) return Enumerable.Empty<FileDBNode>();
+            if (property_instance is not null && property_instance.Equals(PropertyType.GetDefault()) && Options.SkipDefaultedValues) return Enumerable.Empty<FileDBNode>();
 
             //Note: IsPrimitive is the extension method, which does NOT match with the property IsPrimitive!!!!
             if (PropertyType.IsPrimitiveOrString())
@@ -111,6 +112,8 @@ namespace FileDBSerializing.ObjectSerializer
                 {
                     foreach (FileDBNode fuck in ArrayOfShit.Children)
                     {
+                        fuck.ID = ArrayOfShit.ID;
+                        fuck.Parent = ArrayOfShit.Parent;
                         yield return fuck;
                     }
                 }

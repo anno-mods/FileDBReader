@@ -14,6 +14,8 @@ namespace FileDBSerializing.ObjectSerializer
 
         public bool IgnoreMissingProperties { get; set; } = false;
 
+        public bool SkipDefaultedValues { get; set; } = false;
+
 
         public FileDBSerializerOptions()
         {
