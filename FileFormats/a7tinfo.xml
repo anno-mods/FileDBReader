@@ -12,9 +12,7 @@
     <!--
             Type 0 - Load the specified island
             Type 1 - Randomize the island
-            Type 2 - Found in uninhabitable islands (as far as I remember)
-
-            Still a mistery but this could be the IslandType
+            Type 2 - Ship position
         -->
     <Convert Path="//MapTemplate/TemplateElement/ElementType" Type="Int32"/>
 
@@ -29,7 +27,8 @@
       <Enum>
         <Entry Value ="0" Name ="Normal"/>
         <Entry Value ="1" Name ="Starter" />
-        <Entry Value ="3" Name ="Decoration" />
+        <Entry Value ="2" Name ="Decoration" />
+        <Entry Value ="3" Name ="ThirdParty" />
         <Entry Value ="4" Name ="Pirate" />
       </Enum>
     </Convert>
