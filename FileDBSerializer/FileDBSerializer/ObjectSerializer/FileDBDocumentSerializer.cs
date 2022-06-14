@@ -68,12 +68,18 @@ namespace FileDBSerializing.ObjectSerializer
             //Note: IsPrimitive is the extension method, which does NOT match with the property IsPrimitive!!!!
             if (PropertyType.IsPrimitiveOrString())
             {
+                if (property_instance is null && Options.SkipSimpleNullValues)
+                    return Enumerable.Empty<FileDBNode>();
+
                 //if primitive -> attrib, content to bytes, doneu
                 return new FileDBNode[] { BuildSingleValueAttrib(parentObject, property) };
             }
             //Arrays
             else if (PropertyType.IsArray())
             {
+                if (property_instance is null && Options.SkipSimpleNullValues && PropertyType.IsPrimitiveArray())
+                    return Enumerable.Empty<FileDBNode>();
+
                 return BuildArray(property, parentObject);
             }
             //simple Reference Types should be the only thing here

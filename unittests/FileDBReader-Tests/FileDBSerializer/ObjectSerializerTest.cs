@@ -95,6 +95,41 @@ namespace FileDBSerializing.Tests
             result.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
         }
 
+
+        [TestMethod()]
+        public void SkipSimpleNullValues()
+        {
+            // test default setting
+            FileDBSerializerOptions options = new() { Version = FileDBDocumentVersion.Version1 };
+            Assert.IsTrue(options.SkipSimpleNullValues); 
+            
+            // all null
+            var obj = new RootObject();
+            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            Assert.AreEqual("<Content>" +
+                "<DumbManager />" +
+                "<DumbChild />" +
+                "<RefArray />" +
+                "<StringArray />" +
+                "</Content>", xmlDocument.InnerXml);
+
+            // all null, SkipSimpleNullValues = false
+            serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipSimpleNullValues = false });
+            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            Assert.AreEqual("<Content>" +
+                "<RootCount></RootCount>" + // TODO: why are simple null values not self-closing?
+                "<DumbManager />" +
+                "<DumbChild />" +
+                "<PrimitiveArray></PrimitiveArray>" +
+                "<RefArray />" +
+                "<SimpleString></SimpleString>" +
+                "<StringArray />" +
+                "</Content>", xmlDocument.InnerXml);
+        }
+
         private class FlatStringArrayContainer
         {
             [FlatArray]
