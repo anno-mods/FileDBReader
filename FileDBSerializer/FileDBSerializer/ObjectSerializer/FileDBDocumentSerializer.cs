@@ -89,36 +89,48 @@ namespace FileDBSerializing.ObjectSerializer
 
         private IEnumerable<FileDBNode> BuildArray(PropertyInfo property, object graph)
         {
-            Type ArrayContentType = property.GetNullablePropertyType().GetElementType();
+            Type ArrayContentType = property.GetNullablePropertyType().GetElementType()!;
 
-            //primitive arrays
+            // primitive arrays
             if (ArrayContentType.IsPrimitiveType())
             {
                 //if array -> attrib, array content to bytes, done
                 yield return BuildPrimitiveArrayAttrib(graph, property);
             }
-            //string arrays
+            // string arrays
             else if (ArrayContentType.IsStringType())
             {
-                yield return BuildStringArray(graph, property);
+                bool isFlat = property.HasAttribute<FlatArrayAttribute>();
+                if (isFlat)
+                {
+                    IEnumerable<Attrib> arrayContainer = BuildStringArray(graph, property);
+                    foreach (FileDBNode node in arrayContainer)
+                        yield return node;
+                }
+                else
+                    yield return BuildStringArrayTag(graph, property);
             }
-            //reference type array
+            else if (ArrayContentType.IsPrimitiveArray())
+            {
+                // TODO
+                throw new NotImplementedException();
+            }
+            // reference type array
             else
             {
-                Tag ArrayOfShit = BuildReferenceArray(graph, property);
-                bool is_flat = property.HasAttribute<FlatArrayAttribute>();
-
-                if (is_flat)
+                Tag arrayContainer = BuildReferenceArrayTag(graph, property);
+                bool isFlat = property.HasAttribute<FlatArrayAttribute>();
+                if (isFlat)
                 {
-                    foreach (FileDBNode fuck in ArrayOfShit.Children)
+                    foreach (FileDBNode child in arrayContainer.Children)
                     {
-                        fuck.ID = ArrayOfShit.ID;
-                        fuck.Parent = ArrayOfShit.Parent;
-                        yield return fuck;
+                        child.ID = arrayContainer.ID;
+                        child.Parent = arrayContainer.Parent;
+                        yield return child;
                     }
                 }
                 else
-                    yield return ArrayOfShit;
+                    yield return arrayContainer;
                 
             }
         }
@@ -142,17 +154,6 @@ namespace FileDBSerializing.ObjectSerializer
                 attr.Content = new byte[0];
                 return attr;
             } 
-            return ConstructAttrib(PrimitiveObjectInstance, attr);
-        }
-
-        /// <summary>
-        /// Constructs a FileDB Attrib in the target document out of the object instance <paramref name="PrimitiveObjectInstance"/>
-        /// </summary>
-        /// <param name="PrimitiveObjectInstance"></param>
-        /// <returns>The constructed attribute. The Name of the returned attrib will be None.</returns>
-        private Attrib BuildAnonymousSingleValueAttrib(object PrimitiveObjectInstance)
-        {
-            Attrib attr = TargetDocument.AddAttrib("None");
             return ConstructAttrib(PrimitiveObjectInstance, attr);
         }
 
@@ -242,31 +243,41 @@ namespace FileDBSerializing.ObjectSerializer
             }
         }
 
-        //Array of Reference Types - Array is a collection of none tags
-        private Tag BuildReferenceArray(object ArrayObjectInstance, PropertyInfo ObjectProperty)
+        // Array of Reference Types - Array is a collection of none tags
+        private Tag BuildReferenceArrayTag(object arrayObject, PropertyInfo objectProperty)
         {
-            return BuildMultiNodeArray(ArrayObjectInstance, ObjectProperty, BuildTagFromAnonymousObject);
+            return BuildMultiNodeArray(arrayObject, objectProperty, BuildTagFromAnonymousObject);
         }
 
-        //Array of Strings - Array is a collection of none objects
-        private Tag BuildStringArray(object ArrayObjectInstance, PropertyInfo ObjectProperty)
+        private IEnumerable<Attrib> BuildStringArray(object arrayObject, PropertyInfo objectProperty)
         {
-            return BuildMultiNodeArray(ArrayObjectInstance, ObjectProperty, BuildAnonymousSingleValueAttrib);
+            return BuildArrayElements(arrayObject, objectProperty, 
+                (x) => ConstructAttrib(x, TargetDocument.AddAttrib(objectProperty.Name)));
         }
 
-        private Tag BuildMultiNodeArray(object ArrayObjectInstance, PropertyInfo ObjectProperty, Func<object, FileDBNode> ChildCreationFunction)
+        private Tag BuildStringArrayTag(object arrayObject, PropertyInfo objectProperty)
         {
-            Tag t = TargetDocument.AddTag(ObjectProperty.Name);
-            Array ArrayObject = (Array)ObjectProperty.GetValue(ArrayObjectInstance);
+            Tag tag = TargetDocument.AddTag(objectProperty.Name);
+            tag.AddChildren(BuildArrayElements(arrayObject, objectProperty,
+                (x) => ConstructAttrib(x, TargetDocument.AddAttrib("None"))));
+            return tag;
+        }
 
-            //loop through array objects and add them as anonymous attribs
-            for (int i = 0; i < ArrayObject.Length; i++)
-            {
-                //get the array entry object instance, construct a tag and add it to the list!
-                var SingleValueInArray = ArrayObject.GetValue(i);
-                t.AddChild(ChildCreationFunction.Invoke(SingleValueInArray));
-            }
-            return t;
+        private Tag BuildMultiNodeArray(object arrayObject, PropertyInfo objectProperty, Func<object, FileDBNode> elementConstructor)
+        {
+            Tag tag = TargetDocument.AddTag(objectProperty.Name);
+            tag.AddChildren(BuildArrayElements(arrayObject, objectProperty, elementConstructor));
+            return tag;
+        }
+
+        private static IEnumerable<T> BuildArrayElements<T>(object arrayObject, PropertyInfo objectProperty, Func<object, T> elementConstructor)
+        {
+            Array? array = (Array?)objectProperty.GetValue(arrayObject);
+            if (array is null)
+                yield break;
+
+            foreach (var element in array)
+                yield return elementConstructor.Invoke(element);
         }
     }
 }
