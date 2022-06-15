@@ -77,7 +77,7 @@ namespace FileDBSerializing.ObjectSerializer
             //Arrays
             else if (PropertyType.IsArray())
             {
-                if (property_instance is null && Options.SkipSimpleNullValues && PropertyType.IsPrimitiveArray())
+                if (property_instance is null && Options.SkipSimpleNullValues && PropertyType.IsPrimitiveListType())
                     return Enumerable.Empty<FileDBNode>();
 
                 return BuildArray(property, parentObject);
@@ -116,10 +116,17 @@ namespace FileDBSerializing.ObjectSerializer
                 else
                     yield return BuildStringArrayTag(graph, property);
             }
-            else if (ArrayContentType.IsPrimitiveArray())
+            else if (ArrayContentType.IsPrimitiveListType())
             {
-                // TODO
-                throw new NotImplementedException();
+                bool isFlat = property.HasAttribute<FlatArrayAttribute>();
+                if (isFlat)
+                {
+                    IEnumerable<Attrib> arrayContainer = BuildStringArray(graph, property);
+                    foreach (FileDBNode node in arrayContainer)
+                        yield return node;
+                }
+                else
+                    yield return BuildStringArrayTag(graph, property);
             }
             // reference type array
             else
@@ -172,6 +179,10 @@ namespace FileDBSerializing.ObjectSerializer
             else if (PrimitiveObjectInstance.GetType().IsPrimitiveType())
             {
                 AttribInject.Content = PrimitiveConverter.GetBytes(PrimitiveObjectInstance);
+            }
+            else if (PrimitiveObjectInstance.GetType().IsPrimitiveListType())
+            {
+                AttribInject.Content = BuildPrimitiveArrayContent((Array)PrimitiveObjectInstance);
             }
             return AttribInject;
         }

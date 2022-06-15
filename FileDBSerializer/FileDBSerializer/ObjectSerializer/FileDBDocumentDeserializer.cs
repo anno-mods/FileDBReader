@@ -106,10 +106,10 @@ namespace FileDBSerializing.ObjectSerializer
                     IEnumerable<FileDBNode> collection = node.Siblings.Where(s => s.ID == node.ID);
                     ArrayInstance = BuildStringArray(collection, ArrayContentType);
                 }
-                else if (ArrayContentType.IsPrimitiveArray())
+                else if (ArrayContentType.IsPrimitiveListType())
                 {
-                    // TODO
-                    throw new NotImplementedException();
+                    IEnumerable<FileDBNode> collection = node.Siblings.Where(s => s.ID == node.ID);
+                    ArrayInstance = BuildPrimitiveListArray(collection, ArrayContentType);
                 }
                 else
                 {
@@ -123,6 +123,8 @@ namespace FileDBSerializing.ObjectSerializer
 
                 if (ArrayContentType.IsStringType() /* non-flat strings are Tags */)
                     ArrayInstance = BuildStringArray(collection, ArrayContentType);
+                else if (ArrayContentType.IsPrimitiveListType() /* non-flat primitive lists are Tags */)
+                    ArrayInstance = BuildPrimitiveListArray(collection, ArrayContentType);
                 else
                     ArrayInstance = BuildReferenceArray(collection, ArrayContentType);
             }
@@ -166,15 +168,31 @@ namespace FileDBSerializing.ObjectSerializer
             return ArrayInstance;
         }
 
-        private Array BuildStringArray(IEnumerable<FileDBNode> Nodes, Type TargetType)
+        private Array BuildStringArray(IEnumerable<FileDBNode> nodes, Type targetType)
         {
-            return BuildMultiNodeArray(Nodes,
+            return BuildMultiNodeArray(nodes,
                 node => {
                     if (node is not Attrib attrib)
                         throw new FileDBSerializationException($"Array entry must be Attrib: {node.GetName()}");
-                    return InstanceString(TargetType, attrib.Content);
+                    return InstanceString(targetType, attrib.Content);
                 },
-                TargetType
+                targetType
+            );
+        }
+
+        private Array BuildPrimitiveListArray(IEnumerable<FileDBNode> nodes, Type targetType)
+        {
+            Type? contentTargetType = targetType.GetElementType();
+            if (contentTargetType is null)
+                throw new FileDBSerializationException($"Array entry type must be Array: {nodes.FirstOrDefault()?.GetName()}");
+
+            return BuildMultiNodeArray(nodes,
+                node => {
+                    if (node is not Attrib attrib)
+                        throw new FileDBSerializationException($"Array entry must be Attrib: {node.GetName()}");
+                    return BuildPrimitiveArray(attrib.Content, contentTargetType);
+                },
+                targetType
             );
         }
 

@@ -212,5 +212,51 @@ namespace FileDBSerializing.Tests
             xmlDocument = new FileDBReader.XmlInterpreter().Interpret(xmlWithBytes, new(interpreterDocument));
             Assert.AreEqual(testInput, xmlDocument.InnerXml);
         }
+
+        private class PrimitiveListArrayContainer
+        {
+            public byte[]? Single { get; set; }
+            public byte[][]? NonFlat { get; set; }
+            [FlatArray]
+            public byte[][]? Flat { get; set; }
+        }
+
+        [TestMethod()]
+        public void DeSerializePrimitiveArray()
+        {
+            static Stream stream(string x) => new MemoryStream(Encoding.Unicode.GetBytes(x));
+
+            const string testInput = "<Content>" +
+                "<Single>00013434</Single>" +
+                "<NonFlat><None>00013535</None></NonFlat>" +
+                "<Flat>00013636</Flat>" +
+                "<Flat>00013737</Flat>" +
+                "</Content>";
+
+            // load from XML
+            XmlDocument xmlDocument = new();
+            xmlDocument.Load(stream(testInput));
+            IFileDBDocument doc = new XmlFileDbConverter<FileDBDocument_V1>().ToFileDb(xmlDocument);
+
+            // serialize & deserialize
+            FileDBDocumentDeserializer<PrimitiveListArrayContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            var obj = deserializer.GetObjectStructureFromFileDBDocument(doc);
+
+            Assert.IsNotNull(obj);
+            Assert.IsNotNull(obj.Single);
+            Assert.AreEqual("00-01-34-34", BitConverter.ToString(obj.Single!));
+            Assert.AreEqual(1, obj.NonFlat?.Length);
+            Assert.AreEqual("00-01-35-35", BitConverter.ToString(obj.NonFlat![0]));
+            Assert.AreEqual(2, obj.Flat?.Length);
+            Assert.AreEqual("00-01-36-36", BitConverter.ToString(obj.Flat![0]));
+            Assert.AreEqual("00-01-37-37", BitConverter.ToString(obj.Flat[1]));
+
+            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+
+            // convert back to xml
+            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            Assert.AreEqual(testInput, xmlDocument.InnerXml);
+        }
     }
 }

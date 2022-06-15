@@ -19,7 +19,7 @@ namespace FileDBSerializing.ObjectSerializer
 
         public static bool IsArray(this Type type) => type.IsArray;
 
-        public static bool IsPrimitiveArray(this Type type) => type.IsArray && (type.GetElementType()?.IsPrimitiveType() ?? false);
+        public static bool IsPrimitiveListType(this Type type) => type.IsArray && (type.GetElementType()?.IsPrimitiveType() ?? false);
 
         public static object? GetDefault(this Type type)
         {
