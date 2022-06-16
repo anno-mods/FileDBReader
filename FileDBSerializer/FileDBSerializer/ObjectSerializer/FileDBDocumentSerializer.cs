@@ -56,6 +56,7 @@ namespace FileDBSerializing.ObjectSerializer
             }
         }
 
+        #region SINGLE NODES
         //parent switch for node types
         private IEnumerable<FileDBNode> BuildNode(PropertyInfo property, object parentObject)
         {
@@ -72,7 +73,7 @@ namespace FileDBSerializing.ObjectSerializer
                     return Enumerable.Empty<FileDBNode>();
 
                 //if primitive -> attrib, content to bytes, doneu
-                return new FileDBNode[] { BuildSingleValueAttrib(parentObject, property) };
+                return BuildSingleValueAttrib(parentObject, property).AsEnumerable();
             }
             //Arrays
             else if (PropertyType.IsArray())
@@ -86,67 +87,65 @@ namespace FileDBSerializing.ObjectSerializer
             else if(!PropertyType.IsEnumerable())
             {
                 //if reference type -> build tag with child properties
-                return new FileDBNode[] { BuildTagFromProperty(parentObject, property) };
+                return BuildTagFromProperty(parentObject, property).AsEnumerable();
             }
 
             //we should not get here.
             throw new InvalidOperationException($"PropertyType {PropertyType.Name} could not be resolved to a FileDB document element.");
         }
+        #endregion
 
+        #region ARRAYS
+
+        //parent switch for arrays
         private IEnumerable<FileDBNode> BuildArray(PropertyInfo property, object graph)
         {
             Type ArrayContentType = property.GetNullablePropertyType().GetElementType()!;
 
-            // primitive arrays
             if (ArrayContentType.IsPrimitiveType())
             {
                 //if array -> attrib, array content to bytes, done
-                yield return BuildPrimitiveArrayAttrib(graph, property);
+                return BuildPrimitiveArrayAttrib(graph, property).AsEnumerable();
             }
-            // string arrays
-            else if (ArrayContentType.IsStringType())
+            else if (ArrayContentType.IsStringType() || ArrayContentType.IsPrimitiveListType())
             {
-                bool isFlat = property.HasAttribute<FlatArrayAttribute>();
-                if (isFlat)
-                {
-                    IEnumerable<Attrib> arrayContainer = BuildStringArray(graph, property);
-                    foreach (FileDBNode node in arrayContainer)
-                        yield return node;
-                }
-                else
-                    yield return BuildStringArrayTag(graph, property);
+                return BuildArray_StringArray(property, graph);
             }
-            else if (ArrayContentType.IsPrimitiveListType())
-            {
-                bool isFlat = property.HasAttribute<FlatArrayAttribute>();
-                if (isFlat)
-                {
-                    IEnumerable<Attrib> arrayContainer = BuildStringArray(graph, property);
-                    foreach (FileDBNode node in arrayContainer)
-                        yield return node;
-                }
-                else
-                    yield return BuildStringArrayTag(graph, property);
-            }
-            // reference type array
-            else
-            {
-                Tag arrayContainer = BuildReferenceArrayTag(graph, property);
-                bool isFlat = property.HasAttribute<FlatArrayAttribute>();
-                if (isFlat)
-                {
-                    foreach (FileDBNode child in arrayContainer.Children)
-                    {
-                        child.ID = arrayContainer.ID;
-                        child.Parent = arrayContainer.Parent;
-                        yield return child;
-                    }
-                }
-                else
-                    yield return arrayContainer;
-                
-            }
+            //reference type
+            return BuildArray_ReferenceTypeArray(property, graph);
         }
+
+        private IEnumerable<FileDBNode> BuildArray_StringArray(PropertyInfo property, object graph)
+        {
+            bool isFlat = property.HasAttribute<FlatArrayAttribute>();
+            if (isFlat)
+            {
+                IEnumerable<Attrib> arrayContainer = BuildStringArray(graph, property);
+                foreach (FileDBNode node in arrayContainer)
+                    yield return node;
+            }
+            else
+                yield return BuildStringArrayTag(graph, property);
+        }
+
+        private IEnumerable<FileDBNode> BuildArray_ReferenceTypeArray(PropertyInfo property, object graph)
+        {
+            Tag arrayContainer = BuildReferenceArrayTag(graph, property);
+            bool isFlat = property.HasAttribute<FlatArrayAttribute>();
+            if (isFlat)
+            {
+                foreach (FileDBNode child in arrayContainer.Children)
+                {
+                    child.ID = arrayContainer.ID;
+                    child.Parent = arrayContainer.Parent;
+                    yield return child;
+                }
+            }
+            else
+                yield return arrayContainer;
+        }
+
+        #endregion
 
         #region CONSTRUCT_ATTRIB
         //Single Values
@@ -276,7 +275,7 @@ namespace FileDBSerializing.ObjectSerializer
         {
             Tag tag = TargetDocument.AddTag(objectProperty.Name);
             tag.AddChildren(BuildArrayElements(arrayObject, objectProperty,
-                (x) => ConstructAttrib(x, TargetDocument.AddAttrib("None"))));
+                (x) => ConstructAttrib(x, TargetDocument.AddAttrib(Options.NoneTag))));
             return tag;
         }
 

@@ -67,6 +67,7 @@ namespace FileDBSerializing.ObjectSerializer
                 BuildSingleValue(node, propertyInfo as PropertyInfo, parentObject);
         }
 
+        #region SingleValue_Parent
         private void BuildSingleValue(FileDBNode node, PropertyInfo PropertyInfo, object parentObject)
         {
             //convert node.Content and set the value accordingly.
@@ -81,7 +82,9 @@ namespace FileDBSerializing.ObjectSerializer
                 BuildSinglePropertyFromTag((Tag)node, parentObject, PropertyInfo);
             }
         }
+        #endregion
 
+        #region Array_Parent
         /// <summary>
         /// 
         /// </summary>
@@ -92,49 +95,52 @@ namespace FileDBSerializing.ObjectSerializer
         private void BuildArrayProperty(FileDBNode node, PropertyInfo PropertyInfo, object parentObject)
         {
             Type ArrayContentType = PropertyInfo.GetNullablePropertyType().GetElementType()!;
-
             Array? ArrayInstance = null;
 
             if (node is Attrib attrib)
-            {
-                if (ArrayContentType.IsPrimitiveType())
-                {
-                    ArrayInstance = BuildPrimitiveArray(attrib.Content, ArrayContentType);
-                }
-                else if (ArrayContentType.IsStringType() /* flat strings are Attribs */)
-                {
-                    IEnumerable<FileDBNode> collection = node.Siblings.Where(s => s.ID == node.ID);
-                    ArrayInstance = BuildStringArray(collection, ArrayContentType);
-                }
-                else if (ArrayContentType.IsPrimitiveListType())
-                {
-                    IEnumerable<FileDBNode> collection = node.Siblings.Where(s => s.ID == node.ID);
-                    ArrayInstance = BuildPrimitiveListArray(collection, ArrayContentType);
-                }
-                else
-                {
-                    // should not happen
-                }
-            }
+                ArrayInstance = BuildArrayProperty_Attrib(ArrayContentType, attrib, PropertyInfo);
             else if (node is Tag tag)
-            {
-                bool isFlat = PropertyInfo.HasAttribute<FlatArrayAttribute>();
-                IEnumerable<FileDBNode> collection = isFlat ? node.Siblings.Where(s => s.ID == node.ID) : tag.Children;
-
-                if (ArrayContentType.IsStringType() /* non-flat strings are Tags */)
-                    ArrayInstance = BuildStringArray(collection, ArrayContentType);
-                else if (ArrayContentType.IsPrimitiveListType() /* non-flat primitive lists are Tags */)
-                    ArrayInstance = BuildPrimitiveListArray(collection, ArrayContentType);
-                else
-                    ArrayInstance = BuildReferenceArray(collection, ArrayContentType);
-            }
+                ArrayInstance = BuildArrayProperty_Tag(ArrayContentType, tag, PropertyInfo);
             else
-            {
-                // should not happen
-            }
+                //we should not get here.
+                throw new InvalidOperationException($"PropertyType {PropertyInfo.PropertyType.Name} could not be resolved to a FileDB document element.");
 
             if (ArrayInstance is not null) PropertyInfo.SetArray(parentObject, ArrayInstance);
         }
+
+        private Array BuildArrayProperty_Attrib(Type ArrayContentType, Attrib attrib, PropertyInfo PropertyInfo)
+        {
+            if (ArrayContentType.IsPrimitiveType())
+                return BuildPrimitiveArray(attrib.Content, ArrayContentType);
+
+            else if (ArrayContentType.IsStringType() /* flat strings are Attribs */)
+            {
+                IEnumerable<FileDBNode> collection = attrib.Siblings.Where(s => s.ID == attrib.ID);
+                return BuildStringArray(collection, ArrayContentType);
+            }
+            else if (ArrayContentType.IsPrimitiveListType())
+            {
+                IEnumerable<FileDBNode> collection = attrib.Siblings.Where(s => s.ID == attrib.ID);
+                return BuildPrimitiveListArray(collection, ArrayContentType);
+            }
+            throw new InvalidOperationException($"PropertyType {PropertyInfo.PropertyType.Name} could not be resolved to a FileDB document element.");
+        }
+
+        private Array? BuildArrayProperty_Tag(Type ArrayContentType, Tag tag, PropertyInfo PropertyInfo)
+        {
+            bool isFlat = PropertyInfo.HasAttribute<FlatArrayAttribute>();
+            IEnumerable<FileDBNode> collection = isFlat ? tag.Siblings.Where(s => s.ID == tag.ID) : tag.Children;
+
+            if (ArrayContentType.IsStringType() /* non-flat strings are Tags */)
+                return BuildStringArray(collection, ArrayContentType);
+            else if (ArrayContentType.IsPrimitiveListType() /* non-flat primitive lists are Tags */)
+                return BuildPrimitiveListArray(collection, ArrayContentType);
+            else
+                return BuildReferenceArray(collection, ArrayContentType);
+        }
+        #endregion
+
+        #region Array_Construction
 
         private Array BuildPrimitiveArray(byte[] content, Type ContentType)
         {
@@ -206,6 +212,9 @@ namespace FileDBSerializing.ObjectSerializer
                 return MakeInstanceFromTag((Tag)node, TargetType);
             }
         }
+        #endregion
+
+        #region Node_Construction
 
         private object MakeInstanceFromTag(Tag Tag, Type PropertyType)
         {
@@ -263,5 +272,7 @@ namespace FileDBSerializing.ObjectSerializer
             }
             return null;
         }
+
+        #endregion
     }
 }

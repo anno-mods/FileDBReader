@@ -53,4 +53,12 @@ namespace FileDBSerializing.ObjectSerializer
             return that.PropertyType;
         }
     }
+
+    internal static class FileDBNodeExtensions
+    {
+        internal static IEnumerable<FileDBNode> AsEnumerable(this FileDBNode node)
+        {
+            return new FileDBNode[] { node };
+        }
+    }
 }
