@@ -133,7 +133,7 @@ namespace FileDBSerializing.ObjectSerializer
             else if (ArrayContentType.IsPrimitiveListType() /* non-flat primitive lists are Tags */)
                 return BuildPrimitiveListArray(collection, ArrayContentType);
             else
-                return BuildReferenceArray(collection, ArrayContentType);
+                return BuildReferenceArray(collection, ArrayContentType, PropertyInfo.GetCustomAttributes<PolymorphAttribute>());
         }
         #endregion
 
@@ -201,14 +201,18 @@ namespace FileDBSerializing.ObjectSerializer
             );
         }
 
-        private Array BuildReferenceArray(IEnumerable<FileDBNode> Nodes, Type TargetType)
+        private Array BuildReferenceArray(IEnumerable<FileDBNode> Nodes, Type TargetType, IEnumerable<PolymorphAttribute> polymorphAttributes)
         {
             return BuildMultiNodeArray(Nodes, MakeInstance, TargetType);
 
             object MakeInstance(FileDBNode node)
-            {
-                if (node is Attrib) throw new FileDBSerializationException($"Cannot create Array Entry from Attrib: {node.GetName()}");
-                return MakeInstanceFromTag((Tag)node, TargetType);
+            { 
+                if (node is Tag tag)
+                {
+                    Type? polyTarget = polymorphAttributes.FirstOrDefault((x) => x.IsApplicable(tag))?.TargetType;
+                    return MakeInstanceFromTag(tag, polyTarget ?? TargetType);
+                }
+                throw new FileDBSerializationException($"Cannot create Array Entry from Attrib: {node.GetName()}");
             }
         }
         #endregion
@@ -238,7 +242,8 @@ namespace FileDBSerializing.ObjectSerializer
         private void BuildSinglePropertyFromTag(Tag tag, object parentObject, PropertyInfo Property)
         {
             Type PropertyType = Property.GetNullablePropertyType();
-            object PropertyInstance = MakeInstanceFromTag(tag, PropertyType);
+            Type? polyTarget = Property.GetCustomAttributes<PolymorphAttribute>().FirstOrDefault((x) => x.IsApplicable(tag))?.TargetType;
+            object PropertyInstance = MakeInstanceFromTag(tag, polyTarget ?? PropertyType);
             //set the value
             Property.SetValue(parentObject, PropertyInstance);
         }
