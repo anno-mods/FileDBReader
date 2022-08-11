@@ -69,7 +69,7 @@ namespace FileDBReader_Tests.FileDBSerializer
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
-            IFileDBDocument doc = new XmlFileDbConverter<FileDBDocument_V1>().ToFileDb(xmlDocument);
+            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlDocument);
 
             // serialize & deserialize
             FileDBDocumentDeserializer<PolymorphOnPathContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
@@ -152,7 +152,7 @@ namespace FileDBReader_Tests.FileDBSerializer
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
-            IFileDBDocument doc = new XmlFileDbConverter<FileDBDocument_V1>().ToFileDb(xmlDocument);
+            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlDocument);
 
             // serialize & deserialize
             FileDBDocumentDeserializer<PolymorphOnValueContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
