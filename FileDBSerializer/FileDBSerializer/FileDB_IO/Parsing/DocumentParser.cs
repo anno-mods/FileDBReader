@@ -13,32 +13,74 @@ namespace FileDBSerializing
     /// Attrib -> Node that contains content data 
     /// Terminator -> closes the current tag.
     /// </summary>
-    public enum States { Undefined, Tag, Attrib, Terminator }
+    public enum States { 
+        Undefined, 
+        Tag, 
+        Attrib, 
+        Terminator 
+    }
 
-    public class DocumentParser<T> where T : IFileDBDocument, new()
+    public class DocumentParser
     {
-        private BinaryReader reader;
-        private T filedb;
+        private IFileDBDocument filedb;
         private IFileDBParser parser;
 
         int CurrentLevel = 0;
-        Tag CurrentTag = null;
+        Tag? CurrentTag = null;
+        Stream? CurrentStream = null;
 
-        //Main Deserialize Function
-        public T LoadFileDBDocument(Stream s)
+        public FileDBDocumentVersion Version { get; set; }
+
+        public DocumentParser(FileDBDocumentVersion version)
+        {
+            Version = version;
+        }
+
+        private void Init(Stream source)
+        {
+            if (!source.CanRead) throw new ArgumentException("Stream needs to be readable!");
+            CurrentStream = source;
+            filedb = DependencyVersions.GetDocument(Version);
+            parser = DependencyVersions.GetParser(Version, source);
+            parser.RegisterDocument(filedb);
+        }
+
+        public IFileDBDocument LoadFileDBDocument(Stream s)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            reader = new BinaryReader(s);
-            filedb = new T();
-
-            switch (filedb.VERSION)
+            Init(s);
+            try
             {
-                case FileDBDocumentVersion.Version1: parser = new FileDBParser_V1(reader, filedb); break;
-                case FileDBDocumentVersion.Version2: parser = new FileDBParser_V2(reader, filedb); break;
+                ParseDOMSection();
+                ParseTagSection();
+            }
+            catch (IOException ex)
+            {
+                throw new InvalidFileDBException("Reached end of file while parsing");
             }
 
+            stopWatch.Stop();
+            Console.WriteLine("FILEDB Deserialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
+            return filedb;
+        }
+
+        private void ParseTagSection()
+        {
+            try
+            {
+                TagSection t = parser.ReadTagSection(filedb.OFFSET_TO_OFFSETS);
+                filedb.Tags = t;
+            }
+            catch (ArgumentException e)
+            {
+                throw new InvalidFileDBException("Definition of Tag Dictionary is invalid!");
+            }
+        }
+
+        private void ParseDOMSection()
+        {
             CurrentLevel = 0;
             CurrentTag = null;
 
@@ -48,7 +90,7 @@ namespace FileDBSerializing
                 States State = parser.ReadNextOperation(out int bytesize, out ushort ID);
 
                 //make sure we don't mess up with the stream. if anything is wrong in the document, 99% of the time we will get a problematic bytesize sooner or later.
-                if (bytesize > s.Length - s.Position) 
+                if (bytesize > CurrentStream?.Length - CurrentStream?.Position)
                 {
                     throw new InvalidFileDBException("bytesize was larger than bytes left to read.");
                 }
@@ -72,17 +114,9 @@ namespace FileDBSerializing
                         else CurrentTag = null;
                         break;
                     default:
-                        throw new InvalidFileDBException();
+                        throw new InvalidFileDBException("Undefined State");
                 }
             }
-
-            //init tag section
-            TagSection t = parser.ReadTagSection(filedb.OFFSET_TO_OFFSETS);
-            filedb.Tags = t;
-
-            stopWatch.Stop();
-            Console.WriteLine("FILEDB Deserialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
-            return filedb;
         }
 
         private void AddNode(FileDBNode node)

@@ -4,8 +4,11 @@ using System.IO;
 
 namespace FileDBSerializing
 {
-    internal interface IFileDBWriter
+    public interface IFileDBWriter
     {
+        //has to be public for extension methods, meh
+        public BinaryWriter Writer { get; }
+
         void WriteTag(Tag t);
         void WriteAttrib(Attrib a);
         void WriteTagSection(TagSection tagSection);
@@ -21,9 +24,9 @@ namespace FileDBSerializing
         void WriteNodeTerminator();
     }
 
-    internal static class IFileDBWriterExtensions
+    public static class IFileDBWriterExtensions
     {
-        internal static void WriteNode(this IFileDBWriter filedbwriter, FileDBNode n)
+        public static void WriteNode(this IFileDBWriter filedbwriter, FileDBNode n)
         {
             if (n.NodeType == FileDBNodeType.Tag)
                 filedbwriter.WriteTag((Tag)n);
@@ -31,7 +34,7 @@ namespace FileDBSerializing
                 filedbwriter.WriteAttrib((Attrib)n);
         }
 
-        internal static void WriteNodeCollection(this IFileDBWriter filedbwriter, IEnumerable<FileDBNode> collection)
+        public static void WriteNodeCollection(this IFileDBWriter filedbwriter, IEnumerable<FileDBNode> collection)
         {
             foreach (FileDBNode n in collection)
             {
@@ -39,7 +42,7 @@ namespace FileDBSerializing
             }
         }
 
-        internal static void RemoveNonesAndWriteTagSection(this IFileDBWriter filedbwriter, TagSection tagSection)
+        public static void RemoveNonesAndWriteTagSection(this IFileDBWriter filedbwriter, TagSection tagSection)
         {
             tagSection.Tags.Remove(1);
             tagSection.Attribs.Remove(32768);
@@ -48,6 +51,11 @@ namespace FileDBSerializing
 
             tagSection.Tags.Add(1, "None");
             tagSection.Attribs.Add(32768, "None");
+        }
+
+        public static void Flush(this IFileDBWriter writer)
+        {
+            writer.Writer?.Flush();
         }
     }
 }

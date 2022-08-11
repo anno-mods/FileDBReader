@@ -5,14 +5,22 @@ using System.Xml;
 
 namespace FileDBReader.src.XmlRepresentation
 {
-    public class XmlFileDbConverter<T> where T : IFileDBDocument, new()
+    public class XmlFileDbConverter
     {
-        T filedb;
+        IFileDBDocument filedb;
+
         private ushort TagID;
         private ushort AttribID;
 
         private static readonly ushort TAG_START = 1; //0x01 0x00
         private static readonly ushort ATTRIB_START = 32768; //0x01 0x80
+
+        private FileDBDocumentVersion _version;
+
+        public XmlFileDbConverter(FileDBDocumentVersion version)
+        {
+            _version = version;
+        }
 
         private void ResetIDCounter()
         {
@@ -20,12 +28,12 @@ namespace FileDBReader.src.XmlRepresentation
             AttribID = (ushort)(ATTRIB_START + 1);
         }
 
-        public T ToFileDb(XmlDocument xml)
+        public IFileDBDocument ToFileDb(XmlDocument xml)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            filedb = new T();
+            filedb = DependencyVersions.GetDocument(_version);
             ResetIDCounter();
 
             //skip content node
@@ -39,7 +47,7 @@ namespace FileDBReader.src.XmlRepresentation
             else throw new InvalidXmlDocumentInputException("The XML document provided is missing a root Node! Conversion was terminated!");
 
             stopWatch.Stop();
-            Console.WriteLine("XML to FILEDB conversion took: " + stopWatch.Elapsed.TotalMilliseconds);
+            Console.WriteLine("XML to FILEDB conversion took: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
             return filedb;
         }
 

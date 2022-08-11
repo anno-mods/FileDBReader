@@ -5,7 +5,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <StartupObject>FileDBReader.CommandLineHandler</StartupObject>
     <Platforms>AnyCPU;x64</Platforms>
-    <Version>2.0.5</Version>
+    <Version>2.2</Version>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageId></PackageId>
   </PropertyGroup>
@@ -182,5 +182,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

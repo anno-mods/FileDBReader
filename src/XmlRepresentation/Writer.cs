@@ -15,28 +15,23 @@ namespace FileDBReader.src.XmlRepresentation
 
         public Stream Write(XmlDocument doc, Stream Stream, int FileVersion)
         {
-            IFileDBDocument filedb;
+            FileDBDocumentVersion? version = null;
             try
             {
-                if (FileVersion == 1)
-                {
-                    XmlFileDbConverter<FileDBDocument_V1> serializer = new XmlFileDbConverter<FileDBDocument_V1>();
-                    filedb = serializer.ToFileDb(doc);
-                    return DocumentWriter.WriteFileDBToStream(filedb, Stream);
-                }
-                else if (FileVersion == 2)
-                {
-                    XmlFileDbConverter<FileDBDocument_V2> serializer = new XmlFileDbConverter<FileDBDocument_V2>();
-                    filedb = serializer.ToFileDb(doc);
-                    return DocumentWriter.WriteFileDBToStream(filedb, Stream);
-                }
-                else throw new ArgumentException("[WRITER]: Supported FileVersions are 1 and 2!");
+                version = (FileDBDocumentVersion) FileVersion;
+
+                XmlFileDbConverter converter = new XmlFileDbConverter(version.Value);
+                var filedb = converter.ToFileDb(doc);
+                return DocumentWriter.WriteFileDBToStream(filedb, Stream);
             }
-            catch (InvalidXmlDocumentInputException) 
+            catch (InvalidCastException ex)
+            {
+                throw new ArgumentException("[WRITER]: Unsupported File Version!");
+            }
+            catch (InvalidXmlDocumentInputException)
             {
                 Console.WriteLine("[WRITER]: Invalid XML Document input");
             }
-
             return null;
         }
 

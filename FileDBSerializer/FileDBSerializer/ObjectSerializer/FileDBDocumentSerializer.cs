@@ -25,11 +25,7 @@ namespace FileDBSerializing.ObjectSerializer
 
         private void InitTargetDocument()
         {
-            switch (Options.Version)
-            {
-                case FileDBDocumentVersion.Version1: TargetDocument = new FileDBDocument_V1(); break;
-                case FileDBDocumentVersion.Version2: TargetDocument = new FileDBDocument_V2(); break;
-            }
+            TargetDocument = DependencyVersions.GetDocument(Options.Version);
         }
         #endregion
 

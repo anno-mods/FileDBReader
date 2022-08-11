@@ -25,12 +25,12 @@ namespace FileDBReader.src
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Could not open File: {0} - File does not exist", Filename);
-                throw new IOException();
+                throw;
             }
             catch (IOException)
             {
                 Console.WriteLine("Could not open File: {0} - File in Use or other unknown exception", Filename);
-                throw new IOException(); 
+                throw;
             }
         }
 
@@ -50,24 +50,13 @@ namespace FileDBReader.src
                 catch (FileNotFoundException)
                 {
                     Console.WriteLine("Could not access File: {0} - File does not exist", Filename);
-                    throw new IOException();
+                    throw;
                 }
                 catch (IOException)
                 {
                     Console.WriteLine("Could not access File: {0} - File in Use or other unknown exception", Filename);
-                    throw new IOException();
+                    throw;
                 }
-            }
-        }
-
-        public static void SaveHandle(String Filename, bool overwrite, Stream Source)
-        {
-            using (Stream fs = WriteHandle(Filename, overwrite))
-            {
-                fs.Position = 0;
-                Source.Position = 0;
-                Source.CopyTo(fs);
-                Source.Position = 0;
             }
         }
     }

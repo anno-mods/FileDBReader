@@ -1,7 +1,8 @@
 {
   "profiles": {
     "FileDBReader": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "fctohex -f agriculture_02.fc -y"
     }
   }
 }

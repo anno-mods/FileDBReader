@@ -18,7 +18,7 @@ namespace FileDBSerializing.Tests
         {
             var expected = TestDataSources.BuildDocument<FileDBDocument_V2>();
 
-            DocumentParser<FileDBDocument_V2> deserializer = new DocumentParser<FileDBDocument_V2>();
+            DocumentParser deserializer = new DocumentParser(FileDBDocumentVersion.Version2);
 
             IFileDBDocument deser;
             using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v2.bin"))
@@ -37,7 +37,7 @@ namespace FileDBSerializing.Tests
         {
             var expected = TestDataSources.BuildDocument<FileDBDocument_V1>();
 
-            DocumentParser<FileDBDocument_V1> deserializer = new DocumentParser<FileDBDocument_V1>();
+            DocumentParser deserializer = new DocumentParser(FileDBDocumentVersion.Version1);
 
             IFileDBDocument deser;
             using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v1.bin"))

@@ -6,7 +6,7 @@ namespace FileDBSerializing
 {
     public class DocumentWriter
     {
-        private IFileDBWriter StructureWriter;
+        private IFileDBWriter? StructureWriter;
 
         #region serialize
         /// <summary>
@@ -15,34 +15,25 @@ namespace FileDBSerializing
         /// <param name="filedb"></param>
         /// <param name="s">The Stream that should be serialized to.</param>
         /// <returns>the UNCLOSED Stream that contains a serialized version of the document</returns>
-        public Stream WriteFileDBToStream (IFileDBDocument filedb, Stream s)
+        public Stream WriteFileDBToStream (IFileDBDocument filedb, Stream target)
         {
+            if (!target.CanWrite) throw new ArgumentException("Stream needs to be writable!");
+
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            BinaryWriter writer = new BinaryWriter(s);
-
-            if (filedb.VERSION == FileDBDocumentVersion.Version1)
-            {
-                StructureWriter = new FileDBWriter_V1(writer);
-            }
-            else if (filedb.VERSION == FileDBDocumentVersion.Version2)
-            {
-                StructureWriter = new FileDBWriter_V2(writer);
-            }
-
+            StructureWriter = DependencyVersions.GetWriter(filedb.VERSION, target);
             StructureWriter.WriteNodeCollection(filedb.Roots);
             StructureWriter.WriteNodeTerminator(); 
-
             StructureWriter.RemoveNonesAndWriteTagSection(filedb.Tags);
             StructureWriter.WriteMagicBytes();
+            StructureWriter.Flush();
 
-            writer.Flush();
+            target.Position = 0;
 
-            s.Position = 0;
             stopWatch.Stop();
             Console.WriteLine("FILEDB writing took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
-            return s;
+            return target;
         }
         #endregion
     }

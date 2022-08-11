@@ -36,7 +36,7 @@ namespace FileDBReader_Tests
         {
             var Expected = TestDataSources.BuildDocument<FileDBDocument_V2>();
 
-            XmlFileDbConverter<FileDBDocument_V2> serial = new XmlFileDbConverter<FileDBDocument_V2>();
+            XmlFileDbConverter serial = new(FileDBDocumentVersion.Version2);
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
 
@@ -54,7 +54,7 @@ namespace FileDBReader_Tests
         {
             var Expected = TestDataSources.BuildDocument<FileDBDocument_V1>();
 
-            XmlFileDbConverter<FileDBDocument_V1> serial = new XmlFileDbConverter<FileDBDocument_V1>();
+            XmlFileDbConverter serial = new(FileDBDocumentVersion.Version1);
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
 

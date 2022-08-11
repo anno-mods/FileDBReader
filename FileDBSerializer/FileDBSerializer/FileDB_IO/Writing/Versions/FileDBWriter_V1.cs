@@ -9,23 +9,23 @@ namespace FileDBSerializing
 {
     internal class FileDBWriter_V1 : IFileDBWriter
     {
-        private BinaryWriter writer;
+        public BinaryWriter Writer { get; }
 
-        public FileDBWriter_V1(BinaryWriter _writer)
-        { 
-            writer = _writer;
+        public FileDBWriter_V1(Stream s)
+        {
+            Writer = new BinaryWriter(s);
         }
 
         public void WriteNodeID(FileDBNode n)
         {
-            writer.Write((ushort)n.ID);
+            Writer!.Write((ushort)n.ID);
         }
 
         public void WriteAttrib(Attrib a)
         {
             WriteNodeID(a);
-            writer.Write7BitEncodedInt(a.Bytesize);
-            writer.Write(a.Content);
+            Writer!.Write7BitEncodedInt(a.Bytesize);
+            Writer.Write(a.Content);
         }
 
         public void WriteTag(Tag t)
@@ -39,17 +39,17 @@ namespace FileDBSerializing
         {
             int offset = WriteDictionary(tagSection.Tags);
             WriteDictionary(tagSection.Attribs);
-            writer.Write(offset);
+            Writer!.Write(offset);
         }
 
         public int WriteDictionary(Dictionary<ushort, string> dict)
         {
-            int offset = (int)writer.Position();
-            writer.Write7BitEncodedInt(dict.Count);
+            int offset = (int)Writer!.Position();
+            Writer!.Write7BitEncodedInt(dict.Count);
             foreach (KeyValuePair<ushort, String> k in dict)
             {
-                writer.WriteString0(k.Value);
-                writer.Write(k.Key);
+                Writer.WriteString0(k.Value);
+                Writer.Write(k.Key);
             }
             return offset;
         }
@@ -61,7 +61,7 @@ namespace FileDBSerializing
 
         public void WriteNodeTerminator()
         {
-            writer.Write((Int16)0);
+            Writer!.Write((Int16)0);
         }
     }
 }

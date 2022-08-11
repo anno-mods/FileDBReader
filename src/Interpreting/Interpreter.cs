@@ -19,6 +19,23 @@ namespace FileDBReader.src
         public List<(String, Conversion)> Conversions = new List<(String, Conversion)>();
         public Conversion DefaultType;
 
+        public static XmlDocument ToInterpreterDoc(Stream InterpreterStream)
+        {
+            XmlDocument doc = new XmlDocument();
+            try
+            { 
+                doc.Load(InterpreterStream);
+                return doc;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("[INTERPRETER]: Could not load Interpreter from Stream: {1}", e.Message);
+                //return an empty interpreter document.
+                doc.LoadXml("<Converts></Converts>");
+                return doc;
+            }
+        }
+
         public static XmlDocument ToInterpreterDoc(String InterpreterPath) 
         {
             XmlDocument doc = new XmlDocument();

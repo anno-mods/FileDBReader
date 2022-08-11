@@ -21,7 +21,7 @@ namespace FileDBReader.src.XmlRepresentation
             ConvertCollection(Root, filedb.Roots);                
 
             stopWatch.Stop();
-            Console.WriteLine("FILEDB to XML conversion took: " + stopWatch.Elapsed.TotalMilliseconds);
+            Console.WriteLine("FILEDB to XML conversion took: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
 
             return doc; 
         }

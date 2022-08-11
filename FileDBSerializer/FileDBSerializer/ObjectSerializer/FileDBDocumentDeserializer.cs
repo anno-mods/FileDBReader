@@ -1,12 +1,9 @@
 ﻿using FileDBSerializing.EncodingAwareStrings;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileDBSerializing.ObjectSerializer
 {
@@ -177,7 +174,8 @@ namespace FileDBSerializing.ObjectSerializer
         private Array BuildStringArray(IEnumerable<FileDBNode> nodes, Type targetType)
         {
             return BuildMultiNodeArray(nodes,
-                node => {
+                node =>
+                {
                     if (node is not Attrib attrib)
                         throw new FileDBSerializationException($"Array entry must be Attrib: {node.GetName()}");
                     return InstanceString(targetType, attrib.Content);
@@ -193,7 +191,8 @@ namespace FileDBSerializing.ObjectSerializer
                 throw new FileDBSerializationException($"Array entry type must be Array: {nodes.FirstOrDefault()?.GetName()}");
 
             return BuildMultiNodeArray(nodes,
-                node => {
+                node =>
+                {
                     if (node is not Attrib attrib)
                         throw new FileDBSerializationException($"Array entry must be Attrib: {node.GetName()}");
                     return BuildPrimitiveArray(attrib.Content, contentTargetType);

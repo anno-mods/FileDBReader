@@ -9,30 +9,29 @@ namespace FileDBSerializing
 {
     internal class FileDBParser_V2 : IFileDBParser
     {
-        private BinaryReader reader;
-        private IFileDBDocument TargetDocument;
+        public BinaryReader Reader { get; }
+        public IFileDBDocument? TargetDocument { get; set; }
 
-        public FileDBParser_V2(BinaryReader _reader, IFileDBDocument doc)
+        public FileDBParser_V2(Stream s)
         {
-            reader = _reader;
-            TargetDocument = doc;
+            Reader = new BinaryReader(s);
         }
 
         public Dictionary<ushort, string> ParseDictionary(int Offset)
         {
-            reader.BaseStream.Position = Offset;
+            Reader!.BaseStream.Position = Offset;
             Dictionary<ushort, string> dictionary = new Dictionary<ushort, string>();
 
-            int Count = reader.ReadInt32();
+            int Count = Reader.ReadInt32();
             ushort[] IDs = new ushort[Count];
 
             for (int i = 0; i < Count; i++)
             {
-                IDs[i] = reader.ReadUInt16();
+                IDs[i] = Reader.ReadUInt16();
             }
             for (int i = 0; i < Count; i++)
             {
-                String name = reader.ReadString0();
+                String name = Reader.ReadString0();
                 dictionary.Add(IDs[i], name);
             }
             return dictionary;
@@ -40,15 +39,15 @@ namespace FileDBSerializing
 
         public Attrib ReadAttrib(int bytesize, int ID, Tag ParentTag)
         {
-            Attrib a = this.CreateAttrib(bytesize, ID, TargetDocument);
+            Attrib a = this.CreateAttrib(bytesize, ID, TargetDocument!);
             a.Parent = ParentTag;
             return a;
         }
 
         public byte[] ReadAttribContent(int bytesize)
         {
-            int ContentSize = FileDBDocument_V2.GetBlockSpace(bytesize);
-            byte[] Content = reader.ReadBytes(ContentSize);
+            int ContentSize = MemoryBlocks.GetBlockSpace(bytesize, FileDBDocument_V2.ATTRIB_BLOCK_SIZE);
+            byte[] Content = Reader!.ReadBytes(ContentSize);
             Array.Resize<byte>(ref Content, bytesize);
             return Content;
         }
@@ -56,8 +55,8 @@ namespace FileDBSerializing
         public States ReadNextOperation(out int _bytesize, out ushort _id)
         {
             //typecast is not nice. bb fix your shitty compression. 
-            int bytesize = reader.ReadInt32();
-            ushort ID = (ushort)reader.ReadInt32();
+            int bytesize = Reader!.ReadInt32();
+            ushort ID = (ushort)Reader.ReadInt32();
             _bytesize = bytesize;
             _id = ID;
             return this.DetermineState(ID);
@@ -65,15 +64,15 @@ namespace FileDBSerializing
 
         public Tag ReadTag(int ID, Tag ParentTag)
         {
-            return new Tag() { ID = ID, ParentDoc = TargetDocument, Parent = ParentTag };
+            return new Tag() { ID = ID, ParentDoc = TargetDocument!, Parent = ParentTag };
         }
 
         public TagSection ReadTagSection(int OffsetToOffsets)
         {
-            reader.SetPosition(reader.BaseStream.Length - OffsetToOffsets);
+            Reader!.SetPosition(Reader!.BaseStream.Length - OffsetToOffsets);
 
-            int TagsOffset = reader.ReadInt32();
-            int AttribsOffset = reader.ReadInt32();
+            int TagsOffset = Reader.ReadInt32();
+            int AttribsOffset = Reader.ReadInt32();
             return new TagSection(
                 /*Tags*/    ParseDictionary(TagsOffset),
                 /*Attribs*/ ParseDictionary(AttribsOffset)

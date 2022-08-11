@@ -49,10 +49,10 @@ namespace FileDBSerializing.Tests
         {
             var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version1.filedb");
 
-            DocumentParser<FileDBDocument_V1> parser = new();
+            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version1);
             IFileDBDocument doc = parser.LoadFileDBDocument(x);
 
-            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1});
 
             var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
 
@@ -64,7 +64,7 @@ namespace FileDBSerializing.Tests
         {
             var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
 
-            DocumentParser<FileDBDocument_V2> parser = new();
+            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version2);
             IFileDBDocument doc = parser.LoadFileDBDocument(x);
 
             FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
@@ -144,7 +144,7 @@ namespace FileDBSerializing.Tests
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream("<Content></Content>"));
-            IFileDBDocument doc = new XmlFileDbConverter<FileDBDocument_V1>().ToFileDb(xmlDocument);
+            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlDocument);
 
             // serialize & deserialize
             FileDBDocumentDeserializer<FlatStringArrayContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
@@ -181,7 +181,7 @@ namespace FileDBSerializing.Tests
                 "<Convert Path=\"//Item\" Type=\"String\" Encoding=\"UTF-8\"/>" +
                 "</Converts></Converts>"));
             XmlDocument xmlWithBytes = new FileDBReader.XmlExporter().Export(xmlDocument, new(interpreterDocument));
-            IFileDBDocument doc = new XmlFileDbConverter<FileDBDocument_V1>().ToFileDb(xmlWithBytes);
+            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlWithBytes);
 
             Assert.AreEqual(3, doc.Roots.Count);
             Assert.IsTrue(doc.Roots[0] is Attrib);
@@ -236,7 +236,7 @@ namespace FileDBSerializing.Tests
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
-            IFileDBDocument doc = new XmlFileDbConverter<FileDBDocument_V1>().ToFileDb(xmlDocument);
+            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlDocument);
 
             // serialize & deserialize
             FileDBDocumentDeserializer<PrimitiveListArrayContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });

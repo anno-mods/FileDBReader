@@ -9,17 +9,19 @@ namespace FileDBSerializing
 {
     internal class FileDBWriter_V2 : IFileDBWriter
     {
-        private BinaryWriter writer;
+        public BinaryWriter Writer { get; }
 
-        public FileDBWriter_V2(BinaryWriter _writer)
+        private static int MemBlockSize = FileDBDocument_V2.ATTRIB_BLOCK_SIZE;
+
+        public FileDBWriter_V2(Stream s)
         {
-            writer = _writer;
+            Writer = new BinaryWriter(s);
         }
 
         public void WriteAttrib(Attrib a)
         {
             WriteNodeID(a);
-            writer.Write(ToByteBlocks(a.Content, a.Bytesize));
+            Writer!.Write(ToByteBlocks(a.Content, a.Bytesize));
         }
 
         public void WriteTag(Tag t)
@@ -31,60 +33,60 @@ namespace FileDBSerializing
 
         public int WriteDictionary(Dictionary<ushort, string> dict)
         {
-            int Offset = (int)writer.BaseStream.Position;
-            writer.Write(dict.Count);
+            int Offset = (int)Writer!.BaseStream.Position;
+            Writer.Write(dict.Count);
             int bytesWritten = 4;
             foreach (KeyValuePair<ushort, String> k in dict)
             {
-                writer.Write(k.Key);
+                Writer.Write(k.Key);
                 bytesWritten += 2;
             }
             foreach (KeyValuePair<ushort, String> k in dict)
             {
-                bytesWritten += writer.WriteString0(k.Value);
+                bytesWritten += Writer.WriteString0(k.Value);
             }
 
             //fill each dictionary size up to a multiple of 8.
-            int ToWrite = FileDBDocument_V2.GetBlockSpace(bytesWritten) - bytesWritten;
+            int ToWrite = MemoryBlocks.GetBlockSpace(bytesWritten, MemBlockSize) - bytesWritten;
             var AddBytes = new byte[ToWrite];
-            writer.Write(AddBytes);
+            Writer.Write(AddBytes);
 
-            writer.Flush();
+            Writer.Flush();
             return Offset;
         }
 
         public void WriteMagicBytes()
         {
-            writer.Write(8);
-            writer.Write(-2);
+            Writer!.Write(Versioning.GetMagicBytes(FileDBDocumentVersion.Version2));
         }
 
         public void WriteTagSection(TagSection tagSection)
         {
             int TagsOffset = WriteDictionary(tagSection.Tags);
             int AttribsOffset = WriteDictionary(tagSection.Attribs);
-            writer.Write(TagsOffset);
-            writer.Write(AttribsOffset);
+            Writer!.Write(TagsOffset);
+            Writer.Write(AttribsOffset);
         }
 
         public void WriteNodeID(FileDBNode node)
         {
-            writer.Write(node.Bytesize);
-            writer.Write(node.ID);
+            Writer!.Write(node.Bytesize);
+            Writer.Write(node.ID);
         }
 
         public void WriteNodeTerminator()
         {
-            writer.Write((Int64)0);
+            Writer!.Write((Int64)0);
         }
 
         //Account for Attributes to be written in blocks.
 
         private byte[] ToByteBlocks(byte[] attrib, int bytesize)
         {
-            int ContentSize = FileDBDocument_V2.GetBlockSpace(bytesize);
+            int ContentSize = MemoryBlocks.GetBlockSpace(bytesize, MemBlockSize);
             Array.Resize<byte>(ref attrib, ContentSize);
             return attrib;
         }
+
     }
 }

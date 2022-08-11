@@ -51,7 +51,7 @@ namespace FileDBReader
 
         private static void NodelookupTest()
         {
-            DocumentParser<FileDBDocument_V1> ser = new DocumentParser<FileDBDocument_V1>();
+            DocumentParser ser = new DocumentParser(FileDBDocumentVersion.Version1);
 
             var fdoc = ser.LoadFileDBDocument(File.OpenRead("dev_files/a7tinfo/moderate_atoll_ll_01.a7tinfo"));
             fdoc.SelectNodes("MapTemplate/Size");
@@ -238,7 +238,7 @@ namespace FileDBReader
             interpreterDoc.Load(INTERPRETER_FILE);
 
             //read
-            var Read = FcFileHelper.ReadFcFile(TESTFILE);
+            var Read = FcFileHelper.ReadFcFile(SecureIoHandler.ReadHandle(TESTFILE));
             Read.Save(CDATAREAD_TESTFILE);
 
             var Interpreted = interpreter.Interpret(Read, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
@@ -247,7 +247,7 @@ namespace FileDBReader
             var Reinterpreted = exporter.Export(Interpreted, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
             Reinterpreted.Save(REINTERPRETED_TESTFILE);
 
-            var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(Reinterpreted), ConversionMode.Write);
+            var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(Reinterpreted), ConversionMode.Write, new MemoryStream());
             Save(Written, CDATAWRITTEN_TESTFILE);
 
             //save 

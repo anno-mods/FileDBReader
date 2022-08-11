@@ -130,37 +130,6 @@ namespace FileDBReader {
             [Option('y', "overwrite", Required = false, Default = false)]
             public bool overwrite { get; set; }
         }
-
-        [Obsolete("decompress_Interpret has been merged with the verb decompress")]
-        [Verb("decompress_interpret", HelpText = "DEPRACATED. decompress a filedb file and interpret it. An interpreter file is needed. ")]
-        class Decompress_Interpret_Options
-        {
-            [Option('f', "files", Required = true, HelpText = "input files")]
-            public IEnumerable<String> InputFiles { get; set; }
-
-            [Option('i', "interpreter", Required = true, HelpText = "Interpreter file")]
-            public String Interpreter { get; set; }
-
-            [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
-            public int CompressionVersion { get; set; }
-        }
-        [Obsolete("recompress_export has been merged with the verb recompress")]
-        [Verb("recompress_export", HelpText = "DEPRACATED. reimport an xml file to filedb. An interpreter file is needed")]
-        class Recompress_Export_Options
-        {
-            [Option('f', "files", Required = true, HelpText = "input files")]
-            public IEnumerable<String> InputFiles { get; set; }
-
-            [Option('i', "interpreter", Required = true, HelpText = "Interpreter file")]
-            public String Interpreter { get; set; }
-
-            [Option('o', "outputFileExtension", Required = false, HelpText = "file Format of the output file")]
-            public String OutputFileExtension { get; set; }
-
-            [Option('c', "CompressionVersion", Required = true, HelpText = "File Version: \n1 for Anno 1800 files up to GU12 \n2for Anno 1800 files after GU12")]
-            public int CompressionVersion { get; set; }
-        }
-
         #endregion
 
         #region MainMethod
@@ -178,8 +147,6 @@ namespace FileDBReader {
                     FileCheck_Options,
                     FcImportOptions, 
                     FcExportOptions
-                    //Decompress_Interpret_Options, 
-                    //Recompress_Export_Options
                 > 
                 (args).MapResult(
 
@@ -217,17 +184,6 @@ namespace FileDBReader {
                 (FcExportOptions o) =>
                 {
                     return Functions.FcFileExport(o.InputFiles, o.Interpreter, o.overwrite);
-                },
-
-
-                //---------DEPRACATED FUNCTIONS---------//
-                (Decompress_Interpret_Options o ) =>
-                {
-                    return Functions.Decompress(o.InputFiles, o.Interpreter, false, null);
-                }, 
-                (Recompress_Export_Options o) => 
-                {
-                    return Functions.Compress(o.InputFiles, o.Interpreter, o.OutputFileExtension, o.CompressionVersion, false, null); 
                 },
                 e => 1
             ) ;

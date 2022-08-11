@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FileDBSerializing
 {
-    internal interface IFileDBParser
+    public interface IFileDBParser
     {
+        public BinaryReader Reader { get; }
+        public IFileDBDocument? TargetDocument { get; set; }
+
         /// <summary>
         /// Reads the Next Nodes ID and bytesize from the Reader and advances its position.
         /// </summary>
@@ -53,18 +57,23 @@ namespace FileDBSerializing
         /// <param name="ID">the ID of the attrib to be constructed</param>
         /// <returns>the constructed attribute.</returns>
         Attrib ReadAttrib(int bytesize, int ID, Tag ParentTag);
+
+        void RegisterDocument(IFileDBDocument doc)
+        {
+            TargetDocument = doc;
+        }
     }
 
-    internal static class IFileDBParserExtensions
+    public static class IFileDBParserExtensions
     {
-        internal static Attrib CreateAttrib(this IFileDBParser parser, int bytesize, int ID, IFileDBDocument parent)
+        public static Attrib CreateAttrib(this IFileDBParser parser, int bytesize, int ID, IFileDBDocument parent)
         {
             byte[] Content;
             Content = parser.ReadAttribContent(bytesize);
             return new Attrib() { ID = ID, Bytesize = bytesize, Content = Content, ParentDoc = parent};
         }
 
-        internal static States DetermineState(this IFileDBParser parser, int ID)
+        public static States DetermineState(this IFileDBParser parser, int ID)
         {
             switch (ID)
             {

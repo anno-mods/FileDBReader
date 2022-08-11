@@ -28,9 +28,9 @@ namespace FileDBReader
 
         }
 
-        public XmlDocument ReadFcFile(String Filename)
+        public XmlDocument ReadFcFile(Stream fcStream)
         {
-            return StreamToXmlFile(ConvertFile(File.OpenRead(Filename), ConversionMode.Read));
+            return StreamToXmlFile(ConvertFile(fcStream, ConversionMode.Read, fcStream));
         }
 
         public XmlDocument StreamToXmlFile(Stream stream) {
@@ -42,7 +42,7 @@ namespace FileDBReader
 
         public Stream XmlFileToStream(XmlDocument doc)
         {
-            Stream stream = new MemoryStream();
+            var stream = new MemoryStream();
             doc.Save(stream);
             stream.Flush();
             stream.Position = 0;
@@ -57,7 +57,7 @@ namespace FileDBReader
             fs.Close();
         }
 
-        public Stream ConvertFile(Stream fs, ConversionMode mode)
+        public Stream ConvertFile(Stream fs, ConversionMode mode, Stream output)
         {
             CorrectMultiRoots correctMultiRoots = new CorrectMultiRoots();
             if (mode == ConversionMode.Read)
@@ -72,7 +72,6 @@ namespace FileDBReader
             //initialize writer and reader
             var reader = new BinaryReader(fs);
             var Encoding = new UTF8Encoding();
-            MemoryStream output = new MemoryStream();
             var writer = new BinaryWriter(output, Encoding);
 
             //initialize lastSixChars and Current Char

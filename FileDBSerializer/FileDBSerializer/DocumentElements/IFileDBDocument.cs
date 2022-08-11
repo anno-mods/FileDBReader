@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace FileDBSerializing
 {
-    public enum FileDBDocumentVersion { Unknown = -1, Version1 = 1, Version2 = 2, }
-
     public interface IFileDBDocument
     {
         public List<FileDBNode> Roots { get; set; }
