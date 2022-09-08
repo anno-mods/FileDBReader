@@ -54,6 +54,8 @@ namespace FileDBSerializing.ObjectSerializer
 
         #region SINGLE NODES
         //parent switch for node types
+
+        //TopLevelHandlerService
         private IEnumerable<FileDBNode> BuildNode(PropertyInfo property, object parentObject)
         {
             Type PropertyType = property.GetNullablePropertyType();
@@ -94,6 +96,8 @@ namespace FileDBSerializing.ObjectSerializer
         #region ARRAYS
 
         //parent switch for arrays
+
+        //ArrayHandlerService
         private IEnumerable<FileDBNode> BuildArray(PropertyInfo property, object graph)
         {
             Type ArrayContentType = property.GetNullablePropertyType().GetElementType()!;
@@ -165,6 +169,7 @@ namespace FileDBSerializing.ObjectSerializer
             return ConstructAttrib(PrimitiveObjectInstance, attr);
         }
 
+        //PrimitiveOrStringHandlerService - check!
         private Attrib ConstructAttrib(object PrimitiveObjectInstance, Attrib AttribInject)
         {
             if (PrimitiveObjectInstance.GetType().IsStringType())
