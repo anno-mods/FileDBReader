@@ -37,7 +37,7 @@ namespace FileDBReader_Tests
             obj.RefArray = new ArrayElement[2]
             {
                 new ArrayElement() { ElementContent = 3 },
-                new ArrayElement()
+                new ArrayElement() { ElementContent = 42 }
             };
 
             return obj;

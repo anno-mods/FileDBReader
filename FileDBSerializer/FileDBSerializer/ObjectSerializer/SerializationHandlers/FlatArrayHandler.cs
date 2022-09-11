@@ -13,7 +13,24 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
     {
         public IEnumerable<FileDBNode> Handle(object graph, PropertyInfo property, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {
-            throw new NotImplementedException();
+            var arrayInstance = property.GetValue(graph) as Array;
+            if (arrayInstance is null) throw new InvalidOperationException($"{property.PropertyType} cannot be casted into an Array");
+
+            Type arrayContentType = property.GetNullablePropertyType().GetElementType()!;
+            PropertyInfo[] contentProperties = arrayContentType.GetProperties();
+
+            for (int i = 0; i < arrayInstance.Length; i++)
+            {
+                var arrayEntry = arrayInstance.GetValue(i);
+                Tag tag = workingDocument.AddTag(property.Name);
+
+                foreach (PropertyInfo _prop in contentProperties)
+                {
+                    var childnodes = HandlerProvider.GetHandlerFor(_prop).Handle(arrayEntry!, _prop, workingDocument, options);
+                    tag.AddChildren(childnodes);
+                }
+                yield return tag;
+            }
         }
     }
 }

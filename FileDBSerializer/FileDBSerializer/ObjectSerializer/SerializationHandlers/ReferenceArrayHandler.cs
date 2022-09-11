@@ -27,25 +27,14 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             {
                 var arrayEntry = arrayInstance.GetValue(i);
                 Tag none = workingDocument.AddTag(options.NoneTag);
-                none.AddChildren(ToTags(arrayEntry!, contentProperties, workingDocument, options));
+                foreach (PropertyInfo _prop in contentProperties)
+                {
+                    var childnodes = HandlerProvider.GetHandlerFor(_prop).Handle(arrayEntry!, _prop, workingDocument, options);
+                    none.AddChildren(childnodes);
+                }
                 t.AddChild(none);
             }
             return t.AsEnumerable();
-        }
-
-        private IEnumerable<FileDBNode> ToTags(
-            object graph, 
-            PropertyInfo[] properties, 
-            IFileDBDocument workingDocument,
-            FileDBSerializerOptions options
-        )
-        {
-            foreach (var _prop in properties)
-            {
-                var handler = HandlerProvider.GetHandlerFor(_prop);
-                var nodes = handler.Handle(graph, _prop, workingDocument, options);
-                foreach (var node in nodes) yield return node;
-            }
         }
     }
 }
