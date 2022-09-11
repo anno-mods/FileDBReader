@@ -30,7 +30,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 
         public static ISerializationHandler GetHandlerFor(PropertyInfo property)
         {
-            var type = HandlerSelection.TopLevelHandlerService.GetHandlerFor(property);
+            var type = Selectors.TopLevelHandlerService.GetHandlerFor(property);
             return GetFromType(type);
         }
     }

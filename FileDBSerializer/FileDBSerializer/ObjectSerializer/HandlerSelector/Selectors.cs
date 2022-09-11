@@ -2,7 +2,7 @@
 
 namespace FileDBSerializer.ObjectSerializer
 {
-    public class HandlerSelection
+    public class Selectors
     {
         public static TopLevelHandlerSelector TopLevelHandlerService = new TopLevelHandlerSelector();
         public static ArrayHandlerSelector ArrayHandlerService = new ArrayHandlerSelector();

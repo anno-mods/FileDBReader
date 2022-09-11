@@ -36,7 +36,7 @@ namespace FileDBReader_Tests
             obj.PrimitiveArray = new int[] { 3, 1, 4, 1, 5 };
             obj.RefArray = new ArrayElement[2]
             {
-                new ArrayElement(),
+                new ArrayElement() { ElementContent = 3 },
                 new ArrayElement()
             };
 

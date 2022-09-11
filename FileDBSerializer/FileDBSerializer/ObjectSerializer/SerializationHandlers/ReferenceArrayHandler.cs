@@ -16,11 +16,13 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
         {
             var arrayInstance = property.GetValue(graph) as Array;
             if (arrayInstance is null) throw new InvalidOperationException($"{property.PropertyType} cannot be casted into an Array");
-            
+
+            Tag t = workingDocument.AddTag(property.Name);
+
+            //Add array entries to the mix
             Type arrayContentType = property.GetNullablePropertyType().GetElementType()!;
             PropertyInfo[] contentProperties = arrayContentType.GetProperties();
 
-            Tag t = workingDocument.AddTag(property.Name);
             for (int i = 0; i < arrayInstance.Length; i++)
             {
                 var arrayEntry = arrayInstance.GetValue(i);
