@@ -48,7 +48,7 @@ namespace FileDBSerializing.ObjectSerializer
 
             //try to find the property this needs to go for
             Type parentType = parentObject!.GetType();
-            PropertyInfo? propertyInfo = parentType.GetProperty(PropertyName);
+            PropertyInfo? propertyInfo = GetPropertyForName(PropertyName, parentType);
 
             if (propertyInfo is null)
             {
@@ -62,6 +62,26 @@ namespace FileDBSerializing.ObjectSerializer
                 BuildArrayProperty(node, propertyInfo as PropertyInfo, parentObject);
             else
                 BuildSingleValue(node, propertyInfo as PropertyInfo, parentObject);
+        }
+
+        private PropertyInfo? GetPropertyForName(string name, Type inType)
+        {
+            PropertyInfo? result = null;
+
+            foreach(PropertyInfo propertyInfo in inType.GetProperties()){
+                RenamePropertyAttribute? piRenameAttr = propertyInfo.GetCustomAttribute<RenamePropertyAttribute>();  
+                if (piRenameAttr is not null && piRenameAttr.RenameTo == name)
+                {
+                    return propertyInfo;
+                }
+
+                if(propertyInfo.Name == name)
+                {
+                    result = propertyInfo;
+                }
+            }
+
+            return result;
         }
 
         #region SingleValue_Parent
