@@ -8,7 +8,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     public class ReferenceArrayHandler : ISerializationHandler
     {
-        public FileDBNode Handle(
+        public IEnumerable<FileDBNode> Handle(
             object graph, 
             PropertyInfo property, 
             IFileDBDocument workingDocument,
@@ -30,7 +30,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
                 none.AddChildren(ToTags(arrayEntry!, contentProperties, workingDocument, options));
                 t.AddChild(none);
             }
-            return t;
+            return t.AsEnumerable();
         }
 
         private IEnumerable<FileDBNode> ToTags(
@@ -43,7 +43,8 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             foreach (var _prop in properties)
             {
                 var handler = HandlerProvider.GetHandlerFor(_prop);
-                yield return handler.Handle(graph, _prop, workingDocument, options);
+                var nodes = handler.Handle(graph, _prop, workingDocument, options);
+                foreach (var node in nodes) yield return node;
             }
         }
     }

@@ -11,7 +11,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     internal class FlatArrayHandler : ISerializationHandler
     {
-        public FileDBNode Handle(object graph, PropertyInfo property, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<FileDBNode> Handle(object graph, PropertyInfo property, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {
             throw new NotImplementedException();
         }

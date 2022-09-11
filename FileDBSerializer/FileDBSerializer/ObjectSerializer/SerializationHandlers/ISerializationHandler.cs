@@ -1,11 +1,12 @@
 ﻿using FileDBSerializing;
 using FileDBSerializing.ObjectSerializer;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     public interface ISerializationHandler
     {
-        public FileDBNode Handle(object graph, PropertyInfo property, IFileDBDocument workingDocument, FileDBSerializerOptions options);
+        public IEnumerable<FileDBNode> Handle(object graph, PropertyInfo property, IFileDBDocument workingDocument, FileDBSerializerOptions options);
     }
 }

@@ -49,7 +49,7 @@ namespace FileDBSerializing.ObjectSerializer
         {
             var handler = HandlerProvider.GetHandlerFor(property);
             var node = handler.Handle(parentObject, property, TargetDocument, Options);
-            return node.AsEnumerable();
+            return node;
         }
     }
 }
