@@ -52,6 +52,11 @@ namespace FileDBSerializing.ObjectSerializer
             }
         }
 
+        private string GetFileDBItemName(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetCustomAttribute<RenamePropertyAttribute>()?.RenameTo ?? propertyInfo.Name;
+        }
+
         #region SINGLE NODES
         //parent switch for node types
 
@@ -159,7 +164,7 @@ namespace FileDBSerializing.ObjectSerializer
         private Attrib BuildSingleValueAttrib(object graph, PropertyInfo ObjectProperty)
         {
             var PrimitiveObjectInstance = ObjectProperty.GetValue(graph);
-            Attrib attr = TargetDocument.AddAttrib(ObjectProperty.Name);
+            Attrib attr = TargetDocument.AddAttrib(GetFileDBItemName(ObjectProperty));
 
             if (PrimitiveObjectInstance is null)
             {
@@ -201,7 +206,7 @@ namespace FileDBSerializing.ObjectSerializer
         {
             //Get the instance of the property for our specific object as well as the properties of its type.
             var ValueObjectInstance = ObjectProperty.GetValue(graph);
-            Tag t = TargetDocument.AddTag(ObjectProperty.Name);
+            Tag t = TargetDocument.AddTag(GetFileDBItemName(ObjectProperty));
 
             if (ValueObjectInstance is null) return t;
 
@@ -238,7 +243,7 @@ namespace FileDBSerializing.ObjectSerializer
         //Array of primitive Types
         private Attrib BuildPrimitiveArrayAttrib(object ArrayObjectInstance, PropertyInfo ObjectProperty)
         {
-            Attrib attr = TargetDocument.AddAttrib(ObjectProperty.Name);
+            Attrib attr = TargetDocument.AddAttrib(GetFileDBItemName(ObjectProperty));
             Array? arrayObject = ObjectProperty.GetValue(ArrayObjectInstance) as Array;
 
             attr.Content = arrayObject is not null ? BuildPrimitiveArrayContent(arrayObject) : new byte[0];
@@ -269,12 +274,12 @@ namespace FileDBSerializing.ObjectSerializer
         private IEnumerable<Attrib> BuildStringArray(object arrayObject, PropertyInfo objectProperty)
         {
             return BuildArrayElements(arrayObject, objectProperty, 
-                (x) => ConstructAttrib(x, TargetDocument.AddAttrib(objectProperty.Name)));
+                (x) => ConstructAttrib(x, TargetDocument.AddAttrib(GetFileDBItemName(objectProperty))));
         }
 
         private Tag BuildStringArrayTag(object arrayObject, PropertyInfo objectProperty)
         {
-            Tag tag = TargetDocument.AddTag(objectProperty.Name);
+            Tag tag = TargetDocument.AddTag(GetFileDBItemName(objectProperty));
             tag.AddChildren(BuildArrayElements(arrayObject, objectProperty,
                 (x) => ConstructAttrib(x, TargetDocument.AddAttrib(Options.NoneTag))));
             return tag;
@@ -282,7 +287,7 @@ namespace FileDBSerializing.ObjectSerializer
 
         private Tag BuildMultiNodeArray(object arrayObject, PropertyInfo objectProperty, Func<object, FileDBNode> elementConstructor)
         {
-            Tag tag = TargetDocument.AddTag(objectProperty.Name);
+            Tag tag = TargetDocument.AddTag(GetFileDBItemName(objectProperty));
             tag.AddChildren(BuildArrayElements(arrayObject, objectProperty, elementConstructor));
             return tag;
         }
