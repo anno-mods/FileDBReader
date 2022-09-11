@@ -28,13 +28,17 @@ namespace FileDBReader_Tests
         internal static NewObject GetSmallTestAsset()
         {
             NewObject obj = new NewObject();
-            obj.Child = new AnyChild() { 
-                ID = 5,
-                Name = "No Plans for a fifth season whatsoever",
-                Description = "We continue to listen to your feedback"};
-            obj.Count = 1337;
-            obj.Value = 1.1415f;
-            obj.IsNew = false;
+            obj.RefObject = new AnyChild() { 
+                DefaultStr = "No Plans for a fifth season whatsoever",
+                EncAwareStr = "We continue to listen to your feedback"};
+            obj.PrimitiveObject = 1337;
+
+            obj.PrimitiveArray = new int[] { 3, 1, 4, 1, 5 };
+            obj.RefArray = new ArrayElement[2]
+            {
+                new ArrayElement(),
+                new ArrayElement()
+            };
 
             return obj;
         }
