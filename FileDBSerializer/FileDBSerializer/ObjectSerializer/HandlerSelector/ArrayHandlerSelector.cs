@@ -15,11 +15,15 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
             {
                 return HandlerType.PrimitiveArray;
             }
+            else if (arrayContentType.IsStringType())
+            {
+                return HandlerType.StringArray;
+            }
             else if (propertyInfo.HasAttribute<FlatArrayAttribute>())
             {
                 return HandlerType.FlatArray;
             }
-            else if (arrayContentType.IsReference() || arrayContentType.IsStringType())
+            else if (arrayContentType.IsReference())
             {
                 return HandlerType.ReferenceArray;
             }

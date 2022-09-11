@@ -39,6 +39,13 @@ namespace FileDBReader_Tests
                 new ArrayElement() { ElementContent = 3 },
                 new ArrayElement() { ElementContent = 42 }
             };
+            obj.FlatArray = new ArrayElement[3]
+            {
+                new ArrayElement() { ElementContent = 18 },
+                new ArrayElement() { ElementContent = 15},
+                new ArrayElement() { ElementContent = 120 }
+            };
+            obj.StringArray = new string[2]{ "lol", "12345" };
 
             return obj;
         }
