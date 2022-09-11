@@ -20,11 +20,13 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             Type arrayContentType = property.GetNullablePropertyType().GetElementType()!;
             PropertyInfo[] contentProperties = arrayContentType.GetProperties();
 
-            Tag t = workingDocument.AddTag(options.NoneTag);
+            Tag t = workingDocument.AddTag(property.Name);
             for (int i = 0; i < arrayInstance.Length; i++)
             {
                 var arrayEntry = arrayInstance.GetValue(i);
-                t.AddChildren(ToTags(arrayEntry!, contentProperties, workingDocument, options));
+                Tag none = workingDocument.AddTag(options.NoneTag);
+                none.AddChildren(ToTags(arrayEntry!, contentProperties, workingDocument, options));
+                t.AddChild(none);
             }
             return t;
         }
