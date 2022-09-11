@@ -9,7 +9,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
     /// <summary>
     /// Creates a FileDBNode that represents a single string object.
     /// </summary>
-    public class StringSingleValueHandler : ISerializationHandler
+    public class StringHandler : ISerializationHandler
     {
         /// <summary>
         /// </summary>

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
-    internal class ReferenceTypeArrayHandler : ISerializationHandler
+    internal class TupleHandler : ISerializationHandler
     {
         public FileDBNode Handle(object graph, PropertyInfo property, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {

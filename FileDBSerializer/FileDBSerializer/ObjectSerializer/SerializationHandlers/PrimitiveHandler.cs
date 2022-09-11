@@ -8,11 +8,11 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
     /// <summary>
     /// A Handler for simple primitive values
     /// </summary>
-    public class PrimitiveSingleValueHandler : ISerializationHandler
+    public class PrimitiveHandler : ISerializationHandler
     {
         private static PrimitiveTypeConverter? PrimitiveConverter;
 
-        public PrimitiveSingleValueHandler()
+        public PrimitiveHandler()
         {
             PrimitiveConverter ??= new PrimitiveTypeConverter();
         }

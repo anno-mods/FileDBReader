@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FileDBSerializing.Tests.TestData;
+using FileDBReader_Tests.TestSerializationData;
 
 namespace FileDBReader_Tests
 {
@@ -22,6 +23,20 @@ namespace FileDBReader_Tests
             root.SimpleString = "Modders gonna take over the world!";
             root.StringArray = new string[] { "There are no plans for a console version of Anno 1800, or to support controllers in the PC version of the game", "We only made this complete Console UI for fun" };
             return root;
+        }
+
+        internal static NewObject GetSmallTestAsset()
+        {
+            NewObject obj = new NewObject();
+            obj.Child = new AnyChild() { 
+                ID = 5,
+                Name = "No Plans for a fifth season whatsoever",
+                Description = "We continue to listen to your feedback"};
+            obj.Count = 1337;
+            obj.Value = 1.1415f;
+            obj.IsNew = false;
+
+            return obj;
         }
 
         internal static IFileDBDocument BuildDocument<T>() where T : IFileDBDocument, new()
