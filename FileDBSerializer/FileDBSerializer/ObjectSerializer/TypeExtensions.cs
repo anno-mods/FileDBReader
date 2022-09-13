@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace FileDBSerializing.ObjectSerializer
@@ -66,6 +67,14 @@ namespace FileDBSerializing.ObjectSerializer
         internal static IEnumerable<FileDBNode> AsEnumerable(this FileDBNode node)
         {
             return new FileDBNode[] { node };
+        }
+    }
+
+    internal static class AttributeEnumerableExtensions
+    {
+        internal static bool ContainsAttribute<T>(this IEnumerable<Attribute> attribCollection) where T : Attribute 
+        {
+            return attribCollection.Any((attr) => attr.GetType() == typeof(FlatArrayAttribute));
         }
     }
 }

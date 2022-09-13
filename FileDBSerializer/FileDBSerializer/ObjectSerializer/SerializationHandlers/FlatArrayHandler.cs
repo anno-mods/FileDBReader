@@ -22,7 +22,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             for (int i = 0; i < arrayInstance.Length; i++)
             {
                 var arrayEntry = arrayInstance.GetValue(i);
-                var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType, new List<Attribute>());
+                var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType, Enumerable.Empty<Attribute>());
 
                 var created = itemHandler.Handle(arrayEntry, tagName, workingDocument, options);
 

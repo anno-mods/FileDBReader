@@ -8,7 +8,6 @@
         Reference,
         PrimitiveArray,
         FlatArray,
-        ReferenceArray,
-        StringArray
+        ReferenceArray
     }
 }

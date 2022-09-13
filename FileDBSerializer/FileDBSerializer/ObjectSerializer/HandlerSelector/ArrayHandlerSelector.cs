@@ -13,8 +13,7 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
         {            
             Type arrayContentType = itemType.GetNullableType().GetElementType()!;
 
-
-            if (customAttributes.Any((attr) => attr.GetType() == typeof(FlatArrayAttribute)))
+            if (customAttributes.ContainsAttribute<FlatArrayAttribute>())
             {
                 return HandlerType.FlatArray;
             }
@@ -22,17 +21,13 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
             {
                 return HandlerType.PrimitiveArray;
             }
-            else if (arrayContentType.IsStringType())
-            {
-                return HandlerType.StringArray;
-            }
-            else if (arrayContentType.IsReference())
+            else if (arrayContentType.IsReference() || arrayContentType.IsStringType())
             {
                 return HandlerType.ReferenceArray;
             }
 
             //fuck the implementation for now
-            throw new NotImplementedException();
+            throw new NotImplementedException($"No handler found for {itemType}");
         }
     }
 }
