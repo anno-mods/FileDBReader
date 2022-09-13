@@ -3,6 +3,7 @@ using FileDBSerializing.EncodingAwareStrings;
 using FileDBSerializing.ObjectSerializer;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
@@ -19,20 +20,22 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
         /// <param name="workingDocument"></param>
         /// <param name="options"></param>
         /// <returns>Attrib containing the string in the byte representation specified either by encodingawarestring or default encoding</returns>
-        public IEnumerable<FileDBNode> Handle(object graph, PropertyInfo property, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {
-            var objectInstance = property.GetValue(graph);
-            Attrib attr = workingDocument.AddAttrib(property.Name);
+            if (item is null && options.SkipSimpleNullValues)
+                return Enumerable.Empty<FileDBNode>();
 
-            if (objectInstance is null)
+            Attrib attr = workingDocument.AddAttrib(tagName);
+
+            if (item is null)
             {
                 attr.Content = new byte[0];
             }
             else
             {
-                attr.Content = objectInstance is EncodingAwareString ?
-                    ((EncodingAwareString)objectInstance).GetBytes()
-                    : options.DefaultEncoding.GetBytes((String)objectInstance!);
+                attr.Content = item is EncodingAwareString ?
+                    ((EncodingAwareString)item).GetBytes()
+                    : options.DefaultEncoding.GetBytes((String)item!);
             }
 
             return attr.AsEnumerable();

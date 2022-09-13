@@ -1,15 +1,16 @@
 ﻿using FileDBSerializer.ObjectSerializer.SerializationHandlers;
 using FileDBSerializing.ObjectSerializer;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace FileDBSerializer.ObjectSerializer.HandlerSelector
 {
-    public class TopLevelHandlerSelector
+    public class TopLevelHandlerSelector : IHandlerSelector
     {
-        public HandlerType GetHandlerFor(PropertyInfo propertyInfo)
+        public HandlerType GetHandlerFor(Type itemType, IEnumerable<Attribute> customAttributes)
         {
-            var propertyType = propertyInfo.GetNullablePropertyType();
+            var propertyType = itemType.GetNullableType();
             if (propertyType.IsStringType())
                 return HandlerType.String;
 
@@ -17,11 +18,11 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
                 return HandlerType.Primitive;
 
             if (propertyType.IsArray())
-                return Selectors.ArrayHandlerService.GetHandlerFor(propertyInfo);
+                return Selectors.ArrayHandlerService.GetHandlerFor(itemType, customAttributes);
 
             //this needs to be after array
             if (propertyType.IsReference())
-                return Selectors.ReferenceTypeHandlerService.GetHandlerFor(propertyInfo);
+                return Selectors.ReferenceTypeHandlerService.GetHandlerFor(itemType, customAttributes);
 
             throw new InvalidOperationException($"PropertyType {propertyType.Name} could not be resolved to a FileDB document element.");
 
