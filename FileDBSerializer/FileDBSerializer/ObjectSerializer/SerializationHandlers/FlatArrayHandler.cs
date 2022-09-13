@@ -11,25 +11,25 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     internal class FlatArrayHandler : ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(object graph, PropertyInfo property, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {
-            var arrayInstance = property.GetValue(graph) as Array;
-            if (arrayInstance is null) throw new InvalidOperationException($"{property.PropertyType} cannot be casted into an Array");
+            var arrayInstance = item as Array;
+            if (arrayInstance is null) 
+                yield break;
 
-            Type arrayContentType = property.GetNullablePropertyType().GetElementType()!;
-            PropertyInfo[] contentProperties = arrayContentType.GetProperties();
+            Type arrayContentType = arrayInstance.GetType().GetNullableType().GetElementType()!;
 
             for (int i = 0; i < arrayInstance.Length; i++)
             {
                 var arrayEntry = arrayInstance.GetValue(i);
-                Tag tag = workingDocument.AddTag(property.Name);
+                var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType, new List<Attribute>());
 
-                foreach (PropertyInfo _prop in contentProperties)
+                var created = itemHandler.Handle(arrayEntry, tagName, workingDocument, options);
+
+                foreach(FileDBNode tag in created)
                 {
-                    var childnodes = HandlerProvider.GetHandlerFor(_prop).Handle(arrayEntry!, _prop, workingDocument, options);
-                    tag.AddChildren(childnodes);
+                    yield return tag;
                 }
-                yield return tag;
             }
         }
     }

@@ -28,6 +28,16 @@ namespace FileDBSerializing.ObjectSerializer
             if (type.IsValueType) return Activator.CreateInstance(type);
             return null;
         }
+
+        internal static Type GetNullableType(this Type type)
+        {
+            Type? _nulltype;
+            if ((_nulltype = Nullable.GetUnderlyingType(type)) is not null)
+            {
+                return _nulltype;
+            }
+            return type;
+        }
     }
 
     internal static class IEnumerableExtensions
@@ -47,12 +57,7 @@ namespace FileDBSerializing.ObjectSerializer
 
         internal static Type GetNullablePropertyType(this PropertyInfo that)
         {
-            Type? _nulltype;
-            if ((_nulltype = Nullable.GetUnderlyingType(that.PropertyType)) is not null)
-            {
-                return _nulltype;
-            }
-            return that.PropertyType;
+            return that.PropertyType.GetNullableType(); ;
         }
     }
 

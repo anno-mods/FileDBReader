@@ -38,18 +38,16 @@ namespace FileDBSerializing.ObjectSerializer
         {
             foreach (var property in properties)
             {
-                foreach (var _ in BuildNode(property, parentObject))
+                var handler = HandlerProvider.GetHandlerFor(property);
+
+                var item = property.GetValue(parentObject);
+                string tagName = property.Name;
+
+                foreach (var _ in handler.Handle(item, tagName, TargetDocument, Options))
                 {
                     yield return _;
                 }
             }
-        }
-
-        private IEnumerable<FileDBNode> BuildNode(PropertyInfo property, object parentObject)
-        {
-            var handler = HandlerProvider.GetHandlerFor(property);
-            var node = handler.Handle(parentObject, property, TargetDocument, Options);
-            return node;
         }
     }
 }

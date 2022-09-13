@@ -8,31 +8,29 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     public class ReferenceArrayHandler : ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(
-            object graph, 
-            PropertyInfo property, 
-            IFileDBDocument workingDocument,
-            FileDBSerializerOptions options)
+        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {
-            var arrayInstance = property.GetValue(graph) as Array;
-            if (arrayInstance is null) throw new InvalidOperationException($"{property.PropertyType} cannot be casted into an Array");
+            Tag t = workingDocument.AddTag(tagName);
 
-            Tag t = workingDocument.AddTag(property.Name);
+            var arrayInstance = item as Array;
+            if (arrayInstance is null) 
+                return t.AsEnumerable();
+
 
             //Add array entries to the mix
-            Type arrayContentType = property.GetNullablePropertyType().GetElementType()!;
-            PropertyInfo[] contentProperties = arrayContentType.GetProperties();
+            Type arrayContentType = arrayInstance.GetType().GetNullableType().GetElementType()!;
 
             for (int i = 0; i < arrayInstance.Length; i++)
             {
                 var arrayEntry = arrayInstance.GetValue(i);
-                Tag none = workingDocument.AddTag(options.NoneTag);
-                foreach (PropertyInfo _prop in contentProperties)
+                var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType, new List<Attribute>());
+
+                var created = itemHandler.Handle(arrayEntry, options.NoneTag, workingDocument, options);
+
+                foreach (FileDBNode none in created)
                 {
-                    var childnodes = HandlerProvider.GetHandlerFor(_prop).Handle(arrayEntry!, _prop, workingDocument, options);
-                    none.AddChildren(childnodes);
+                    t.AddChild(none);
                 }
-                t.AddChild(none);
             }
             return t.AsEnumerable();
         }
