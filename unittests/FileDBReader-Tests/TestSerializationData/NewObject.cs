@@ -25,7 +25,9 @@ namespace FileDBReader_Tests.TestSerializationData
         public List<int> IntList { get; set; }
         public List<AnyChild> ReferenceList { get; set; }
         public List<(String, int, int)> TupleList { get; set; }
-        public (int, int) Tuple { get; set; }
+        public (int, (int, (int, int))) Tuple { get; set; }
+
+        public (byte, AnyChild)[] ComplexTupleArray { get; set; }
 
     }
 

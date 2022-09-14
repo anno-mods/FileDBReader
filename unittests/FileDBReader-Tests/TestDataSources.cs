@@ -47,7 +47,8 @@ namespace FileDBReader_Tests
             };
             obj.StringArray = new string[2]{ "lol", "12345" };
             obj.TupleArray = new (string, int)[] {
-                ("another test string", 1337)
+                ("another test string", 1337),
+                ("yet another season?", 5)
             };
 
             obj.counts = new()
@@ -77,6 +78,12 @@ namespace FileDBReader_Tests
                 ("String", 5, 1),
                 ("Modders gonna take over the world", 5, 5),
                 (" ", 0, 0)
+            };
+            obj.Tuple = (5, (2, (3, 0)));
+            obj.ComplexTupleArray = new (byte, AnyChild)[]
+            {
+                (5, new AnyChild() { DefaultStr = "str123", EncAwareStr = "ff" }),
+                (2, new AnyChild() { DefaultStr = "str456", EncAwareStr = "dd"})
             };
 
             return obj;

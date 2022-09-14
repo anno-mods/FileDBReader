@@ -22,13 +22,23 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             {
                 var tuple_entry = tuple[i];
                 var handler = HandlerProvider.GetHandlerFor(tuple_entry.GetType(), Enumerable.Empty<Attribute>());
-                var result = handler.Handle(tuple_entry, tagName, workingDocument, options);
 
-                foreach (var _ in result)
+                //return primitives directly, but everthing else should come wrapped.
+                if (handler is not TupleHandler)
                 {
-                    yield return _;
+                    var result = handler.Handle(tuple_entry, tagName, workingDocument, options);
+                    foreach (var _ in result)
+                        yield return _;
+                }
+                else
+                {
+                    var result = handler.Handle(tuple_entry, options.NoneTag, workingDocument, options);
+                    var tag = workingDocument.AddTag(tagName);
+                    tag.AddChildren(result);
+                    yield return tag;
                 }
 
+                
             }
         }
     }
