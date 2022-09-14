@@ -20,8 +20,13 @@ namespace FileDBReader_Tests.TestSerializationData
         public String[] StringArray { get; set; }
         
         public (String, int)[] TupleArray { get; set; }
-
         public CountsElement counts { get; set; }
+
+        public List<int> IntList { get; set; }
+        public List<AnyChild> ReferenceList { get; set; }
+        public List<(String, int, int)> TupleList { get; set; }
+        public (int, int) Tuple { get; set; }
+
     }
 
     public class AnyChild

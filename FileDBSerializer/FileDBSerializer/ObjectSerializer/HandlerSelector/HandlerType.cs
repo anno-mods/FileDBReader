@@ -8,6 +8,8 @@
         Reference,
         PrimitiveArray,
         FlatArray,
-        ReferenceArray
+        ReferenceArray,
+        List,
+        TupleList
     }
 }

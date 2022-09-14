@@ -59,6 +59,25 @@ namespace FileDBReader_Tests
                     new() { None = (7,22)}
                 }
             };
+            obj.IntList = new()
+            {
+                1,
+                4,
+                5
+            };
+            obj.ReferenceList = new()
+            {
+                new() { DefaultStr = "String1"},
+                new() { EncAwareStr = "EncAwareString"},
+                new()
+            };
+            obj.TupleList = new()
+            {
+                ("String1", 2, 3),
+                ("String", 5, 1),
+                ("Modders gonna take over the world", 5, 5),
+                (" ", 0, 0)
+            };
 
             return obj;
         }

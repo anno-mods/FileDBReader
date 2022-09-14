@@ -27,6 +27,8 @@ namespace FileDBSerializing.ObjectSerializer
 
         public static bool IsTuple(this Type type) => type.GetInterfaces().Contains(typeof(ITuple));
 
+        public static bool IsList(this Type type) => type.GetInterfaces().Contains(typeof(IList));
+
         public static object? GetDefault(this Type type)
         {
             if (type.IsValueType) return Activator.CreateInstance(type);

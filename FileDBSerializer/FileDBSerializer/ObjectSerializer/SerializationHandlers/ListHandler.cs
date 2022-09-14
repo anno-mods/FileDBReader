@@ -1,31 +1,29 @@
 ﻿using FileDBSerializing;
 using FileDBSerializing.ObjectSerializer;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 
 namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
-    public class ReferenceArrayHandler : ISerializationHandler
+    public class ListHandler : ISerializationHandler
     {
         public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {
             Tag t = workingDocument.AddTag(tagName);
 
-            var arrayInstance = item as Array;
-            if (arrayInstance is null) 
+            var listInstance = item as IList;
+            if (listInstance is null)
                 return t.AsEnumerable();
 
             //Add array entries to the mix
-            Type arrayContentType = arrayInstance.GetType().GetNullableType().GetElementType()!;
+            Type listContentType = listInstance.GetType().GetNullableType().GetGenericArguments().Single();
 
-            for (int i = 0; i < arrayInstance.Length; i++)
+            foreach (var listEntry in listInstance)
             {
-                var arrayEntry = arrayInstance.GetValue(i);
-                var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType, new List<Attribute>());
-
-                var created = itemHandler.Handle(arrayEntry, options.NoneTag, workingDocument, options);
-
+                var itemHandler = HandlerProvider.GetHandlerFor(listContentType, new List<Attribute>());
+                var created = itemHandler.Handle(listEntry, options.NoneTag, workingDocument, options);
                 foreach (FileDBNode none in created)
                 {
                     t.AddChild(none);
