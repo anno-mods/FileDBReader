@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace FileDBSerializing.ObjectSerializer
 {
@@ -23,6 +24,8 @@ namespace FileDBSerializing.ObjectSerializer
         public static bool IsReference(this Type type) => !type.IsValueType;
 
         public static bool IsPrimitiveListType(this Type type) => type.IsArray && (type.GetElementType()?.IsPrimitiveType() ?? false);
+
+        public static bool IsTuple(this Type type) => type.GetInterfaces().Contains(typeof(ITuple));
 
         public static object? GetDefault(this Type type)
         {

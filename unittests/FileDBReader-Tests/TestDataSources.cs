@@ -46,6 +46,19 @@ namespace FileDBReader_Tests
                 new ArrayElement() { ElementContent = 120 }
             };
             obj.StringArray = new string[2]{ "lol", "12345" };
+            obj.TupleArray = new (string, int)[] {
+                ("another test string", 1337)
+            };
+
+            obj.counts = new()
+            {
+                size = 4,
+                None = new CountsElementEntry[]
+                {
+                    new() { None = (5,5) },
+                    new() { None = (7,22)}
+                }
+            };
 
             return obj;
         }

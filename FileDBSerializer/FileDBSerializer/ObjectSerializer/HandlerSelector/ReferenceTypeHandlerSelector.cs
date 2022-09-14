@@ -1,7 +1,9 @@
 ﻿using FileDBSerializer.ObjectSerializer.SerializationHandlers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace FileDBSerializer.ObjectSerializer.HandlerSelector
 {
@@ -9,7 +11,6 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
     {
         public HandlerType GetHandlerFor(Type itemType, IEnumerable<Attribute> customAttributes)
         {
-            //make check for ITuple here laterz(tm)
             return HandlerType.Reference;
         }
     }

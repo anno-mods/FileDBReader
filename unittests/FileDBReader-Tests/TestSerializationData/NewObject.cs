@@ -18,12 +18,28 @@ namespace FileDBReader_Tests.TestSerializationData
         [FlatArray]
         public ArrayElement[] FlatArray { get; set; }
         public String[] StringArray { get; set; }
+        
+        public (String, int)[] TupleArray { get; set; }
+
+        public CountsElement counts { get; set; }
     }
 
     public class AnyChild
     {
         public String DefaultStr { get; set; }
         public UTF32String EncAwareStr {get; set;}
+    }
+
+    public class CountsElement
+    {
+        public int size { get; set; }
+        [FlatArray]
+        public CountsElementEntry[] None { get; set; }
+    }
+
+    public class CountsElementEntry
+    { 
+        public (byte, byte) None { get; set; }  
     }
 
     public class ArrayElement

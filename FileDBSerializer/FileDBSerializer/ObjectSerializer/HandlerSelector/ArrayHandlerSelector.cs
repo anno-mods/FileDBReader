@@ -21,7 +21,10 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
             {
                 return HandlerType.PrimitiveArray;
             }
-            else if (arrayContentType.IsReference() || arrayContentType.IsStringType())
+            else if (
+                arrayContentType.IsReference()
+                || arrayContentType.IsStringType()
+                || arrayContentType.IsTuple())
             {
                 return HandlerType.ReferenceArray;
             }
