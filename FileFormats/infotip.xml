@@ -8,11 +8,10 @@
   Encoding = Encoding as it occurs in .Net Encodings
 -->
 <Converts>
-  <Default Type ="Int32" />
+  <Default Type = "Int32"/>
   <InternalCompression />
   <Converts>
-    <Convert Path ="//InfoElement/Text[text()]" Type ="Int32"/>
-    <Convert Path ="//InfoElement/*/Text" Type ="String" />
+    <Convert Path = "//*[not(self::InfoElement)]/Text" Type = "String" />
     <Convert Path ="//Condition" Type ="String" Encoding = "UTF-8"/>
     <Convert Path ="//ValueText" Type ="String" />
     <Convert Path ="//IconText" Type ="String" />
