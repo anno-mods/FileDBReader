@@ -44,6 +44,11 @@ namespace FileDBSerializing.ObjectSerializer
             }
             return type;
         }
+
+        internal static PropertyInfo? GetPropertyWithRenaming(this Type type, String name)
+        {
+            return type.GetProperty(name);
+        }
     }
 
     internal static class IEnumerableExtensions
