@@ -21,7 +21,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             for (int i = 0; i < tuple.Length; i++)
             {
                 var tuple_entry = tuple[i];
-                var handler = HandlerProvider.GetHandlerFor(tuple_entry.GetType(), Enumerable.Empty<Attribute>());
+                var handler = HandlerProvider.GetHandlerFor(tuple_entry.GetType());
 
                 //return primitives directly, but everthing else should come wrapped.
                 if (handler is not TupleHandler)

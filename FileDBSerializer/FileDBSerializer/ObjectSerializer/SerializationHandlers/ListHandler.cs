@@ -22,7 +22,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 
             foreach (var listEntry in listInstance)
             {
-                var itemHandler = HandlerProvider.GetHandlerFor(listContentType, new List<Attribute>());
+                var itemHandler = HandlerProvider.GetHandlerFor(listContentType);
                 var created = itemHandler.Handle(listEntry, options.NoneTag, workingDocument, options);
                 foreach (FileDBNode none in created)
                 {

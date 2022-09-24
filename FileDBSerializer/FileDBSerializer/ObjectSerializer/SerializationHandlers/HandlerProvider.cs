@@ -1,6 +1,7 @@
 ﻿using FileDBSerializer.ObjectSerializer.HandlerSelector;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
@@ -38,6 +39,11 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
         {
             var type = Selectors.TopLevelHandlerService.GetHandlerFor(itemType, customAttributes);
             return GetFromType(type);
+        }
+
+        public static ISerializationHandler GetHandlerFor(Type itemType)
+        {
+            return GetHandlerFor(itemType, Enumerable.Empty<Attribute>());
         }
     }
 }
