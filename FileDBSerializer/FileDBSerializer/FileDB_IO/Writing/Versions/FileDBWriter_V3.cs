@@ -13,7 +13,8 @@ namespace FileDBSerializing
         { 
         
         }
-        new public void WriteMagicBytes()
+
+        public override void WriteMagicBytes()
         {
             Writer!.Write(Versioning.GetMagicBytes(FileDBDocumentVersion.Version3));
         }

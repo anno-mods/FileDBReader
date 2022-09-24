@@ -10,46 +10,60 @@ using FileDBReader_Tests;
 
 namespace FileDBSerializing.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class FileDBSerializingTest
     {
-        [TestMethod()]
-        public void DeserializeTest_v2()
-        {
-            var expected = TestDataSources.BuildDocument<FileDBDocument_V2>();
-
-            DocumentParser deserializer = new DocumentParser(FileDBDocumentVersion.Version2);
-
-            IFileDBDocument deser;
-            using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v2.bin"))
-            {
-                deser = deserializer.LoadFileDBDocument(s);
-            }
-
-            for (int i = 0; i < deser.Roots.Count && i < expected.Roots.Count; i++)
-            {
-                AreEqual(deser.Roots.ElementAt(i), expected.Roots.ElementAt(i));
-            }
-        }
-
-        [TestMethod()]
+        [TestMethod]
         public void DeserializeTest_v1()
         {
             var expected = TestDataSources.BuildDocument<FileDBDocument_V1>();
+            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version1);
 
-            DocumentParser deserializer = new DocumentParser(FileDBDocumentVersion.Version1);
-
-            IFileDBDocument deser;
+            IFileDBDocument doc;
             using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v1.bin"))
             {
-                deser = deserializer.LoadFileDBDocument(s);
+                doc = parser.LoadFileDBDocument(s);
             }
 
-            for (int i = 0; i < deser.Roots.Count && i < expected.Roots.Count; i++)
+            for (int i = 0; i < doc.Roots.Count && i < expected.Roots.Count; i++)
             {
-                AreEqual(deser.Roots.ElementAt(i), expected.Roots.ElementAt(i));
+                AreEqual(doc.Roots.ElementAt(i), expected.Roots.ElementAt(i));
+            }
+        }
+
+        [TestMethod]
+        public void DeserializeTest_v2()
+        {
+            var expected = TestDataSources.BuildDocument<FileDBDocument_V2>();
+            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version2);
+
+            IFileDBDocument doc;
+            using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v2.bin"))
+            {
+                doc = parser.LoadFileDBDocument(s);
             }
 
+            for (int i = 0; i < doc.Roots.Count && i < expected.Roots.Count; i++)
+            {
+                AreEqual(doc.Roots.ElementAt(i), expected.Roots.ElementAt(i));
+            }
+        }
+        [TestMethod]
+        public void DeserializeTest_v3()
+        {
+            var expected = TestDataSources.BuildDocument<FileDBDocument_V3>();
+            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version3);
+
+            IFileDBDocument doc;
+            using (Stream s = File.OpenRead("FileDBSerializer/Testfiles/testResult_v3.bin"))
+            {
+                doc = parser.LoadFileDBDocument(s);
+            }
+
+            for (int i = 0; i < doc.Roots.Count && i < expected.Roots.Count; i++)
+            {
+                AreEqual(doc.Roots.ElementAt(i), expected.Roots.ElementAt(i));
+            }
         }
 
         [TestMethod]
@@ -74,6 +88,20 @@ namespace FileDBSerializing.Tests
             DocumentWriter ser = new DocumentWriter();
 
             var docV2 = TestDataSources.BuildDocument<FileDBDocument_V2>();
+            var docstream = new MemoryStream();
+            var result = ser.WriteFileDBToStream(docV2, docstream);
+
+            Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));
+        }
+
+        [TestMethod]
+        public void SerializeTest_v3()
+        {
+            var expected = File.OpenRead("FileDBSerializer/Testfiles/testResult_v3.bin");
+
+            DocumentWriter ser = new DocumentWriter();
+
+            var docV2 = TestDataSources.BuildDocument<FileDBDocument_V3>();
             var docstream = new MemoryStream();
             var result = ser.WriteFileDBToStream(docV2, docstream);
 

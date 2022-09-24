@@ -107,6 +107,9 @@
     <None Update="FileDBSerializer\Testfiles\testResult_v2.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="FileDBSerializer\Testfiles\testResult_v3.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

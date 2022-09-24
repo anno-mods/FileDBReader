@@ -16,7 +16,7 @@ namespace FileDBSerializing
         public TagSection Tags { get; set; }
 
         public int ELEMENT_COUNT { get => Roots.Count; }
-        public FileDBDocumentVersion VERSION { get; } = FileDBDocumentVersion.Version2;
+        public virtual FileDBDocumentVersion VERSION { get; } = FileDBDocumentVersion.Version2;
         public byte[] MAGIC_BYTES { get => Versioning.GetMagicBytes(VERSION); }
         public int MAGIC_BYTE_COUNT { get => MAGIC_BYTES.Length; }
         public int OFFSET_TO_OFFSETS { get; } = 16;
