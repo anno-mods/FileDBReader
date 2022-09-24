@@ -1,4 +1,5 @@
 ﻿using FileDBSerializing;
+using FileDBSerializing.LookUps;
 using FileDBSerializing.ObjectSerializer;
 using System;
 using System.Collections.Generic;
@@ -18,17 +19,20 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
                 throw new InvalidOperationException("Only Tags can be handled by ReferenceTypeHandler");
             var instance = Activator.CreateInstance(targetType);
 
-            foreach (var child in tag.Children)
+            var names = tag.Children.Select(x => x.Name).Distinct();
+            foreach (var name in names)
             {
+                var children = tag.SelectNodes(name);
+
                 //find the property corresponding to the child
-                var propertyinfo = targetType.GetPropertyWithRenaming(child.Name);
+                var propertyinfo = targetType.GetPropertyWithRenaming(name);
                 if (propertyinfo is null && !options.IgnoreMissingProperties)
-                    throw new InvalidProgramException($"{child.Name} could not be resolved to a property of {targetType.Name}");
+                    throw new InvalidProgramException($"{name} could not be resolved to a property of {targetType.Name}");
                 else if (propertyinfo is null)
                     continue;
 
                 var handler = HandlerProvider.GetHandlerFor(propertyinfo);
-                var prop_instance = handler.Handle(child.AsEnumerable(), propertyinfo.PropertyType, options);
+                var prop_instance = handler.Handle(children.AsEnumerable(), propertyinfo.PropertyType, options);
                 propertyinfo.SetValue(instance, prop_instance);
             }
 
