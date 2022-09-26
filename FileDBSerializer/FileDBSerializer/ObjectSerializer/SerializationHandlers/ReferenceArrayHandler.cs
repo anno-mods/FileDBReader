@@ -18,12 +18,11 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 
             //Add array entries to the mix
             Type arrayContentType = arrayInstance.GetType().GetNullableType().GetElementType()!;
+            var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType);
 
             for (int i = 0; i < arrayInstance.Length; i++)
             {
                 var arrayEntry = arrayInstance.GetValue(i);
-                var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType);
-
                 var created = itemHandler.Handle(arrayEntry, options.NoneTag, workingDocument, options);
 
                 foreach (FileDBNode none in created)

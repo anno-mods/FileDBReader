@@ -11,7 +11,9 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
         private static Dictionary<HandlerType, IDeserializationHandler> handlers = new()
         {
             { HandlerType.Primitive, new PrimitiveHandler() },
-            { HandlerType.Reference, new ReferenceTypeHandler()}
+            { HandlerType.Reference, new ReferenceTypeHandler() },
+            { HandlerType.PrimitiveArray, new PrimitiveArrayHandler() },
+            { HandlerType.ReferenceArray, new ReferenceArrayHandler() }
         };
 
         public static IDeserializationHandler GetFromType(HandlerType handlerType)

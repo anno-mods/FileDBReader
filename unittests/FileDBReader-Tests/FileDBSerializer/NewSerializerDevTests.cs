@@ -25,15 +25,15 @@ namespace FileDBSerializing.Tests
         public void NewDeserializerTest()
         {
             var obj = TestDataSources.GetDeserializerTestAsset();
-            FileDBSerializer<SomethingManager> serializer = new(FileDBDocumentVersion.Version2);
+            FileDBSerializer<DeserObject> serializer = new(FileDBDocumentVersion.Version2);
             using (Stream result = File.Create("deser.filedb"))
             {
                 serializer.Serialize(result, obj);
             }
-            SomethingManager? deser;
+            DeserObject? deser;
             using (var instream = File.OpenRead("deser.filedb"))
             {
-                deser = serializer.Deserialize(instream) as SomethingManager;
+                deser = serializer.Deserialize(instream) as DeserObject;
             }
             deser.Should().BeEquivalentTo(obj);
         }

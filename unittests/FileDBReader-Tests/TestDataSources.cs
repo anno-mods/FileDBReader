@@ -25,13 +25,18 @@ namespace FileDBReader_Tests
             return root;
         }
 
-        internal static SomethingManager GetDeserializerTestAsset()
+        internal static DeserObject GetDeserializerTestAsset()
         {
-            SomethingManager result = new();
-            result.Child = new ChildElement();
-            result.Child.ID = 1337;
-            result.SomethingCount = 14;
-            result.SomethingValue = 5;
+            DeserObject result = new();
+            result.Reference = new DeserChild();
+            result.Reference.ID = 1337;
+            result.IntValue = 14;
+            result.IntArray = new int[] { 1, 2, 3 };
+            result.ReferenceArray = new DeserChild[]
+                {
+                    new DeserChild() { ID = 42},
+                    new DeserChild() { ID = 34 }
+                };
             return result;
         }
 
