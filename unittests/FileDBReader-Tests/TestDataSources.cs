@@ -25,6 +25,16 @@ namespace FileDBReader_Tests
             return root;
         }
 
+        internal static SomethingManager GetDeserializerTestAsset()
+        {
+            SomethingManager result = new();
+            result.Child = new ChildElement();
+            result.Child.ID = 1337;
+            result.SomethingCount = 14;
+            result.SomethingValue = 5;
+            return result;
+        }
+
         internal static NewObject GetSmallTestAsset()
         {
             NewObject obj = new NewObject();

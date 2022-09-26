@@ -5,6 +5,8 @@ using FileDBSerializing.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
+using FluentAssertions;
+
 namespace FileDBSerializing.Tests
 {
     [TestClass]
@@ -17,6 +19,23 @@ namespace FileDBSerializing.Tests
             FileDBSerializer<NewObject> objectserializer = new FileDBSerializer<NewObject>(FileDBDocumentVersion.Version2);
             Stream result = File.Create("myfile.filedb");
             objectserializer.Serialize(result, obj);
+        }
+
+        [TestMethod]
+        public void NewDeserializerTest()
+        {
+            var obj = TestDataSources.GetDeserializerTestAsset();
+            FileDBSerializer<SomethingManager> serializer = new(FileDBDocumentVersion.Version2);
+            using (Stream result = File.Create("deser.filedb"))
+            {
+                serializer.Serialize(result, obj);
+            }
+            SomethingManager? deser;
+            using (var instream = File.OpenRead("deser.filedb"))
+            {
+                deser = serializer.Deserialize(instream) as SomethingManager;
+            }
+            deser.Should().BeEquivalentTo(obj);
         }
     }
 }

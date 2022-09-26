@@ -19,13 +19,14 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 
         public object? Handle(IEnumerable<FileDBNode> nodes, Type targetType, FileDBSerializerOptions options)
         {
+            var actualTargetType = targetType.GetNullableType();
             if (nodes.Count() != 1)
                 throw new InvalidOperationException("PrimitiveHandler can handle exactly one node");
             var node = nodes.First();
             if (node is not Attrib attrib)
                 throw new InvalidOperationException("Only attribs can be handled by PrimitiveHandler");
 
-            return PrimitiveConverter!.GetObject(targetType, attrib.Content);
+            return PrimitiveConverter!.GetObject(actualTargetType, attrib.Content);
         }
     }
 }
