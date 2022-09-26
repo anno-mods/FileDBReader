@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBSerializing.EncodingAwareStrings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,9 @@ namespace FileDBReader_Tests.TestSerializationData
         public DeserChild? Reference { get; set; }
         public int[] IntArray { get; set; }
         public DeserChild[] ReferenceArray { get; set; }
+
+        public UnicodeString EncodingAwareString { get; set; }
+        public String DefaultString { get; set; }
     }
 
     public class DeserChild

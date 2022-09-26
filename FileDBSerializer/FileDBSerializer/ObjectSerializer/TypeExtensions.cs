@@ -15,6 +15,8 @@ namespace FileDBSerializing.ObjectSerializer
 
         public static bool IsStringType(this Type t) => t == typeof(String) || t.IsSubclassOf(typeof(EncodingAwareString));
 
+        public static bool IsEncodingAwareString(this Type t) => t.IsSubclassOf(typeof(EncodingAwareString));
+
         public static bool IsPrimitiveType(this Type type) => PrimitiveTypeConverter.SupportsType(type);
 
         public static bool IsPrimitiveOrString(this Type type) => type.IsPrimitiveType() || type.IsStringType();

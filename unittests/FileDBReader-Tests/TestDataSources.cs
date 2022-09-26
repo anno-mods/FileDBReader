@@ -37,6 +37,8 @@ namespace FileDBReader_Tests
                     new DeserChild() { ID = 42},
                     new DeserChild() { ID = 34 }
                 };
+            result.EncodingAwareString = "teststring 1234";
+            result.DefaultString = "Oh no you don't";
             return result;
         }
 
