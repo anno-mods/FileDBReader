@@ -14,7 +14,7 @@
     <Convert Path ="//HeightMap/HeightMap" Type="UInt16" Structure ="List" />
     <Convert Path ="//StreetID/val" Type="Byte" Structure ="List" />
     <Convert Path ="//AreaIDs/val" Type="Byte" Structure ="List" />
-    <Convert Path ="//AreaIDs/SparseEnabled" Type="Byte" />
+    <Convert Path ="//AreaIDs/SparseEnabled" Type="Boolean" />
     <Convert Path ="//AreaIDs/block/x" Type="Int16" />
     <Convert Path ="//AreaIDs/block/y" Type="Int16" />
     <Convert Path ="//AreaIDs/block/mode" Type="Byte" />
