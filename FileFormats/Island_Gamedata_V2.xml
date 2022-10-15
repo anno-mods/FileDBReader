@@ -14,6 +14,12 @@
     <Convert Path ="//HeightMap/HeightMap" Type="UInt16" Structure ="List" />
     <Convert Path ="//StreetID/val" Type="Byte" Structure ="List" />
     <Convert Path ="//AreaIDs/val" Type="Byte" Structure ="List" />
+    <Convert Path ="//AreaIDs/SparseEnabled" Type="Boolean" />
+    <Convert Path ="//AreaIDs/block/x" Type="Int16" />
+    <Convert Path ="//AreaIDs/block/y" Type="Int16" />
+    <Convert Path ="//AreaIDs/block/mode" Type="Byte" />
+    <Convert Path ="//AreaIDs/block/default" Type="Byte" Structure="List" />
+    <Convert Path ="//AreaIDs/block/values" Type="Byte" Structure="List" />
     <Convert Path ="//EnvironmentGRid/val" Type="Byte" Structure ="List" />
     <Convert Path ="//bits" Type="Byte" Structure ="List" />
     <Convert Path ="//PlayableArea" Type="Int32" Structure ="List" />
