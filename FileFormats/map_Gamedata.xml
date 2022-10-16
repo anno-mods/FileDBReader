@@ -55,7 +55,7 @@
     <Convert Path ="//*[not(self::View)]/Direction" Type ="Single" Structure ="List" />
     <Convert Path ="//Position" Type ="Single" Structure ="List" />
     <Convert Path ="//Orientation" Type ="Single" Structure ="List" />
-    <Convert Path ="//BasePosition" Type ="Int32" Structure="List" />
+    <Convert Path ="//BasePosition" Type ="Single" Structure="List" />
     
     <!-- Camera Sequences and Stuff -->
     <Convert Path ="//Sequence/Name" Type="String" Encoding="UTF-8"/>
@@ -78,6 +78,8 @@
     <Convert Path ="//SonarEnd" Type ="Int64"/>
     <Convert Path ="//CommandQueue/StateParams/*[self::Object or self::AttachObject]/ObjectID" Type ="Int64" />
     <Convert Path ="//CommandQueue/StateParams/EscortedObjectMetaID" Type ="Int64" />
+    <Convert Path ="//OptimalAttackMovementData/OptimalAngleWS" Type ="Single" />
+    <Convert Path ="//OptimalAttackMovementData/OptimalDistanceWS" Type ="Single" />
     <Convert Path ="//Draggable/Dragger" Type="Int64" />
     <Convert Path ="//Mesh/SequenceData/CurrentSequenceStartTime" Type ="Int64" />
     <Convert Path ="//FeedbackController/SequenceStartTime" Type ="Int64" />
@@ -89,9 +91,9 @@
     <Convert Path ="//PropertyTradeRouteVehicle/TargetLoadingHarbour" Type ="Int64" />
     
     <Convert Path ="//Walking/Reservation/RectSize" Type ="Int64" Structure="List"/>
-    <Convert Path ="//Walking/LastPos" Type ="Int32" Structure="List"/>
-    <Convert Path ="//Walking/LastWaystepPos" Type ="Int32" Structure="List"/>
-    <Convert Path ="//Walking/LastTickPos" Type ="Int32" Structure="List"/>
+    <Convert Path ="//Walking/LastPos" Type ="Single" Structure="List"/>
+    <Convert Path ="//Walking/LastWaystepPos" Type ="Single" Structure="List"/>
+    <Convert Path ="//Walking/LastTickPos" Type ="Single" Structure="List"/>
     <Convert Path ="//Walking/LastDirView" Type ="Single"/>
     <Convert Path ="//Walking/LastDirLogic" Type ="Single"/>
     <Convert Path ="//Walking/LastDeltaDirDelta" Type ="Single"/>
