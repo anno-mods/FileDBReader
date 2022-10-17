@@ -56,32 +56,24 @@ namespace FileDBReader_Tests
                 new ArrayElement() { ElementContent = 3 },
                 new ArrayElement() { ElementContent = 42 }
             };
-            obj.FlatArray = new ArrayElement[3]
-            {
-                new ArrayElement() { ElementContent = 18 },
-                new ArrayElement() { ElementContent = 15},
-                new ArrayElement() { ElementContent = 120 }
-            };
             obj.StringArray = new string[2]{ "lol", "12345" };
-            obj.TupleArray = new (string, int)[] {
-                ("another test string", 1337),
-                ("yet another season?", 5)
-            };
-
-            obj.counts = new()
+            obj.TupleArray = new (byte, byte)[2]
             {
-                size = 4,
-                None = new CountsElementEntry[]
-                {
-                    new() { None = (5,5) },
-                    new() { None = (7,22)}
-                }
-            };
+                (5,5),
+                (07,16)
+            };   
+            
             obj.IntList = new()
             {
                 1,
                 4,
                 5
+            };
+            obj.StringList = new()
+            {
+                "We are taking all the time we can with our game updates",
+                "we prefer a good game to money",
+                "All the balancing decisions are carefully calculated and not based on dicerolls and eastereggs"
             };
             obj.ReferenceList = new()
             {
@@ -91,16 +83,26 @@ namespace FileDBReader_Tests
             };
             obj.TupleList = new()
             {
-                ("String1", 2, 3),
-                ("String", 5, 1),
-                ("Modders gonna take over the world", 5, 5),
-                (" ", 0, 0)
+                (5, new AnyChild() { DefaultStr = "str123", EncAwareStr = "ff" }),
+                (2, new AnyChild() { DefaultStr = "str456", EncAwareStr = "dd" })
+            };
+            obj.AnotherTupleList = new()
+            {
+                ("another test string", 1337),
+                ("yet another season?", 5)
             };
             obj.Tuple = (5, (2, (3, 0)));
-            obj.ComplexTupleArray = new (byte, AnyChild)[]
+            obj.NestedList = new()
             {
-                (5, new AnyChild() { DefaultStr = "str123", EncAwareStr = "ff" }),
-                (2, new AnyChild() { DefaultStr = "str456", EncAwareStr = "dd"})
+                obj.ReferenceList,
+                obj.ReferenceList
+            };
+
+            obj.DangerPoints = new[]
+            {
+                new[]{ 1,5},
+                new[]{ 2,5},
+                new[]{ 4,2}
             };
 
             return obj;

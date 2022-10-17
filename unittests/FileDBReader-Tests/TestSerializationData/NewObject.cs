@@ -12,22 +12,25 @@ namespace FileDBReader_Tests.TestSerializationData
     {
         public int? PrimitiveObject { get; set; }
         public AnyChild? RefObject { get; set; }
-        public ArrayElement[] RefArray { get; set; }
-        public int[] PrimitiveArray { get; set; }
-
-        [FlatArray]
-        public ArrayElement[] FlatArray { get; set; }
-        public String[] StringArray { get; set; }
-        
-        public (String, int)[] TupleArray { get; set; }
-        public CountsElement counts { get; set; }
-
-        public List<int> IntList { get; set; }
-        public List<AnyChild> ReferenceList { get; set; }
-        public List<(String, int, int)> TupleList { get; set; }
         public (int, (int, (int, int))) Tuple { get; set; }
 
-        public (byte, AnyChild)[] ComplexTupleArray { get; set; }
+        public int[] PrimitiveArray { get; set; }
+        public String[] StringArray { get; set; }
+        public ArrayElement[] RefArray { get; set; }
+        public (byte, byte)[] TupleArray { get; set; }
+
+        public List<int> IntList { get; set; }
+        public List<String> StringList { get; set; }
+        public List<AnyChild> ReferenceList { get; set; }
+        public List<(byte, AnyChild)> TupleList { get; set; }
+        public List<(String, int)> AnotherTupleList { get; set; }
+
+        public int[][] DangerPoints { get; set; }
+
+        //[FlatArray]
+        //public ArrayElement[] FlatArray { get; set; }
+
+        public List<List<AnyChild>> NestedList { get; set; }
 
     }
 

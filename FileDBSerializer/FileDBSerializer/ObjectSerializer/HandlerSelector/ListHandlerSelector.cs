@@ -15,10 +15,6 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
                 throw new InvalidProgramException("ListHandlerSelector expects a list type");
             Type listContentType = itemType.GetNullableType().GetGenericArguments().Single();
 
-            if (listContentType.IsTuple())
-            {
-                return HandlerType.TupleList;
-            }
             return HandlerType.List;
 
             //fuck the implementation for now

@@ -17,8 +17,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             { HandlerType.PrimitiveArray, new PrimitiveArrayHandler() },
             { HandlerType.ITuple, new TupleHandler() },
             { HandlerType.FlatArray, new FlatArrayHandler() },
-            { HandlerType.List, new ListHandler() },
-            { HandlerType.TupleList, new TupleListHandler()}
+            { HandlerType.List, new ListHandler() }
         };
 
         public static ISerializationHandler GetFromType(HandlerType handlerType)

@@ -16,6 +16,11 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             if (arrayInstance is null) 
                 return t.AsEnumerable();
 
+            var size = arrayInstance.Length;
+            var size_node = workingDocument.AddAttrib("size");
+            size_node.Content = BitConverter.GetBytes(size);
+            t.AddChild(size_node);
+
             //Add array entries to the mix
             Type arrayContentType = arrayInstance.GetType().GetNullableType().GetElementType()!;
             var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType);
@@ -25,10 +30,14 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
                 var arrayEntry = arrayInstance.GetValue(i);
                 var created = itemHandler.Handle(arrayEntry, options.NoneTag, workingDocument, options);
 
-                foreach (FileDBNode none in created)
+                if (itemHandler is TupleHandler)
                 {
+                    var none = workingDocument.AddTag(options.NoneTag);
+                    none.AddChildren(created);
                     t.AddChild(none);
                 }
+                else
+                    t.AddChildren(created);
             }
             return t.AsEnumerable();
         }
