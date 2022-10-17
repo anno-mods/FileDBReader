@@ -24,11 +24,8 @@ namespace FileDBReader_Tests.TestSerializationData
         public List<AnyChild> ReferenceList { get; set; }
         public List<(byte, AnyChild)> TupleList { get; set; }
         public List<(String, int)> AnotherTupleList { get; set; }
-
-        public int[][] DangerPoints { get; set; }
-
-        //[FlatArray]
-        //public ArrayElement[] FlatArray { get; set; }
+        [FlatArray]
+        public List<AnyChild> FlatList { get; set; }
 
         public List<List<AnyChild>> NestedList { get; set; }
 

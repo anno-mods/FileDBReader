@@ -1,6 +1,7 @@
 ﻿using FileDBSerializing;
 using FileDBSerializing.ObjectSerializer;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,18 +14,17 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
     {
         public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {
-            var arrayInstance = item as Array;
-            if (arrayInstance is null) 
+            var listInstance = item as IList;
+            if (listInstance is null) 
                 yield break;
 
-            Type arrayContentType = arrayInstance.GetType().GetNullableType().GetElementType()!;
+            Type listContentType = listInstance.GetType().GetNullableType().GetGenericArguments().Single();
 
-            for (int i = 0; i < arrayInstance.Length; i++)
+            foreach (var listEntry in listInstance)
             {
-                var arrayEntry = arrayInstance.GetValue(i);
-                var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType);
+                var itemHandler = HandlerProvider.GetHandlerFor(listContentType);
 
-                var created = itemHandler.Handle(arrayEntry, tagName, workingDocument, options);
+                var created = itemHandler.Handle(listEntry, tagName, workingDocument, options);
 
                 foreach(FileDBNode tag in created)
                 {

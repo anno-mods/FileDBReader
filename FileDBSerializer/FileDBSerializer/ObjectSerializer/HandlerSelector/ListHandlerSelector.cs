@@ -15,6 +15,11 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
                 throw new InvalidProgramException("ListHandlerSelector expects a list type");
             Type listContentType = itemType.GetNullableType().GetGenericArguments().Single();
 
+            if (customAttributes.ContainsAttribute<FlatArrayAttribute>())
+            {
+                return HandlerType.FlatArray;
+            }
+
             return HandlerType.List;
 
             //fuck the implementation for now

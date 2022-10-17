@@ -13,11 +13,7 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
         {            
             Type arrayContentType = itemType.GetNullableType().GetElementType()!;
 
-            if (customAttributes.ContainsAttribute<FlatArrayAttribute>())
-            {
-                return HandlerType.FlatArray;
-            }
-            else if (arrayContentType.IsPrimitiveType())
+            if (arrayContentType.IsPrimitiveType())
             {
                 return HandlerType.PrimitiveArray;
             }

@@ -97,12 +97,12 @@ namespace FileDBReader_Tests
                 obj.ReferenceList,
                 obj.ReferenceList
             };
-
-            obj.DangerPoints = new[]
+            obj.FlatList = new()
             {
-                new[]{ 1,5},
-                new[]{ 2,5},
-                new[]{ 4,2}
+                new() { DefaultStr = "Never gonna give you up" },
+                new() { EncAwareStr = "Never gonna let you down" },
+                new() { DefaultStr = "Never gonna run around",
+                            EncAwareStr = "and desert you!"}
             };
 
             return obj;
