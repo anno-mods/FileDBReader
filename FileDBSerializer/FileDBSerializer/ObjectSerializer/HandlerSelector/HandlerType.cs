@@ -9,7 +9,6 @@
         PrimitiveArray,
         FlatArray,
         ReferenceArray,
-        List,
-        TupleList
+        List
     }
 }

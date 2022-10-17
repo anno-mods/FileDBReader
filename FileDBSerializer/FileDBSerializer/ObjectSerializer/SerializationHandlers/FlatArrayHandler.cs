@@ -23,9 +23,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             foreach (var listEntry in listInstance)
             {
                 var itemHandler = HandlerProvider.GetHandlerFor(listContentType);
-
                 var created = itemHandler.Handle(listEntry, tagName, workingDocument, options);
-
                 foreach(FileDBNode tag in created)
                 {
                     yield return tag;
