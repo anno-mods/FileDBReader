@@ -4,12 +4,8 @@ using System.Text;
 
 namespace FileDBSerializing.ObjectSerializer
 {
-    public class PrimitiveTypeConverter
+    public static class PrimitiveTypeConverter
     {
-        public PrimitiveTypeConverter()
-        {
-
-        }
         //----- ########################### -----//
         //      Make sure that the set of keys is identical in both dictionaries!!!!
         //      Else this will mess with SupportsType() and lead to fuckwhat-types of errors.
@@ -48,7 +44,7 @@ namespace FileDBSerializing.ObjectSerializer
         };
 
 
-        public byte[] GetBytes(object t)
+        public static byte[] GetBytes(object t)
         {
             Type _type = t.GetType();
             if (SupportsType(_type))
@@ -57,14 +53,14 @@ namespace FileDBSerializing.ObjectSerializer
                 throw new InvalidOperationException(_type + " is not a primitive type!");
         }
 
-        public object GetObject(Type TargetType, byte[] b)
+        public static object GetObject(Type TargetType, byte[] b)
         {
             if (!SupportsType(TargetType)) throw new InvalidOperationException($"{TargetType} is not a primitive type");
 
             return PrimitiveTypesBack[TargetType](b);
         }
 
-        public TargetType GetObject<TargetType>(byte[] b) 
+        public static TargetType GetObject<TargetType>(byte[] b) 
             => (TargetType)GetObject(typeof(TargetType), b);
 
         public static bool SupportsType(Type t)

@@ -11,11 +11,9 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     public class PrimitiveArrayHandler : ISerializationHandler
     {
-        private static PrimitiveTypeConverter? PrimitiveConverter;
 
         public PrimitiveArrayHandler()
         {
-            PrimitiveConverter ??= new PrimitiveTypeConverter();
         }
 
         public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
@@ -39,7 +37,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
                 {
                     var singleVal = arrayInstance.GetValue(i);
                     //can singleVal be null here? idk, may lead to errors.
-                    ContentStream.Write(PrimitiveConverter!.GetBytes(singleVal));
+                    ContentStream.Write(PrimitiveTypeConverter.GetBytes(singleVal));
                 }
                 attr.Content = ContentStream.ToArray();
             }
