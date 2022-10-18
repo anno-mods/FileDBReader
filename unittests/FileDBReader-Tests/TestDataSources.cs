@@ -32,11 +32,52 @@ namespace FileDBReader_Tests
             result.Reference.ID = 1337;
             result.IntValue = 14;
             result.IntArray = new int[] { 1, 2, 3 };
+
             result.ReferenceArray = new DeserChild[]
                 {
                     new DeserChild() { ID = 42},
                     new DeserChild() { ID = 34 }
                 };
+
+            result.ReferenceList = new List<DeserChild>()
+            {
+                new DeserChild() {ID = 69},
+                new DeserChild() {ID = 420},
+            };
+            result.PrimitiveList = new List<short>() { (short)-1, (short)0, (short)1, short.MaxValue };
+
+            result.IndexTuple = new Tuple<int, DeserChild>(1, new DeserChild() { ID = 111 });
+
+            result.NestedTuple = new Tuple<int, Tuple<short[], string, DeserChild>>(
+                2, 
+                new Tuple<short[], string, DeserChild>(
+                    new short[] { short.MinValue, short.MaxValue }, "Hello World!", new DeserChild() { ID = 222 }
+                    )
+                );
+
+            result.ListOfTuples = new List<Tuple<int, DeserChild, DeserChild>>()
+            {
+                new Tuple<int, DeserChild, DeserChild>(1, new DeserChild(){ ID = 10 }, new DeserChild(){ID = 100}),
+                new Tuple<int, DeserChild, DeserChild>(2, new DeserChild(){ ID = 20 }, new DeserChild(){ID = 200}),
+                new Tuple<int, DeserChild, DeserChild>(3, new DeserChild(){ ID = 30 }, new DeserChild(){ID = 300}),
+            };
+
+            result.ArrayOfTuples = new Tuple<int, DeserChild, DeserChild>[]
+            {
+                new Tuple<int, DeserChild, DeserChild>(4, new DeserChild(){ ID = 40 }, new DeserChild(){ID = 400}),
+                new Tuple<int, DeserChild, DeserChild>(5, new DeserChild(){ ID = 50 }, new DeserChild(){ID = 500}),
+                new Tuple<int, DeserChild, DeserChild>(6, new DeserChild(){ ID = 60 }, new DeserChild(){ID = 600}),
+            };
+
+            result.FlatLongList = new List<long>() { long.MinValue, -1L, 0L, 1L, long.MaxValue };
+
+            result.FlatTupleList = new List<Tuple<int, DeserChild, DeserChild>>()
+            {
+                new Tuple<int, DeserChild, DeserChild>(7, new DeserChild(){ ID = 70 }, new DeserChild(){ID = 700}),
+                new Tuple<int, DeserChild, DeserChild>(8, new DeserChild(){ ID = 80 }, new DeserChild(){ID = 800}),
+                new Tuple<int, DeserChild, DeserChild>(9, new DeserChild(){ ID = 90 }, new DeserChild(){ID = 900}),
+            };
+
             result.EncodingAwareString = "teststring 1234";
             result.DefaultString = "Oh no you don't";
             return result;

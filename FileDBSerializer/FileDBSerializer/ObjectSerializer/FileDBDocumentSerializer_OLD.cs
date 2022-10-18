@@ -14,7 +14,6 @@ namespace FileDBSerializing.ObjectSerializer
     {
         private FileDBSerializerOptions Options;
         private IFileDBDocument TargetDocument;
-        private PrimitiveTypeConverter PrimitiveConverter = new PrimitiveTypeConverter();
 
         #region Constructor
         public FileDBDocumentSerializer_OLD(FileDBSerializerOptions options)
@@ -178,7 +177,7 @@ namespace FileDBSerializing.ObjectSerializer
             }
             else if (PrimitiveObjectInstance.GetType().IsPrimitiveType())
             {
-                AttribInject.Content = PrimitiveConverter.GetBytes(PrimitiveObjectInstance);
+                AttribInject.Content = PrimitiveTypeConverter.GetBytes(PrimitiveObjectInstance);
             }
             else if (PrimitiveObjectInstance.GetType().IsPrimitiveListType())
             {
@@ -254,7 +253,7 @@ namespace FileDBSerializing.ObjectSerializer
                 for (int i = 0; i < ArrayObject.Length; i++)
                 {
                     var SingleValue = ArrayObject.GetValue(i);
-                    ContentStream.Write(PrimitiveConverter.GetBytes(SingleValue));
+                    ContentStream.Write(PrimitiveTypeConverter.GetBytes(SingleValue));
                 }
                 return ContentStream.ToArray();
             }

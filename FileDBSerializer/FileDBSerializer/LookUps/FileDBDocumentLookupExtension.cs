@@ -21,13 +21,13 @@ namespace FileDBSerializing.LookUps
             return document.Roots.SelectNodes(Lookup, condition);
         }
 
-        public static FileDBNode SelectSingleNode(this IFileDBDocument document, String Lookup)
+        public static FileDBNode? SelectSingleNode(this IFileDBDocument document, String Lookup)
         {
             return document.Roots.SelectSingleNode(Lookup);
         }
 
         //Overload with Condition
-        public static FileDBNode SelectSingleNode(this IFileDBDocument document, String Lookup, LookupCondition condition)
+        public static FileDBNode? SelectSingleNode(this IFileDBDocument document, String Lookup, LookupCondition condition)
         {
             return document.Roots.SelectSingleNode(Lookup, condition);
         }

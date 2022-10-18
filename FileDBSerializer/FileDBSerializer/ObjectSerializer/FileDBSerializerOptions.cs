@@ -10,6 +10,7 @@ namespace FileDBSerializing.ObjectSerializer
     {
         public FileDBDocumentVersion Version { get; set; }
         public String NoneTag { get; } = "None";
+        public String ArraySizeTag { get; } = "size";
         public Encoding DefaultEncoding { get; set; } = Encoding.UTF8;
 
         public bool IgnoreMissingProperties { get; set; } = false;

@@ -1,4 +1,5 @@
 ﻿using FileDBSerializing;
+using FileDBSerializing.LookUps;
 using FileDBSerializing.ObjectSerializer;
 using System;
 using System.Collections.Generic;
@@ -20,15 +21,49 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 
             var actualTargetType = targetType.GetNullableType();
             var arrayContentType = actualTargetType.GetElementType()!;
-            var elemCount = tag.Children.Count();
+
+            var elemCountEntry = tag.SelectSingleNode(options.ArraySizeTag);
+            if(elemCountEntry is not Attrib sizeAttrib)
+                throw new InvalidOperationException("The array size entry must be an Attrib.");
+
+            if(tag.Children.First() != elemCountEntry)
+                throw new InvalidOperationException("The array size entry must be the first entry in the Array Tag.");
+
+            int elemCount = (int)PrimitiveTypeConverter.GetObject(typeof(int), sizeAttrib.Content);
+
+            if((elemCount + 1) != tag.Children.Count)
+                throw new InvalidOperationException("The array size entry does not match the actual array size.");
+
             var itemHandler = HandlerProvider.GetHandlerFor(arrayContentType);
 
             var arrayInstance = Array.CreateInstance(arrayContentType, elemCount);
-            for (int i = 0; i < elemCount; i++)
+
+            if(itemHandler is not TupleHandler)
             {
-                var none = tag.Children.ElementAt(i);
-                object? arrayEntry = itemHandler.Handle(none.AsEnumerable(), arrayContentType, options);
-                arrayInstance.SetValue(arrayEntry, i);
+                for (int i = 0; i < elemCount; i++)
+                {
+                    var none = tag.Children.ElementAt(i + 1); //Offset by one due to size element
+                    object? arrayEntry = itemHandler.Handle(none.AsEnumerable(), arrayContentType, options);
+                    arrayInstance.SetValue(arrayEntry, i);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < elemCount; i++)
+                {
+                    var nestedWrapper = tag.Children.ElementAt(i + 1);
+
+                    if (nestedWrapper is not Tag nestedTag)
+                        throw new InvalidOperationException("A Tuple in a reference array must be a Tag.");
+
+                    int nestedTupleSize = arrayContentType.GetNullableType().GetGenericArguments().Length;
+
+                    if (nestedTag.Children.Count != nestedTupleSize)
+                        throw new InvalidOperationException("The nested Tuple Wrapper does not have the correct number of items for the nested Tuple.");
+
+                    object? arrayEntry = itemHandler.Handle(nestedTag.Children, arrayContentType, options);
+                    arrayInstance.SetValue(arrayEntry, i);
+                }
             }
             return arrayInstance;
         }

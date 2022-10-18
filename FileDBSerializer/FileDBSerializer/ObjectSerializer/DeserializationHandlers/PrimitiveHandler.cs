@@ -8,11 +8,9 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 {
     public class PrimitiveHandler : IDeserializationHandler
     {
-        private static PrimitiveTypeConverter? PrimitiveConverter;
 
         public PrimitiveHandler()
         {
-            PrimitiveConverter ??= new PrimitiveTypeConverter();
         }
 
         public object? Handle(IEnumerable<FileDBNode> nodes, Type targetType, FileDBSerializerOptions options)
@@ -24,7 +22,7 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
             if (node is not Attrib attrib)
                 throw new InvalidOperationException("Only attribs can be handled by PrimitiveHandler");
 
-            return PrimitiveConverter!.GetObject(actualTargetType, attrib.Content);
+            return PrimitiveTypeConverter.GetObject(actualTargetType, attrib.Content);
         }
     }
 }

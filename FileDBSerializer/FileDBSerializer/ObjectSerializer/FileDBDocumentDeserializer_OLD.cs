@@ -10,7 +10,6 @@ namespace FileDBSerializing.ObjectSerializer
     public class FileDBDocumentDeserializer_OLD<T> where T : class, new()
     {
         private FileDBSerializerOptions Options;
-        private PrimitiveTypeConverter PrimitiveConverter = new PrimitiveTypeConverter();
         private T TargetObject;
         private Type TargetType;
 
@@ -151,7 +150,7 @@ namespace FileDBSerializing.ObjectSerializer
             for (int i = 0; i < ArrayLength; i++)
             {
                 byte[] SpanSlice = ContentSpan.Slice(i * contentSize, contentSize).ToArray();
-                var ArrayEntry = PrimitiveConverter.GetObject(ContentType, SpanSlice);
+                var ArrayEntry = PrimitiveTypeConverter.GetObject(ContentType, SpanSlice);
                 ArrayInstance.SetValue(ArrayEntry, i);
             }
 
@@ -256,7 +255,7 @@ namespace FileDBSerializing.ObjectSerializer
             object? PropertyInstance = null;
 
             if (PropertyType.IsPrimitiveType())
-                PropertyInstance = PrimitiveConverter.GetObject(PropertyType, attrib.Content);
+                PropertyInstance = PrimitiveTypeConverter.GetObject(PropertyType, attrib.Content);
             else if (PropertyType.IsStringType())
                 PropertyInstance = InstanceString(PropertyType, attrib.Content);
 

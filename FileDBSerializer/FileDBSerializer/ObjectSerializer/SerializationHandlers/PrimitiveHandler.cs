@@ -12,11 +12,9 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
     /// </summary>
     public class PrimitiveHandler : ISerializationHandler
     {
-        private static PrimitiveTypeConverter? PrimitiveConverter;
 
         public PrimitiveHandler()
         {
-            PrimitiveConverter ??= new PrimitiveTypeConverter();
         }
 
         /// <summary>
@@ -37,7 +35,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 
             attr.Content = item is null ?
                     new byte[0]
-                    : PrimitiveConverter!.GetBytes(item);
+                    : PrimitiveTypeConverter.GetBytes(item);
             return attr.AsEnumerable();
         }
     }

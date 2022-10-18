@@ -12,7 +12,6 @@ namespace FileDBSerializing.ObjectSerializer
     public class FileDBDocumentDeserializer<T> where T : class, new()
     {
         private FileDBSerializerOptions Options;
-        private PrimitiveTypeConverter PrimitiveConverter = new PrimitiveTypeConverter();
         private T TargetObject;
         private Type TargetType;
 

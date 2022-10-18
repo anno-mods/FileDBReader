@@ -9,10 +9,8 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 {
     public class PrimitiveArrayHandler : IDeserializationHandler
     {
-        private static PrimitiveTypeConverter? PrimitiveConverter;
         public PrimitiveArrayHandler()
         {
-            PrimitiveConverter ??= new PrimitiveTypeConverter();
         }
 
         public object? Handle(IEnumerable<FileDBNode> nodes, Type targetType, FileDBSerializerOptions options)
@@ -37,7 +35,7 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
             {
                 //todo maybe make this nicer and faster with memory<T>
                 var slice = attrib.Content.Skip(i * arrayval_size).Take(arrayval_size);
-                var entry = PrimitiveConverter!.GetObject(elem_type, slice.ToArray());
+                var entry = PrimitiveTypeConverter.GetObject(elem_type, slice.ToArray());
                 arrayInstance.SetValue(entry, i);
             }
 
