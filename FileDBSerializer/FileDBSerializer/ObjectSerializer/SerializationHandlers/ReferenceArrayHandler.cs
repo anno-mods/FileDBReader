@@ -17,7 +17,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
                 return t.AsEnumerable();
 
             var size = arrayInstance.Length;
-            var size_node = workingDocument.AddAttrib("size");
+            var size_node = workingDocument.AddAttrib(options.ArraySizeTag);
             size_node.Content = BitConverter.GetBytes(size);
             t.AddChild(size_node);
 
