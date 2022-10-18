@@ -1,4 +1,5 @@
 ﻿using FileDBSerializing.EncodingAwareStrings;
+using FileDBSerializing.ObjectSerializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,11 @@ namespace FileDBReader_Tests.TestSerializationData
 
         public List<Tuple<int, DeserChild, DeserChild>> ListOfTuples { get; set; }
         public Tuple<int, DeserChild, DeserChild>[] ArrayOfTuples { get; set; }
+
+        [FlatArray]
+        public List<long> FlatLongList { get; set; }
+        [FlatArray]
+        public List<Tuple<int, DeserChild, DeserChild>> FlatTupleList { get; set; }
 
         public UnicodeString EncodingAwareString { get; set; }
         public String DefaultString { get; set; }

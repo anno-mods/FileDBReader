@@ -69,6 +69,15 @@ namespace FileDBReader_Tests
                 new Tuple<int, DeserChild, DeserChild>(6, new DeserChild(){ ID = 60 }, new DeserChild(){ID = 600}),
             };
 
+            result.FlatLongList = new List<long>() { long.MinValue, -1L, 0L, 1L, long.MaxValue };
+
+            result.FlatTupleList = new List<Tuple<int, DeserChild, DeserChild>>()
+            {
+                new Tuple<int, DeserChild, DeserChild>(7, new DeserChild(){ ID = 70 }, new DeserChild(){ID = 700}),
+                new Tuple<int, DeserChild, DeserChild>(8, new DeserChild(){ ID = 80 }, new DeserChild(){ID = 800}),
+                new Tuple<int, DeserChild, DeserChild>(9, new DeserChild(){ ID = 90 }, new DeserChild(){ID = 900}),
+            };
+
             result.EncodingAwareString = "teststring 1234";
             result.DefaultString = "Oh no you don't";
             return result;

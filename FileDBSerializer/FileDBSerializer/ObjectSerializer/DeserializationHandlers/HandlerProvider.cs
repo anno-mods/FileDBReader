@@ -16,6 +16,7 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
             { HandlerType.ReferenceArray, new ReferenceArrayHandler() },
             { HandlerType.String, new StringHandler()},
             { HandlerType.ITuple, new TupleHandler() },
+            { HandlerType.FlatArray, new FlatArrayHandler() },
             { HandlerType.List, new ListHandler() }
         };
 
