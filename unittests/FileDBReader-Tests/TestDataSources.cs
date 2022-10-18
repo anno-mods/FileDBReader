@@ -37,6 +37,12 @@ namespace FileDBReader_Tests
                     new DeserChild() { ID = 42},
                     new DeserChild() { ID = 34 }
                 };
+            result.ReferenceList = new List<DeserChild>()
+            {
+                new DeserChild() {ID = 69},
+                new DeserChild() {ID = 420},
+            };
+            result.PrimitiveList = new List<short>() { (short)-1, (short)0, (short)1, short.MaxValue };
             result.EncodingAwareString = "teststring 1234";
             result.DefaultString = "Oh no you don't";
             return result;

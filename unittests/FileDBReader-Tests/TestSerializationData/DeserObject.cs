@@ -13,6 +13,8 @@ namespace FileDBReader_Tests.TestSerializationData
         public DeserChild? Reference { get; set; }
         public int[] IntArray { get; set; }
         public DeserChild[] ReferenceArray { get; set; }
+        public List<DeserChild> ReferenceList { get; set; }
+        public List<short> PrimitiveList { get; set; }
 
         public UnicodeString EncodingAwareString { get; set; }
         public String DefaultString { get; set; }
