@@ -16,19 +16,19 @@ namespace FileDBSerializing.LookUps
             return SelectNodes(Collection, Lookup, node => true);
         }
 
-        public static FileDBNode SelectSingleNode(this IEnumerable<FileDBNode> Collection, String Lookup)
+        public static FileDBNode? SelectSingleNode(this IEnumerable<FileDBNode> Collection, String Lookup)
         {
             return SelectSingleNode(Collection, Lookup, node => true);
         }
 
-        public static Tag SelectSingleTag(this IEnumerable<FileDBNode> Collection, String Lookup)
+        public static Tag? SelectSingleTag(this IEnumerable<FileDBNode> Collection, String Lookup)
         {
-            return (Tag)SelectSingleNode(Collection, Lookup, node => node is Tag);
+            return SelectSingleNode(Collection, Lookup, node => node is Tag) as Tag;
         }
 
-        public static Attrib SelectSingleAttrib(this IEnumerable<FileDBNode> Collection, String Lookup)
+        public static Attrib? SelectSingleAttrib(this IEnumerable<FileDBNode> Collection, String Lookup)
         {
-            return (Attrib)SelectSingleNode(Collection, Lookup, node => node is Attrib);
+            return SelectSingleNode(Collection, Lookup, node => node is Attrib) as Attrib;
         }
 
         #region LookupMethods
@@ -75,7 +75,7 @@ namespace FileDBSerializing.LookUps
         /// <param name="Lookup">Lookup Path of the node</param>
         /// <param name="condition">Condition matching the delegate type LookupConditon. This condition is matched only for the resulting nodes (last element of the lookup path)!.</param>
         /// <returns>The first FileDBNode matching the given condition and Lookup, or null, if no such node is found.</returns>
-        public static FileDBNode SelectSingleNode(this IEnumerable<FileDBNode> Collection, String Lookup, LookupCondition condition)
+        public static FileDBNode? SelectSingleNode(this IEnumerable<FileDBNode> Collection, String Lookup, LookupCondition condition)
         {
             try
             {

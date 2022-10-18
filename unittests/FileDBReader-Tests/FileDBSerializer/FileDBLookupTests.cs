@@ -36,18 +36,18 @@ namespace FileDBSerializing.Tests
         public void LookUpTest_Attrib_Single()
         { 
             IFileDBDocument document = TestDataSources.BuildDocument<FileDBDocument_V2>();
-            Attrib floatattr = (Attrib)document.SelectSingleNode("TestRootOne/FloatAttrib_Child");
+            Attrib? floatattr = document.SelectSingleNode("TestRootOne/FloatAttrib_Child") as Attrib;
             var bytes = BitConverter.GetBytes(33.2f);
-            CollectionAssert.AreEquivalent(bytes, floatattr.Content);
+            CollectionAssert.AreEquivalent(bytes, floatattr?.Content);
         }
 
         [TestMethod]
         public void LookUpTest_Tag_Single()
         {
             IFileDBDocument document = TestDataSources.BuildDocument<FileDBDocument_V2>();
-            Tag Tag = (Tag)document.SelectSingleNode("TestRootOne/None");
+            Tag? Tag = document.SelectSingleNode("TestRootOne/None") as Tag;
             var TagName = "None";
-            Assert.AreEqual(TagName, Tag.GetName());
+            Assert.AreEqual(TagName, Tag?.GetName());
         }
     }
 }
