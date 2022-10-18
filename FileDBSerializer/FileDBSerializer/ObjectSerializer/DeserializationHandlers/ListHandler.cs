@@ -29,11 +29,34 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
             var listConstructor = actualTargetType.GetConstructor(new Type[] { });
             var listInstance = (IList)listConstructor!.Invoke(new object[] { });
 
-            for (int i = 0; i < elemCount; i++)
+            if(itemHandler is not TupleHandler)
             {
-                var none = tag.Children.ElementAt(i);
-                object? listEntry = itemHandler.Handle(none.AsEnumerable(), listContentType, options);
-                listInstance.Add(listEntry);
+                for (int i = 0; i < elemCount; i++)
+                {
+                    var none = tag.Children.ElementAt(i);
+                    object? listEntry = itemHandler.Handle(none.AsEnumerable(), listContentType, options);
+                    listInstance.Add(listEntry);
+                }
+            }
+            else
+            {
+                int stride = listContentType.GetNullableType().GetGenericArguments().Length;
+                if(elemCount % stride != 0)
+                    throw new InvalidOperationException("The amount of items in this List of Tuples cannot properly fill Tuples without remainder.\r\n" +
+                        $"There are {elemCount % stride} items too many.");
+
+                for (int i = 0; i < elemCount; i+=stride)
+                {
+                    FileDBNode[] tupleItems = new FileDBNode[stride];
+                    for (int j = 0; j < tupleItems.Length; j++)
+                    {
+                        tupleItems[j] = tag.Children.ElementAt(i + j);
+                    }
+
+                    object? listEntry = itemHandler.Handle(tupleItems, listContentType, options);
+                    listInstance.Add(listEntry);
+                }
+
             }
             return listInstance;
         }

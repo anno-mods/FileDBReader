@@ -16,6 +16,12 @@ namespace FileDBReader_Tests.TestSerializationData
         public List<DeserChild> ReferenceList { get; set; }
         public List<short> PrimitiveList { get; set; }
 
+        public Tuple<int, DeserChild> IndexTuple { get; set; }
+        public Tuple<int, Tuple<short[], string, DeserChild>> NestedTuple { get; set; }
+
+        public List<Tuple<int, DeserChild, DeserChild>> ListOfTuples { get; set; }
+        public Tuple<int, DeserChild, DeserChild>[] ArrayOfTuples { get; set; }
+
         public UnicodeString EncodingAwareString { get; set; }
         public String DefaultString { get; set; }
     }
