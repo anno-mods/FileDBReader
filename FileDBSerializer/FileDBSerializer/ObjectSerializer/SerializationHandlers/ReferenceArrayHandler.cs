@@ -2,6 +2,7 @@
 using FileDBSerializing.ObjectSerializer;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
@@ -10,6 +11,9 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
     {
         public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {
+            if (item is null && options.SkipReferenceArrayNullValues)
+                return Enumerable.Empty<FileDBNode>();
+
             Tag t = workingDocument.AddTag(tagName);
 
             var arrayInstance = item as Array;

@@ -19,9 +19,10 @@ namespace FileDBReader_Tests
             root.DumbChild = Child;
             root.DumbManager = new SomethingManager() { Child = Child, SomethingCount = 69420, SomethingValue = 3.1415f };
             root.PrimitiveArray = new int[5] { 1337, 42, 69, 420, 31 };
-            root.RefArray = new() { new ChildElement() { ID = 69420 }, new ChildElement() { ID = 1234 } };
+            root.RefList = new() { new ChildElement() { ID = 69420 }, new ChildElement() { ID = 1234 } };
             root.SimpleString = "Modders gonna take over the world!";
-            root.StringArray = new() { "There are no plans for a console version of Anno 1800, or to support controllers in the PC version of the game", "We only made this complete Console UI for fun" };
+            root.StringList = new() { "There are no plans for a console version of Anno 1800, or to support controllers in the PC version of the game", "We only made this complete Console UI for fun" };
+            root.RefArray = new ChildElement[] { new ChildElement() { ID = 11 }, new ChildElement() { ID = 12 } };
             return root;
         }
 

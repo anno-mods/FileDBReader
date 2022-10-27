@@ -109,10 +109,7 @@ namespace FileDBSerializing.Tests
             IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
             XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
             Assert.AreEqual("<Content>" +
-                "<DumbManager />" +
-                "<DumbChild />" +
                 "<RefArray />" +
-                "<StringArray />" +
                 "</Content>", xmlDocument.InnerXml);
 
             // all null, SkipSimpleNullValues = false
@@ -124,9 +121,23 @@ namespace FileDBSerializing.Tests
                 "<DumbManager />" +
                 "<DumbChild />" +
                 "<PrimitiveArray></PrimitiveArray>" +
-                "<RefArray />" +
                 "<SimpleString></SimpleString>" +
-                "<StringArray />" +
+                "<RefArray />" +
+                "</Content>", xmlDocument.InnerXml);
+
+            // all null, SkipSimpleNullValues = false
+            serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipSimpleNullValues = false, SkipListNullValues = false });
+            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            Assert.AreEqual("<Content>" +
+                "<RootCount></RootCount>" + // TODO: why are simple null values not self-closing?
+                "<DumbManager />" +
+                "<DumbChild />" +
+                "<PrimitiveArray></PrimitiveArray>" +
+                "<RefList />" +
+                "<SimpleString></SimpleString>" +
+                "<StringList />" + 
+                "<RefArray />" +
                 "</Content>", xmlDocument.InnerXml);
         }
 

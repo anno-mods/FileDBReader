@@ -22,8 +22,17 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
             var actualTargetType = targetType.GetNullableType();
             var arrayContentType = actualTargetType.GetElementType()!;
 
+            if(tag.Children.Count == 0)
+            {
+                var emptyInstance = Array.CreateInstance(arrayContentType, 0);
+                return emptyInstance;
+            }
+
             var elemCountEntry = tag.SelectSingleNode(options.ArraySizeTag);
-            if(elemCountEntry is not Attrib sizeAttrib)
+            if(elemCountEntry is null)
+                throw new InvalidOperationException($"The array is missing a size entry when parsing to type {targetType}.");
+
+            if (elemCountEntry is not Attrib sizeAttrib)
                 throw new InvalidOperationException("The array size entry must be an Attrib.");
 
             if(tag.Children.First() != elemCountEntry)
