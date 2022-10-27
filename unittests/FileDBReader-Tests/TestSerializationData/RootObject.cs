@@ -15,9 +15,10 @@ namespace FileDBSerializing.Tests.TestData
         public SomethingManager? DumbManager { get; set; }
         public ChildElement? DumbChild { get; set; }
         public int[]? PrimitiveArray { get; set; }
-        public List<ChildElement>? RefArray { get; set; } = new();
+        public List<ChildElement>? RefList { get; set; }
         public UnicodeString? SimpleString { get; set; }
-        public List<String>? StringArray { get; set; } = new();
+        public List<String>? StringList { get; set; }
+        public ChildElement[] RefArray { get; set; }
     }
 
     public record SomethingManager

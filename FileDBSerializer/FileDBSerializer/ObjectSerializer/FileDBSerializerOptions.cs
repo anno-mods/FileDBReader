@@ -17,6 +17,8 @@ namespace FileDBSerializing.ObjectSerializer
 
         public bool SkipDefaultedValues { get; set; } = false;
         public bool SkipSimpleNullValues { get; set; } = true;
+        public bool SkipListNullValues { get; set; } = true;
+        public bool SkipReferenceArrayNullValues { get; set; } = false;
 
         public FileDBSerializerOptions()
         {

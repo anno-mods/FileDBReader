@@ -44,12 +44,12 @@ namespace FileDBSerializing.LookUps
             return tag.Children.SelectNodes(Lookup, condition);
         }
 
-        public static FileDBNode SelectSingleNode(this Tag tag, String Lookup)
+        public static FileDBNode? SelectSingleNode(this Tag tag, String Lookup)
         {
             return tag.Children.SelectSingleNode(Lookup);
         }
 
-        public static FileDBNode SelectSingleNode(this Tag tag, String Lookup, LookupCondition condition)
+        public static FileDBNode? SelectSingleNode(this Tag tag, String Lookup, LookupCondition condition)
         {
             return tag.Children.SelectSingleNode(Lookup, condition);
         }

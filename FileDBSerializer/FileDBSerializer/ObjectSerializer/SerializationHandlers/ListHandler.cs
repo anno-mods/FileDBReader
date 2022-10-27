@@ -11,6 +11,9 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
     {
         public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
         {
+            if(item is null && options.SkipListNullValues)
+                return Enumerable.Empty<FileDBNode>();
+
             Tag t = workingDocument.AddTag(tagName);
 
             var listInstance = item as IList;
