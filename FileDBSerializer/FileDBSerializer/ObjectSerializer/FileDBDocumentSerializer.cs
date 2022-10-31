@@ -25,7 +25,7 @@ namespace FileDBSerializing.ObjectSerializer
         //serializes an object into a filedb document
         public IFileDBDocument WriteObjectStructureToFileDBDocument(object graph)
         {
-            PropertyInfo[] properties = graph.GetType().GetProperties();
+            IEnumerable<PropertyInfo> properties = graph.GetType().GetPropertiesWithOrder();
             TargetDocument.Roots = SerializePropertyCollection(properties, graph).ToList();
 
             var tmpdocument = TargetDocument;

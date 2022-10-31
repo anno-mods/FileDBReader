@@ -1,4 +1,5 @@
-﻿using FileDBSerializing.EncodingAwareStrings;
+﻿using FileDBSerializer.ObjectSerializer;
+using FileDBSerializing.EncodingAwareStrings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,6 +51,57 @@ namespace FileDBSerializing.ObjectSerializer
         internal static PropertyInfo? GetPropertyWithRenaming(this Type type, String name)
         {
             return type.GetProperty(name);
+        }
+
+        /// <summary>
+        /// Get Properties of a class with its base class properties respecting the PropertyLocationAttribute if present.
+        /// </summary>
+        /// <param name="type">The targeted Type.</param>
+        /// <returns>An IEnumerable&lt;PropertyInfo&gt; containing the ordered PropertyInfos.</returns>
+        public static IEnumerable<PropertyInfo> GetPropertiesWithOrder(this Type type)
+        {
+            List<PropertyInfo> propertyInfos = new List<PropertyInfo>();
+            int nThBefore = 0;
+
+            void PlacePropertyInfo(PropertyInfo item, PropertyLocationOption location)
+            {
+                if(location == PropertyLocationOption.BEFORE_PARENT)
+                {
+                    propertyInfos.Insert(nThBefore, item);
+                    nThBefore++;
+                }
+                else
+                {
+                    propertyInfos.Add(item);
+                }
+            }
+
+
+            var baseType = type.BaseType;
+            if(baseType is not null && baseType != typeof(object))
+            {
+                propertyInfos.AddRange(baseType.GetPropertiesWithOrder());
+            }
+
+            var currentProperties = type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
+            foreach(PropertyInfo info in currentProperties)
+            {
+                if(info.GetCustomAttribute<PropertyLocationAttribute>() is PropertyLocationAttribute propertyAttribute && propertyAttribute is not null)
+                {
+                    PlacePropertyInfo(info, propertyAttribute.Location);
+                }
+                else if(type.GetCustomAttribute<PropertyLocationAttribute>() is PropertyLocationAttribute typeAttribute && typeAttribute is not null)
+                {
+                    PlacePropertyInfo(info, typeAttribute.Location);
+                }
+                else
+                {
+                    //Default to BEFORE_PARENT as that is the default language behaviour
+                    PlacePropertyInfo(info, PropertyLocationOption.BEFORE_PARENT);
+                }
+            }
+
+            return propertyInfos;
         }
     }
 
