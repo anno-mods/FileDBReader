@@ -84,7 +84,9 @@ namespace FileDBSerializing.ObjectSerializer
             }
 
             var currentProperties = type.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
-            foreach(PropertyInfo info in currentProperties)
+            var orderedProperties = currentProperties.OrderBy(x => x.MetadataToken);
+
+            foreach(PropertyInfo info in orderedProperties)
             {
                 if(info.GetCustomAttribute<PropertyLocationAttribute>() is PropertyLocationAttribute propertyAttribute && propertyAttribute is not null)
                 {
