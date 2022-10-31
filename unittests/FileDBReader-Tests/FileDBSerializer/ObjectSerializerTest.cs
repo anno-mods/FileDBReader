@@ -108,7 +108,14 @@ namespace FileDBSerializing.Tests
             FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
             IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
             XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
-            Assert.AreEqual("<Content>" +
+            Assert.AreEqual("<Content />", xmlDocument.InnerXml);
+
+            // all null, SkipReferenceArrayNullValues = false
+            serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipReferenceArrayNullValues = false });
+            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            Assert.AreEqual(
+                "<Content>" +
                 "<RefArray />" +
                 "</Content>", xmlDocument.InnerXml);
 
@@ -116,20 +123,21 @@ namespace FileDBSerializing.Tests
             serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipSimpleNullValues = false });
             doc = serializer.WriteObjectStructureToFileDBDocument(obj);
             xmlDocument = new FileDbXmlConverter().ToXml(doc);
-            Assert.AreEqual("<Content>" +
+            Assert.AreEqual(
+                "<Content>" +
                 "<RootCount></RootCount>" + // TODO: why are simple null values not self-closing?
                 "<DumbManager />" +
                 "<DumbChild />" +
                 "<PrimitiveArray></PrimitiveArray>" +
                 "<SimpleString></SimpleString>" +
-                "<RefArray />" +
                 "</Content>", xmlDocument.InnerXml);
 
-            // all null, SkipSimpleNullValues = false
+            // all null, SkipSimpleNullValues = false, SkipListNullValues = false
             serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipSimpleNullValues = false, SkipListNullValues = false });
             doc = serializer.WriteObjectStructureToFileDBDocument(obj);
             xmlDocument = new FileDbXmlConverter().ToXml(doc);
-            Assert.AreEqual("<Content>" +
+            Assert.AreEqual(
+                "<Content>" +
                 "<RootCount></RootCount>" + // TODO: why are simple null values not self-closing?
                 "<DumbManager />" +
                 "<DumbChild />" +
@@ -137,8 +145,74 @@ namespace FileDBSerializing.Tests
                 "<RefList />" +
                 "<SimpleString></SimpleString>" +
                 "<StringList />" + 
+                "</Content>", xmlDocument.InnerXml);
+
+
+            // all null, SkipSimpleNullValues = false, SkipListNullValues = false, SkipReferenceArrayNullValues = false
+            serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipSimpleNullValues = false, SkipListNullValues = false, SkipReferenceArrayNullValues = false });
+            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            Assert.AreEqual(
+                "<Content>" +
+                "<RootCount></RootCount>" + // TODO: why are simple null values not self-closing?
+                "<DumbManager />" +
+                "<DumbChild />" +
+                "<PrimitiveArray></PrimitiveArray>" +
+                "<RefList />" +
+                "<SimpleString></SimpleString>" +
+                "<StringList />" +
                 "<RefArray />" +
                 "</Content>", xmlDocument.InnerXml);
+        }
+
+        /// <summary>
+        /// A Reference Array with only 1 child element is illegal - the size tag should only appear when the array size is &gt;=1.
+        /// </summary>
+        [TestMethod]
+        public void ErrorOnInvalidReferenceArray()
+        {
+            string invalidReferenceArrayXML =
+                "<Content>" +
+                "<RefArray>" +
+                "<size>00000000</size>" +
+                "</RefArray>" +
+                "</Content>";
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(invalidReferenceArrayXML);
+
+            XmlFileDbConverter xmlFileDbConverter = new XmlFileDbConverter(FileDBDocumentVersion.Version1);
+
+            IFileDBDocument doc = xmlFileDbConverter.ToFileDb(xmlDoc);
+
+            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+
+            RootObject DeserializedDocument;
+            Assert.ThrowsException<InvalidOperationException>(() => DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc));
+        }
+
+        [TestMethod]
+        public void EmptyReferenceArrayRoundTrip()
+        {
+            string emptyReferenceArrayXML =
+                "<Content>" +
+                "<RefArray />" +
+                "</Content>";
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(emptyReferenceArrayXML);
+
+            XmlFileDbConverter xmlFileDbConverter = new XmlFileDbConverter(FileDBDocumentVersion.Version1);
+
+            IFileDBDocument fromXML = xmlFileDbConverter.ToFileDb(xmlDoc);
+            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+            RootObject? DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(fromXML);
+
+            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            IFileDBDocument toXml = serializer.WriteObjectStructureToFileDBDocument(DeserializedDocument);
+            XmlDocument xmlDocumentResult = new FileDbXmlConverter().ToXml(toXml);
+
+            Assert.AreEqual(emptyReferenceArrayXML, xmlDocumentResult.InnerXml);
         }
 
         private class FlatStringArrayContainer
