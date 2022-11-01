@@ -22,10 +22,17 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
             var actualTargetType = targetType.GetNullableType();
             var arrayContentType = actualTargetType.GetElementType()!;
 
+            //Empty Reference Array does not need a <size></size> tag/attrib
             if(tag.Children.Count == 0)
             {
                 var emptyInstance = Array.CreateInstance(arrayContentType, 0);
                 return emptyInstance;
+            }
+            else if(tag.Children.Count == 1)
+            {
+                throw new InvalidOperationException($"The tag that should be parsed as a reference array has exactly one child. " +
+                    $"This is not possible as it should either have 0 children (when empty), " +
+                    $"or should have at least 2 children (1+ child items plus the size tag).");
             }
 
             var elemCountEntry = tag.SelectSingleNode(options.ArraySizeTag);

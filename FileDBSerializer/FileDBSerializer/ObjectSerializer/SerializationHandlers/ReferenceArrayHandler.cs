@@ -21,6 +21,11 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
                 return t.AsEnumerable();
 
             var size = arrayInstance.Length;
+
+            //Empty Reference Array does not need a <size></size> tag/attrib
+            if (size == 0)
+                return t.AsEnumerable();
+
             var size_node = workingDocument.AddAttrib(options.ArraySizeTag);
             size_node.Content = BitConverter.GetBytes(size);
             t.AddChild(size_node);
