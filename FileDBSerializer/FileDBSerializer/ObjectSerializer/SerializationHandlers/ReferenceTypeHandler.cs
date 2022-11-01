@@ -19,7 +19,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 
             if (item is null) return t.AsEnumerable();
 
-            PropertyInfo[] properties = item.GetType().GetProperties();
+            IEnumerable<PropertyInfo> properties = item.GetType().GetPropertiesWithOrder();
 
             foreach (var _prop in properties)
             {

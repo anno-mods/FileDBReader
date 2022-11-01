@@ -11,6 +11,7 @@ using FileDBSerializing.ObjectSerializer;
 using FileDBSerializing.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
+using FileDBReader_Tests.TestSerializationData.PropertyOrder;
 
 namespace FileDBSerializing.Tests
 {
@@ -145,6 +146,131 @@ namespace FileDBSerializing.Tests
         {
             [FlatArray]
             public List<String>? Item { get; set; } = new();
+        }
+
+        [TestMethod]
+        public void TestPropertyOrderBefore()
+        {
+            var obj = new BeforeObject() { BaseCount = 1, BaseChild = new ChildElement() { ID = 1 } };
+            obj.BeforeID = 1;
+            obj.BeforeList = new List<ChildElement>();
+
+            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+
+            Assert.AreEqual(
+                "<Content>" +
+                "<BeforeID>0100000000000000</BeforeID>" +
+                "<BeforeList />" +
+                "<BaseCount>01000000</BaseCount>" +
+                "<BaseChild>" + 
+                "<ID>01000000</ID>" +
+                "</BaseChild>" +
+                "</Content>", 
+                xmlDocument.InnerXml);
+        }
+
+        [TestMethod]
+        public void TestPropertyOrderAfter()
+        {
+            var obj = new AfterObject() { BaseCount = 2, BaseChild = new ChildElement() { ID = 2 } };
+            obj.AfterID = 2;
+            obj.AfterList = new List<ChildElement>();
+
+            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+
+            Assert.AreEqual(
+                "<Content>" +
+                "<BaseCount>02000000</BaseCount>" +
+                "<BaseChild>" +
+                "<ID>02000000</ID>" +
+                "</BaseChild>" +
+                "<AfterID>0200000000000000</AfterID>" +
+                "<AfterList />" +
+                "</Content>",
+                xmlDocument.InnerXml);
+        }
+
+        [TestMethod]
+        public void TestPropertyOrderMixed()
+        {
+            var obj = new MixedObject() { BaseCount = 3, BaseChild = new ChildElement() { ID = 3 } };
+            obj.FirstID = 3;
+            obj.EndList = new List<ChildElement>();
+            obj.SecondIntArr = new int[] { 0, 1 };
+
+            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+
+            Assert.AreEqual(
+                "<Content>" +
+                "<FirstID>0300000000000000</FirstID>" +
+                "<SecondIntArr>0000000001000000</SecondIntArr>" +
+                "<BaseCount>03000000</BaseCount>" +
+                "<BaseChild>" +
+                "<ID>03000000</ID>" +
+                "</BaseChild>" +
+                "<EndList />" +
+                "</Content>",
+                xmlDocument.InnerXml);
+        }
+
+        [TestMethod]
+        public void TestPropertyOrderNested()
+        {
+            var before = new BeforeObject() { BaseCount = 1, BaseChild = new ChildElement() { ID = 1 } };
+            before.BeforeID = 1;
+            before.BeforeList = new List<ChildElement>();
+
+            var after = new AfterObject() { BaseCount = 2, BaseChild = new ChildElement() { ID = 2 } };
+            after.AfterID = 2;
+            after.AfterList = new List<ChildElement>();
+
+            var mixed = new MixedObject() { BaseCount = 3, BaseChild = new ChildElement() { ID = 3 } };
+            mixed.FirstID = 3;
+            mixed.EndList = new List<ChildElement>();
+            mixed.SecondIntArr = new int[] { 0, 1 };
+
+            var obj = new ParentObject() { Before = before, After = after, Mixed = mixed };
+
+            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+
+            string nestedXML =
+                "<Content>" +
+                "<Before>" +
+                "<BeforeID>0100000000000000</BeforeID>" +
+                "<BeforeList />" +
+                "<BaseCount>01000000</BaseCount>" +
+                "<BaseChild>" +
+                "<ID>01000000</ID>" +
+                "</BaseChild>" +
+                "</Before>" +
+                "<After>" +
+                "<BaseCount>02000000</BaseCount>" +
+                "<BaseChild>" +
+                "<ID>02000000</ID>" +
+                "</BaseChild>" +
+                "<AfterID>0200000000000000</AfterID>" +
+                "<AfterList />" +
+                "</After>" +
+                "<Mixed>" +
+                "<FirstID>0300000000000000</FirstID>" +
+                "<SecondIntArr>0000000001000000</SecondIntArr>" +
+                "<BaseCount>03000000</BaseCount>" +
+                "<BaseChild>" +
+                "<ID>03000000</ID>" +
+                "</BaseChild>" +
+                "<EndList />" +
+                "</Mixed>" +
+                "</Content>";
+
+            Assert.AreEqual(nestedXML, xmlDocument.InnerXml);
         }
 
         [TestMethod()]
