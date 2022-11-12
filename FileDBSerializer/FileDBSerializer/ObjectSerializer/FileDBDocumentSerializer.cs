@@ -41,7 +41,7 @@ namespace FileDBSerializing.ObjectSerializer
                 var handler = HandlerProvider.GetHandlerFor(property);
 
                 var item = property.GetValue(parentObject);
-                string tagName = property.Name;
+                string tagName = property.GetNameWithRenaming();
 
                 foreach (var _ in handler.Handle(item, tagName, TargetDocument, Options))
                 {

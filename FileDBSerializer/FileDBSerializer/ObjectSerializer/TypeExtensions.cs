@@ -48,8 +48,33 @@ namespace FileDBSerializing.ObjectSerializer
             return type;
         }
 
+        internal static String GetNameWithRenaming(this PropertyInfo property)
+        {
+            if (property.HasAttribute<RenamePropertyAttribute>())
+            {
+                var attrib = property.GetCustomAttribute<RenamePropertyAttribute>();
+                if(attrib is not null) 
+                    return attrib.RenameTo;
+            }
+            return property.Name;
+        }
+
         internal static PropertyInfo? GetPropertyWithRenaming(this Type type, String name)
         {
+            var properties = type.GetProperties();
+
+            //try to get the renamed first 
+            if (properties.Any(x => x.HasAttribute<RenamePropertyAttribute>()))
+            {
+                var withRename = properties.Where(x => x.HasAttribute<RenamePropertyAttribute>())
+                    .Where(x => (x.GetCustomAttribute(typeof(RenamePropertyAttribute)) as RenamePropertyAttribute)?.RenameTo.Equals(name) ?? false);
+                if (withRename.Count() > 1)
+                    throw new Exception($"Multiple properties with the same name exist in: {type.Name}");
+                var property = withRename.FirstOrDefault();
+                
+                if(property is not null) return property;
+            }
+            //if no renamed exist, just do it default way.
             return type.GetProperty(name);
         }
 

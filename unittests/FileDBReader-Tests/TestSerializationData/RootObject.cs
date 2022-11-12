@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using System.Runtime.Serialization;
 using FileDBSerializing.EncodingAwareStrings;
+using FileDBSerializing.ObjectSerializer;
 
 namespace FileDBSerializing.Tests.TestData
 {
@@ -31,5 +32,29 @@ namespace FileDBSerializing.Tests.TestData
     public record ChildElement
     {
         public uint? ID { get; set; }
+    }
+
+    public record RenamedRootObject
+    {
+        [RenameProperty("RootCount")]
+        public int? UnknownCount { get; set; }
+
+        [RenameProperty("DumbManager")]
+        public SomethingManager? IntelligentManager { get; set; }
+        public ChildElement? DumbChild { get; set; }
+
+        [RenameProperty("PrimitiveArray")]
+        public int[]? IntArray { get; set; }
+
+        [RenameProperty("RefList")]
+        public List<ChildElement>? RefNotAList { get; set; }
+        public UnicodeString? SimpleString { get; set; }
+
+        [RenameProperty("StringList")]
+        public List<String>? StringNotAList { get; set; }
+
+
+        [RenameProperty("RefArray")]
+        public ChildElement[]? ChildArray { get; set; }
     }
 }

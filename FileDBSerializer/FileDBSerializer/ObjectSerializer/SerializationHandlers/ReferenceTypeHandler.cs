@@ -26,7 +26,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
                 //use a handler for the children properties
                 var handler = HandlerProvider.GetHandlerFor(_prop);
                 var childItem = _prop.GetValue(item);
-                t.AddChildren(handler.Handle(childItem, _prop.Name, workingDocument, options));
+                t.AddChildren(handler.Handle(childItem, _prop.GetNameWithRenaming(), workingDocument, options));
             }
             return t.AsEnumerable();
         }

@@ -26,6 +26,22 @@ namespace FileDBReader_Tests
             return root;
         }
 
+
+        internal static RenamedRootObject GetTestAssetRenamed()
+        {
+            RenamedRootObject root = new RenamedRootObject();
+            root.UnknownCount = 5;
+            ChildElement Child = new ChildElement() { ID = 1337 };
+            root.DumbChild = Child;
+            root.IntelligentManager = new SomethingManager() { Child = Child, SomethingCount = 69420, SomethingValue = 3.1415f };
+            root.IntArray = new int[5] { 1337, 42, 69, 420, 31 };
+            root.ChildArray = new ChildElement[] { new ChildElement() { ID = 11 }, new ChildElement() { ID = 12 } };
+            root.SimpleString = "Modders gonna take over the world!";
+            root.StringNotAList = new() { "There are no plans for a console version of Anno 1800, or to support controllers in the PC version of the game", "We only made this complete Console UI for fun" };
+            root.RefNotAList = new() { new ChildElement() { ID = 69420 }, new ChildElement() { ID = 1234 } };
+            return root;
+        }
+
         internal static DeserObject GetDeserializerTestAsset()
         {
             DeserObject result = new();
@@ -174,5 +190,6 @@ namespace FileDBReader_Tests
             filedb.Roots.Add(root3);
             return filedb;
         }
+
     }
 }

@@ -18,6 +18,8 @@ namespace FileDBSerializing.Tests
     [TestClass]
     public class ObjectSerializerTest
     {
+        #region RootObject De-/Serialization Tests
+
         [TestMethod]
         public void SerializeTest_V1() 
         {
@@ -95,6 +97,95 @@ namespace FileDBSerializing.Tests
 
             result.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
         }
+
+#endregion
+
+        #region RenamedRootObject De-/Serialization Tests
+
+
+        [TestMethod]
+        public void SerializeTestRenamed_V1()
+        {
+            var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version1.filedb");
+
+            var obj = TestDataSources.GetTestAssetRenamed();
+            FileDBSerializer<RenamedRootObject> objectserializer = new FileDBSerializer<RenamedRootObject>(FileDBDocumentVersion.Version1);
+
+            Stream result = File.Create("fuck.data");
+            objectserializer.Serialize(result, obj);
+
+            Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));
+        }
+
+        [TestMethod]
+        public void SerializeTestRenamed_V2()
+        {
+            var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
+
+            var obj = TestDataSources.GetTestAssetRenamed();
+            FileDBSerializer<RenamedRootObject> objectserializer = new FileDBSerializer<RenamedRootObject>(FileDBDocumentVersion.Version2);
+            MemoryStream result = new MemoryStream();
+            objectserializer.Serialize(result, obj);
+
+            Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));
+        }
+
+
+
+        [TestMethod]
+        public void DeserializeTestRenamed_V1()
+        {
+            var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version1.filedb");
+
+            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version1);
+            IFileDBDocument doc = parser.LoadFileDBDocument(x);
+
+            FileDBDocumentDeserializer<RenamedRootObject> objectdeserializer = new FileDBDocumentDeserializer<RenamedRootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+
+            var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
+
+            DeserializedDocument.Should().BeEquivalentTo(TestDataSources.GetTestAssetRenamed());
+        }
+
+        [TestMethod]
+        public void DeserializeTestRenamed_V2()
+        {
+            var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
+
+            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version2);
+            IFileDBDocument doc = parser.LoadFileDBDocument(x);
+
+            FileDBDocumentDeserializer<RenamedRootObject> objectdeserializer = new FileDBDocumentDeserializer<RenamedRootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+
+            var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
+
+            DeserializedDocument.Should().BeEquivalentTo(TestDataSources.GetTestAssetRenamed());
+        }
+
+
+
+        [TestMethod]
+        public void StaticConvertTestRenamed_Serialize()
+        {
+            var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
+
+            var obj = TestDataSources.GetTestAssetRenamed();
+
+            Stream Result = FileDBConvert.SerializeObject(obj, new() { Version = FileDBDocumentVersion.Version2 });
+
+            Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, Result));
+        }
+
+        [TestMethod]
+        public void StaticConvertTestRenamed_Deserialize()
+        {
+            var source = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
+            RenamedRootObject? result = FileDBConvert.DeserializeObject<RenamedRootObject>(source, new() { Version = FileDBDocumentVersion.Version2 });
+
+            result.Should().BeEquivalentTo(TestDataSources.GetTestAssetRenamed());
+        }
+
+        #endregion
 
 
         [TestMethod()]
