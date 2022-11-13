@@ -53,7 +53,6 @@ namespace FileDBSerializing.Tests.TestData
         [RenameProperty("StringList")]
         public List<String>? StringNotAList { get; set; }
 
-
         [RenameProperty("RefArray")]
         public ChildElement[]? ChildArray { get; set; }
     }

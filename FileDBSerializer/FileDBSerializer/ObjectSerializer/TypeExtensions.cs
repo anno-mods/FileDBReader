@@ -11,6 +11,7 @@ namespace FileDBSerializing.ObjectSerializer
 {
     internal static class TypeExtensions
     {
+        private static readonly RenamedPropertyHelper _renamedPropertyHelper = new();
         //sorry vera I needed to copy this ^^
         public static bool IsEnumerable(this Type type) => type != typeof(String) && (type.IsArray || typeof(IEnumerable).IsAssignableFrom(type));
 
@@ -50,32 +51,18 @@ namespace FileDBSerializing.ObjectSerializer
 
         internal static String GetNameWithRenaming(this PropertyInfo property)
         {
-            if (property.HasAttribute<RenamePropertyAttribute>())
-            {
-                var attrib = property.GetCustomAttribute<RenamePropertyAttribute>();
-                if(attrib is not null) 
-                    return attrib.RenameTo;
-            }
-            return property.Name;
+            if (property.DeclaringType is null)
+                throw new Exception($"Property cannot be checked as it lacks a declaring type: {property.Name}");
+            if (!_renamedPropertyHelper.CheckTypeValidity(property.DeclaringType!))
+                throw new Exception($"Naming conflict in {property.DeclaringType.Name}: {property.Name}");
+            return _renamedPropertyHelper.GetNameWithRenaming(property);
         }
 
         internal static PropertyInfo? GetPropertyWithRenaming(this Type type, String name)
         {
-            var properties = type.GetProperties();
-
-            //try to get the renamed first 
-            if (properties.Any(x => x.HasAttribute<RenamePropertyAttribute>()))
-            {
-                var withRename = properties.Where(x => x.HasAttribute<RenamePropertyAttribute>())
-                    .Where(x => (x.GetCustomAttribute(typeof(RenamePropertyAttribute)) as RenamePropertyAttribute)?.RenameTo.Equals(name) ?? false);
-                if (withRename.Count() > 1)
-                    throw new Exception($"Multiple properties with the same name exist in: {type.Name}");
-                var property = withRename.FirstOrDefault();
-                
-                if(property is not null) return property;
-            }
-            //if no renamed exist, just do it default way.
-            return type.GetProperty(name);
+            if (!_renamedPropertyHelper.CheckTypeValidity(type))
+                throw new Exception($"Naming conflict in {type.Name}: {name}");
+            return _renamedPropertyHelper.GetPropertyWithRenaming(type, name);
         }
 
         /// <summary>
