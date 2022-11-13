@@ -9,7 +9,7 @@
     <Authors>anno-mods</Authors>
     <Description>A small C# library for serializing Anno 1800's proprietary DOM files.</Description>
     <SignAssembly>False</SignAssembly>
-    <Version>1.1.0</Version>
+    <Version>2.3</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -38,6 +38,8 @@
   <PropertyGroup>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Nullable>enable</Nullable>
+    <AssemblyVersion>2.3</AssemblyVersion>
+    <FileVersion>2.3</FileVersion>
   </PropertyGroup>
   
   <ItemGroup>
