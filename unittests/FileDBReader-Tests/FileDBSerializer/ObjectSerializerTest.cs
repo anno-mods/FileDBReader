@@ -55,7 +55,7 @@ namespace FileDBSerializing.Tests
             DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version1);
             IFileDBDocument doc = parser.LoadFileDBDocument(x);
 
-            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1});
+            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
 
             var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
 
@@ -98,7 +98,7 @@ namespace FileDBSerializing.Tests
             result.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
         }
 
-#endregion
+        #endregion
 
         #region RenamedRootObject De-/Serialization Tests
 
@@ -111,7 +111,7 @@ namespace FileDBSerializing.Tests
             var obj = TestDataSources.GetTestAssetRenamed();
             FileDBSerializer<RenamedRootObject> objectserializer = new FileDBSerializer<RenamedRootObject>(FileDBDocumentVersion.Version1);
 
-            Stream result = File.Create("fuck.data");
+            Stream result = new MemoryStream();
             objectserializer.Serialize(result, obj);
 
             Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, result));

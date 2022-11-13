@@ -26,7 +26,6 @@ namespace FileDBReader_Tests
             return root;
         }
 
-
         internal static RenamedRootObject GetTestAssetRenamed()
         {
             RenamedRootObject root = new RenamedRootObject();
@@ -35,6 +34,7 @@ namespace FileDBReader_Tests
             root.DumbChild = Child;
             root.IntelligentManager = new SomethingManager() { Child = Child, SomethingCount = 69420, SomethingValue = 3.1415f };
             root.IntArray = new int[5] { 1337, 42, 69, 420, 31 };
+
             root.ChildArray = new ChildElement[] { new ChildElement() { ID = 11 }, new ChildElement() { ID = 12 } };
             root.SimpleString = "Modders gonna take over the world!";
             root.StringNotAList = new() { "There are no plans for a console version of Anno 1800, or to support controllers in the PC version of the game", "We only made this complete Console UI for fun" };
@@ -190,6 +190,5 @@ namespace FileDBReader_Tests
             filedb.Roots.Add(root3);
             return filedb;
         }
-
     }
 }

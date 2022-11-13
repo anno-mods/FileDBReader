@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!-- 
   Simple example of a conversion file for infotips. 
 
@@ -8,10 +8,10 @@
   Encoding = Encoding as it occurs in .Net Encodings
 -->
 <Converts>
-  <Default Type ="Int32" />
+  <Default Type = "Int32"/>
   <InternalCompression />
   <Converts>
-    <Convert Path ="//Text" Type ="String" />
+    <Convert Path = "//*[not(self::InfoElement)]/Text" Type = "String" />
     <Convert Path ="//Condition" Type ="String" Encoding = "UTF-8"/>
     <Convert Path ="//ValueText" Type ="String" />
     <Convert Path ="//IconText" Type ="String" />

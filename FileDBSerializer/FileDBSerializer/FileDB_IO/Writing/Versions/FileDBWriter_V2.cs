@@ -55,7 +55,7 @@ namespace FileDBSerializing
             return Offset;
         }
 
-        public void WriteMagicBytes()
+        public virtual void WriteMagicBytes()
         {
             Writer!.Write(Versioning.GetMagicBytes(FileDBDocumentVersion.Version2));
         }

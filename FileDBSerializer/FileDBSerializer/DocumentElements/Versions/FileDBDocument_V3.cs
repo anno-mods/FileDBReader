@@ -8,6 +8,6 @@ namespace FileDBSerializing
 {
     public class FileDBDocument_V3 : FileDBDocument_V2
     {
-        new public FileDBDocumentVersion VERSION { get; } = FileDBDocumentVersion.Version3;
+        public override FileDBDocumentVersion VERSION { get; } = FileDBDocumentVersion.Version3;
     }
 }
