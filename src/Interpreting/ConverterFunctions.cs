@@ -9,53 +9,52 @@ namespace FileDBReader
 {
     public static class ConverterFunctions
     {
-        private static PrimitiveTypeConverter typeConverter = new PrimitiveTypeConverter();
         #region FunctionDictionaries
         public static Dictionary<Type, Func<string, Encoding, String>> ConversionRulesImport = new Dictionary<Type, Func<string, Encoding, String>>
             {
-                { typeof(bool),   (s, Encoding) => typeConverter.GetObject<bool>(HexHelper.ToBytes(s)).ToString()},
-                { typeof(byte),   (s, Encoding) => typeConverter.GetObject<byte>(HexHelper.ToBytes(s)).ToString()},
-                { typeof(sbyte),  (s, Encoding) => typeConverter.GetObject<sbyte>(HexHelper.ToBytes(s)).ToString() },
-                { typeof(short),  (s, Encoding) => typeConverter.GetObject<short>(HexHelper.ToBytes(s)).ToString() },
-                { typeof(ushort), (s, Encoding) => typeConverter.GetObject<ushort>(HexHelper.ToBytes(s)).ToString() },
-                { typeof(int),    (s, Encoding) => typeConverter.GetObject<int>(HexHelper.ToBytes(s)).ToString() },
-                { typeof(uint),   (s, Encoding) => typeConverter.GetObject<uint>(HexHelper.ToBytes(s)).ToString() },
-                { typeof(long),   (s, Encoding) => typeConverter.GetObject<long>(HexHelper.ToBytes(s)).ToString() },
-                { typeof(ulong),  (s, Encoding) => typeConverter.GetObject<ulong>(HexHelper.ToBytes(s)).ToString() },
-                { typeof(float),  (s, Encoding) => typeConverter.GetObject<float>(HexHelper.ToBytes(s)).ToString() },
-                { typeof(double), (s, Encoding) => typeConverter.GetObject<double>(HexHelper.ToBytes(s)).ToString() },
+                { typeof(bool),   (s, Encoding) => PrimitiveTypeConverter.GetObject<bool>(HexHelper.ToBytes(s)).ToString()},
+                { typeof(byte),   (s, Encoding) => PrimitiveTypeConverter.GetObject<byte>(HexHelper.ToBytes(s)).ToString()},
+                { typeof(sbyte),  (s, Encoding) => PrimitiveTypeConverter.GetObject<sbyte>(HexHelper.ToBytes(s)).ToString() },
+                { typeof(short),  (s, Encoding) => PrimitiveTypeConverter.GetObject<short>(HexHelper.ToBytes(s)).ToString() },
+                { typeof(ushort), (s, Encoding) => PrimitiveTypeConverter.GetObject<ushort>(HexHelper.ToBytes(s)).ToString() },
+                { typeof(int),    (s, Encoding) => PrimitiveTypeConverter.GetObject<int>(HexHelper.ToBytes(s)).ToString() },
+                { typeof(uint),   (s, Encoding) => PrimitiveTypeConverter.GetObject<uint>(HexHelper.ToBytes(s)).ToString() },
+                { typeof(long),   (s, Encoding) => PrimitiveTypeConverter.GetObject<long>(HexHelper.ToBytes(s)).ToString() },
+                { typeof(ulong),  (s, Encoding) => PrimitiveTypeConverter.GetObject<ulong>(HexHelper.ToBytes(s)).ToString() },
+                { typeof(float),  (s, Encoding) => PrimitiveTypeConverter.GetObject<float>(HexHelper.ToBytes(s)).ToString() },
+                { typeof(double), (s, Encoding) => PrimitiveTypeConverter.GetObject<double>(HexHelper.ToBytes(s)).ToString() },
                 { typeof(String), (s, Encoding) => ToString(s, Encoding)}
             };
 
         public static Dictionary<Type, Func<String, Encoding, byte[]>> ConversionRulesExport = new Dictionary<Type, Func<String, Encoding, byte[]>>
             {
-                { typeof(bool),     (s, Encoding)   => typeConverter.GetBytes(bool.Parse(s))},
-                { typeof(byte),     (s, Encoding)   => typeConverter.GetBytes(byte.Parse(s))},
-                { typeof(sbyte),    (s, Encoding)   => typeConverter.GetBytes(sbyte.Parse(s))},
-                { typeof(short),    (s, Encoding)   => typeConverter.GetBytes(short.Parse(s))},
-                { typeof(ushort),   (s, Encoding)   => typeConverter.GetBytes(ushort.Parse(s))},
-                { typeof(int),      (s, Encoding)   => typeConverter.GetBytes(int.Parse(s))},
-                { typeof(uint),     (s, Encoding)   => typeConverter.GetBytes(uint.Parse(s))},
-                { typeof(long),     (s, Encoding)   => typeConverter.GetBytes(long.Parse(s))},
-                { typeof(ulong),    (s, Encoding)   => typeConverter.GetBytes(ulong.Parse(s))},
-                { typeof(float),    (s, Encoding)   => typeConverter.GetBytes(float.Parse(s))},
-                { typeof(double),   (s, Encoding)   => typeConverter.GetBytes(double.Parse(s))},
+                { typeof(bool),     (s, Encoding)   => PrimitiveTypeConverter.GetBytes(bool.Parse(s))},
+                { typeof(byte),     (s, Encoding)   => PrimitiveTypeConverter.GetBytes(byte.Parse(s))},
+                { typeof(sbyte),    (s, Encoding)   => PrimitiveTypeConverter.GetBytes(sbyte.Parse(s))},
+                { typeof(short),    (s, Encoding)   => PrimitiveTypeConverter.GetBytes(short.Parse(s))},
+                { typeof(ushort),   (s, Encoding)   => PrimitiveTypeConverter.GetBytes(ushort.Parse(s))},
+                { typeof(int),      (s, Encoding)   => PrimitiveTypeConverter.GetBytes(int.Parse(s))},
+                { typeof(uint),     (s, Encoding)   => PrimitiveTypeConverter.GetBytes(uint.Parse(s))},
+                { typeof(long),     (s, Encoding)   => PrimitiveTypeConverter.GetBytes(long.Parse(s))},
+                { typeof(ulong),    (s, Encoding)   => PrimitiveTypeConverter.GetBytes(ulong.Parse(s))},
+                { typeof(float),    (s, Encoding)   => PrimitiveTypeConverter.GetBytes(float.Parse(s))},
+                { typeof(double),   (s, Encoding)   => PrimitiveTypeConverter.GetBytes(double.Parse(s))},
                 { typeof(String),   (s, Encoding)   => Encoding.GetBytes(s)}
             };
 
         public static Dictionary<Type, Func<string, object>> ConversionRulesToObject = new Dictionary<Type, Func<string, object>>
             {
-                { typeof(bool),   s => typeConverter.GetObject<bool>(HexHelper.ToBytes(s))},
-                { typeof(byte),   s => typeConverter.GetObject<byte>(HexHelper.ToBytes(s))},
-                { typeof(sbyte),  s => typeConverter.GetObject<sbyte>(HexHelper.ToBytes(s))},
-                { typeof(short),  s => typeConverter.GetObject<short>(HexHelper.ToBytes(s)) },
-                { typeof(ushort), s => typeConverter.GetObject<ushort>(HexHelper.ToBytes(s)) },
-                { typeof(int),    s => typeConverter.GetObject<int>(HexHelper.ToBytes(s))},
-                { typeof(uint),   s => typeConverter.GetObject<uint>(HexHelper.ToBytes(s))},
-                { typeof(long),   s => typeConverter.GetObject<long>(HexHelper.ToBytes(s))},
-                { typeof(ulong),  s => typeConverter.GetObject<ulong>(HexHelper.ToBytes(s))},
-                { typeof(double), s => typeConverter.GetObject<double>(HexHelper.ToBytes(s))},
-                { typeof(float),  s => typeConverter.GetObject<float>(HexHelper.ToBytes(s))},
+                { typeof(bool),   s => PrimitiveTypeConverter.GetObject<bool>(HexHelper.ToBytes(s))},
+                { typeof(byte),   s => PrimitiveTypeConverter.GetObject<byte>(HexHelper.ToBytes(s))},
+                { typeof(sbyte),  s => PrimitiveTypeConverter.GetObject<sbyte>(HexHelper.ToBytes(s))},
+                { typeof(short),  s => PrimitiveTypeConverter.GetObject<short>(HexHelper.ToBytes(s)) },
+                { typeof(ushort), s => PrimitiveTypeConverter.GetObject<ushort>(HexHelper.ToBytes(s)) },
+                { typeof(int),    s => PrimitiveTypeConverter.GetObject<int>(HexHelper.ToBytes(s))},
+                { typeof(uint),   s => PrimitiveTypeConverter.GetObject<uint>(HexHelper.ToBytes(s))},
+                { typeof(long),   s => PrimitiveTypeConverter.GetObject<long>(HexHelper.ToBytes(s))},
+                { typeof(ulong),  s => PrimitiveTypeConverter.GetObject<ulong>(HexHelper.ToBytes(s))},
+                { typeof(double), s => PrimitiveTypeConverter.GetObject<double>(HexHelper.ToBytes(s))},
+                { typeof(float),  s => PrimitiveTypeConverter.GetObject<float>(HexHelper.ToBytes(s))},
                 { typeof(String), s => ToString(s, new UnicodeEncoding())}
             };
         

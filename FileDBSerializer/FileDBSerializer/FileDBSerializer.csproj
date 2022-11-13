@@ -40,4 +40,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   
+  <ItemGroup>
+    <Compile Remove="ObjectSerializer\SerializationHandlers\TupleArrayHandler.cs" />
+  </ItemGroup>
+  
 </Project>
