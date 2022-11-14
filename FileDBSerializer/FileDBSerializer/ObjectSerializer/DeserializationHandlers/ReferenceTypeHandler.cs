@@ -27,7 +27,7 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
                 //find the property corresponding to the child
                 var propertyinfo = targetType.GetPropertyWithRenaming(name);
                 if (propertyinfo is null && !options.IgnoreMissingProperties)
-                    throw new InvalidProgramException($"{name} could not be resolved to a property of {targetType.Name}");
+                    throw new InvalidProgramException($"{name} could not be resolved to a property of {targetType.Name} in node {tag.Name}");
                 else if (propertyinfo is null)
                     continue;
 
