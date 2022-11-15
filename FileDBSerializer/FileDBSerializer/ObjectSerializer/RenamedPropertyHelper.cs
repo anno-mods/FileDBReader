@@ -1,5 +1,6 @@
 ﻿using FileDBSerializing.ObjectSerializer;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +9,7 @@ namespace FileDBSerializer.ObjectSerializer
 {
     public class RenamedPropertyHelper
     {
-        private Dictionary<Type, bool> _verifiedCache;
+        private ConcurrentDictionary<Type, bool> _verifiedCache;
 
         public RenamedPropertyHelper()
         {
@@ -33,7 +34,7 @@ namespace FileDBSerializer.ObjectSerializer
                     valid = false;
                 PropertyNamesSoFar.Add(name);
             }
-            _verifiedCache.Add(t, valid);
+            _verifiedCache.TryAdd(t, valid);
             return valid;
         }
 
