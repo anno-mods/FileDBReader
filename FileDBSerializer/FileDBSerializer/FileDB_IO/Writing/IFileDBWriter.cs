@@ -11,8 +11,15 @@ namespace FileDBSerializing
 
         void WriteTag(Tag t);
         void WriteAttrib(Attrib a);
-        void WriteTagSection(TagSection tagSection);
-        
+
+
+        #region Tag Section
+        void RemoveNonesAndWriteTagSection(IFileDBDocument forDocument);
+        (int, int) WriteTagSection(TagSection tagSection);
+        void WriteNodeCountSection(int nodeCount);
+        void WriteTagOffsets(int tagOffset, int attribOffset);
+        #endregion
+
         /// <summary>
         /// 
         /// </summary>
@@ -42,15 +49,18 @@ namespace FileDBSerializing
             }
         }
 
-        public static void RemoveNonesAndWriteTagSection(this IFileDBWriter filedbwriter, TagSection tagSection)
+        public static void RemoveNonesAndWriteTagSection(this IFileDBWriter filedbwriter, TagSection tagSection, int nodeCount)
         {
             tagSection.Tags.Remove(1);
             tagSection.Attribs.Remove(32768);
 
-            filedbwriter.WriteTagSection(tagSection);
+            (int tagOffset, int attribOffset) = filedbwriter.WriteTagSection(tagSection);
 
             tagSection.Tags.Add(1, "None");
             tagSection.Attribs.Add(32768, "None");
+
+            filedbwriter.WriteNodeCountSection(nodeCount);
+            filedbwriter.WriteTagOffsets(tagOffset, attribOffset);
         }
 
         public static void Flush(this IFileDBWriter writer)

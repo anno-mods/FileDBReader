@@ -35,12 +35,39 @@ namespace FileDBSerializing
             WriteNodeTerminator();
         }
 
-        public void WriteTagSection(TagSection tagSection)
+        #region Tag Section
+        public void RemoveNonesAndWriteTagSection(IFileDBDocument forDocument)
+        {
+            TagSection tagSection = forDocument.Tags;
+
+            tagSection.Tags.Remove(1);
+            tagSection.Attribs.Remove(32768);
+
+            (int tagOffset, int attribOffset) = this.WriteTagSection(tagSection);
+            this.WriteTagOffsets(tagOffset, attribOffset);
+
+            tagSection.Tags.Add(1, "None");
+            tagSection.Attribs.Add(32768, "None");
+        }
+
+        public (int, int) WriteTagSection(TagSection tagSection)
         {
             int offset = WriteDictionary(tagSection.Tags);
             WriteDictionary(tagSection.Attribs);
-            Writer!.Write(offset);
+
+            return (offset, 0);
         }
+
+        public void WriteTagOffsets(int tagOffset, int attribOffset)
+        {
+            Writer!.Write(tagOffset);
+        }
+
+        public void WriteNodeCountSection(int nodeCount)
+        {
+            return;
+        }
+        #endregion
 
         public int WriteDictionary(Dictionary<ushort, string> dict)
         {

@@ -25,7 +25,7 @@ namespace FileDBSerializing
             StructureWriter = DependencyVersions.GetWriter(filedb.VERSION, target);
             StructureWriter.WriteNodeCollection(filedb.Roots);
             StructureWriter.WriteNodeTerminator(); 
-            StructureWriter.RemoveNonesAndWriteTagSection(filedb.Tags);
+            StructureWriter.RemoveNonesAndWriteTagSection(filedb);
             StructureWriter.WriteMagicBytes();
             StructureWriter.Flush();
 

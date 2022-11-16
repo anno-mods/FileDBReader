@@ -57,5 +57,20 @@ namespace FileDBSerializing
             }
             return new Attrib() { ID = IDOfThisTag, ParentDoc = doc };
         }
+
+        public static int CountNodes(this IFileDBDocument doc)
+        {
+            int count = 1 + doc.Roots.Count; //<Content> node + all roots
+
+            foreach (var node in doc.Roots)
+            {
+                if (node is Tag t)
+                {
+                    count += t.GetChildCountRecursive();
+                }
+            }
+
+            return count;
+        }
     }
 }
