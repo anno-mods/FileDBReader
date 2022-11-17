@@ -72,7 +72,7 @@ Be aware that filedb compressed files can contain other filedb compressed files 
 <Converts>
     <Default Type ="Int32" />
     <InternalCompression>
-        <Element Path="//AreaManagerData/None/Data" CompressionVersion = "2">
+        <Element Path="//AreaManagerData/None/Data" CompressionVersion="2">
             <ReplaceTagNames>
                 <!-- ensure that Original and Replacement are both unique! -->
                 <Entry Original="Delayed Construction" Replacement="DelayedConstruction"/>
@@ -82,14 +82,14 @@ Be aware that filedb compressed files can contain other filedb compressed files 
     <Converts>
         <Convert Path ="//VegetationPropSetName" Type="String" Encoding="UTF-8" />
         <Convert Path ="//GlobalAmbientName" Type="String" />
-        <Convert Path ="//HeightMap/HeightMap" Type="UInt16" Structure ="List" />
-        <Convert Path ="//GuidVariationList" Type = "Int32" Structure="Cdata">
+        <Convert Path ="//HeightMap/HeightMap" Type="UInt16" Structure="List" />
+        <Convert Path ="//GuidVariationList" Type="Int32" Structure="Cdata" />
         <Convert Path="//MapTemplate/TemplateElement/Element/Size" Type="Int16">
             <!-- This Enum will map the converted value 0 to Small, 1 to Medium and 2 to Large. Ensure that Name and Value are both unique -->
             <Enum>
-                <Entry Value ="0" Name ="Small" />
-                <Entry Value ="1" Name ="Medium" />
-                <Entry Value ="2" Name ="Large" />
+                <Entry Value="0" Name="Small" />
+                <Entry Value="1" Name="Medium" />
+                <Entry Value="2" Name="Large" />
             </Enum>
         </Convert>
     </Converts>
