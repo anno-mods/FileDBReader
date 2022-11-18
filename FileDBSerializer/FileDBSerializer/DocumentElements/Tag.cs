@@ -50,6 +50,21 @@ namespace FileDBSerializing
         {
             return ParentDoc.Tags.Tags[(ushort)ID];
         }
-        
+
+        public int GetChildCountRecursive()
+        {
+            int count = ChildCount;
+
+            foreach (FileDBNode child in Children)
+            {
+                if (child is Tag t)
+                {
+                    count += t.GetChildCountRecursive();
+                }
+            }
+
+            return count;
+        }
+
     }
 }

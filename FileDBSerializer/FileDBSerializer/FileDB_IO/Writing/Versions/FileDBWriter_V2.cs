@@ -60,13 +60,41 @@ namespace FileDBSerializing
             Writer!.Write(Versioning.GetMagicBytes(FileDBDocumentVersion.Version2));
         }
 
-        public void WriteTagSection(TagSection tagSection)
+
+        #region Tag Section
+        public virtual void RemoveNonesAndWriteTagSection(IFileDBDocument forDocument)
+        {
+            TagSection tagSection = forDocument.Tags;
+
+            tagSection.Tags.Remove(1);
+            tagSection.Attribs.Remove(32768);
+
+            (int tagOffset, int attribOffset) = this.WriteTagSection(tagSection);
+            this.WriteTagOffsets(tagOffset, attribOffset);
+
+            tagSection.Tags.Add(1, "None");
+            tagSection.Attribs.Add(32768, "None");
+        }
+
+        public (int, int) WriteTagSection(TagSection tagSection)
         {
             int TagsOffset = WriteDictionary(tagSection.Tags);
             int AttribsOffset = WriteDictionary(tagSection.Attribs);
-            Writer!.Write(TagsOffset);
-            Writer.Write(AttribsOffset);
+
+            return (TagsOffset, AttribsOffset);
         }
+
+        public void WriteTagOffsets(int tagOffset, int attribOffset)
+        {
+            Writer!.Write(tagOffset);
+            Writer!.Write(attribOffset);
+        }
+
+        public virtual void WriteNodeCountSection(int nodeCount)
+        {
+            return;
+        }
+        #endregion
 
         public void WriteNodeID(FileDBNode node)
         {
@@ -87,6 +115,5 @@ namespace FileDBSerializing
             Array.Resize<byte>(ref attrib, ContentSize);
             return attrib;
         }
-
     }
 }
