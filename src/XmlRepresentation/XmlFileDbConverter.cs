@@ -51,10 +51,11 @@ namespace FileDBReader.src.XmlRepresentation
             return filedb;
         }
 
-        private FileDBNode XmlNodeToFileDBNode( XmlNode n, Tag parent)
+        private FileDBNode XmlNodeToFileDBNode(XmlNode n, Tag parent)
         {
             //This is the closest we can determine this shit.
-            if ((n.FirstChild != null && n.FirstChild.NodeType == XmlNodeType.Text))
+            if ((n.FirstChild != null && n.FirstChild.NodeType == XmlNodeType.Text) || 
+                (n is XmlElement elem && elem.FirstChild == null && elem.IsEmpty == false))
                 return XmlNodeToAttrib(n, parent);
             else
                 return XmlNodeToTag(n, parent);
