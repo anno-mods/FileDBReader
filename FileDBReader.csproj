@@ -5,7 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <StartupObject>FileDBReader.CommandLineHandler</StartupObject>
     <Platforms>AnyCPU;x64</Platforms>
-    <Version>2.3</Version>
+    <Version>2.4</Version>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageId></PackageId>
     <Nullable>enable</Nullable>
