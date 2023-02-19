@@ -46,9 +46,14 @@ namespace FileDBReader.src
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
 
             //Preload Interpreter
-            Interpreter? Interpr = !String.IsNullOrEmpty(InterpreterPath) ?
-                    new Interpreter(Interpreter.ToInterpreterDoc(SecureIoHandler.ReadHandle(InterpreterPath))) :
-                    null;
+            Interpreter? Interpr = null;
+            if (!String.IsNullOrEmpty(InterpreterPath))
+            {
+                using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
+                if (interpreter_stream is null)
+                    return -1;
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+            }
 
             foreach (String s in InputFiles)
             {
@@ -65,9 +70,12 @@ namespace FileDBReader.src
         {
             try
             {
-                using (Stream fs = SecureIoHandler.ReadHandle(InputFile))
-                using (Stream output = SecureIoHandler.WriteHandle(Path.ChangeExtension(InputFile, "xml"), overwrite))
+                using (var fs = SecureIoHandler.ReadHandle(InputFile))
+                using (var output = SecureIoHandler.WriteHandle(Path.ChangeExtension(InputFile, "xml"), overwrite))
                 {
+                    if (fs is null || output is null)
+                        return -1;
+
                     XmlDocument result;
                     result = reader.Read(fs);
                     if (Interpr is not null)
@@ -110,9 +118,15 @@ namespace FileDBReader.src
             var ext = OutputFileExtension ?? DefaultFileFormat;
 
             //Preload Interpreter
-            Interpreter? Interpr = !String.IsNullOrEmpty(InterpreterPath) ?
-                    new Interpreter(Interpreter.ToInterpreterDoc(SecureIoHandler.ReadHandle(InterpreterPath))) :
-                    null;
+            Interpreter? Interpr = null; 
+            if (!String.IsNullOrEmpty(InterpreterPath))
+            {
+                using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
+                if (interpreter_stream is null)
+                    return -1;
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+            }
+            
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
 
             //convert all input files
@@ -134,9 +148,12 @@ namespace FileDBReader.src
             try
             {
                 XmlDocument result = new XmlDocument();
-                using (Stream fs = SecureIoHandler.ReadHandle(InputFile))
-                using (Stream output = SecureIoHandler.WriteHandle(Path.ChangeExtension(InputFile, OutputFileExtension), overwrite))
+                using (var fs = SecureIoHandler.ReadHandle(InputFile))
+                using (var output = SecureIoHandler.WriteHandle(Path.ChangeExtension(InputFile, OutputFileExtension), overwrite))
                 {
+                    if (fs is null || output is null)
+                        return -1;
+
                     result.Load(fs);
 
                     if (interpreter is not null)
@@ -146,10 +163,6 @@ namespace FileDBReader.src
                     }
                     writer.Write(result, output, CompressionVersion);
                 }
-            }
-            catch (IOException)
-            {
-                return -1;
             }
             catch (Exception other)
             {
@@ -171,9 +184,15 @@ namespace FileDBReader.src
             int returncode = 0;
 
             //Preload Interpreter
-            Interpreter? Interpr = !String.IsNullOrEmpty(InterpreterPath) ?
-                    new Interpreter(Interpreter.ToInterpreterDoc(SecureIoHandler.ReadHandle(InterpreterPath))) :
-                    null;
+            Interpreter? Interpr = null;
+            if (!String.IsNullOrEmpty(InterpreterPath))
+            {
+                using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
+                if (interpreter_stream is null)
+                    return -1;
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+            }
+
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
 
             foreach (String s in InputFiles)
@@ -194,9 +213,12 @@ namespace FileDBReader.src
                 var baseDoc = new XmlDocument();
                 String FileNameNew = Path.GetFileNameWithoutExtension(InputFile) + InterpretedFileSuffix + ".xml";
 
-                using (Stream input = SecureIoHandler.ReadHandle(InputFile))
-                using (Stream output = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
+                using (var input = SecureIoHandler.ReadHandle(InputFile))
+                using (var output = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
                 {
+                    if (input is null || output is null)
+                        return -1;
+
                     baseDoc.Load(InputFile);
                     var interpreter = new XmlInterpreter(baseDoc, Interpr);
                     baseDoc = interpreter.Run();
@@ -221,9 +243,15 @@ namespace FileDBReader.src
             int returncode = 0;
 
             //Preload Interpreter
-            Interpreter? Interpr = !String.IsNullOrEmpty(InterpreterPath) ?
-                    new Interpreter(Interpreter.ToInterpreterDoc(SecureIoHandler.ReadHandle(InterpreterPath))) :
-                    null;
+            Interpreter? Interpr = null;
+            if (!String.IsNullOrEmpty(InterpreterPath))
+            {
+                using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
+                if (interpreter_stream is null)
+                    return -1;
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+            }
+
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
 
             foreach (String s in InputFiles)
@@ -243,9 +271,12 @@ namespace FileDBReader.src
             try
             {
                 String FileNameNew = Path.GetFileNameWithoutExtension(InputFile) + ReinterpretedFileSuffix + ".xml";
-                using (Stream input = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
-                using (Stream output = SecureIoHandler.ReadHandle(InputFile))
+                using (var input = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
+                using (var output = SecureIoHandler.ReadHandle(InputFile))
                 {
+                    if (input is null || output is null)
+                        return -1;
+
                     inputDoc.Load(input);
                     var exporter = new XmlExporter(inputDoc, Interpr);
                     var doc = exporter.Run();
@@ -272,7 +303,7 @@ namespace FileDBReader.src
             {
                 try
                 {
-                    using (Stream fs = SecureIoHandler.ReadHandle(s))
+                    using (var fs = SecureIoHandler.ReadHandle(s))
                     {
                         Console.WriteLine("{0} uses Compression Version {1}", s, VersionDetector.GetCompressionVersion(fs));
                     }
@@ -293,9 +324,14 @@ namespace FileDBReader.src
             int returncode = 0;
 
             //Preload Interpreter
-            Interpreter? Interpr = !String.IsNullOrEmpty(InterpreterPath) ?
-                    new Interpreter(Interpreter.ToInterpreterDoc(SecureIoHandler.ReadHandle(InterpreterPath))) :
-                    null;
+            Interpreter? Interpr = null;
+            if (!String.IsNullOrEmpty(InterpreterPath))
+            {
+                using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
+                if (interpreter_stream is null)
+                    return -1;
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+            }
 
             foreach (String s in InputFiles)
             {
@@ -310,8 +346,8 @@ namespace FileDBReader.src
             {
                 String FileNameNew = Path.GetFileNameWithoutExtension(InputFile) + ".xml";
 
-                using (Stream fs = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
-                using (Stream input = SecureIoHandler.ReadHandle(InputFile))
+                using (var fs = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
+                using (var input = SecureIoHandler.ReadHandle(InputFile))
                 {
                     var result = FcFileHelper.ReadFcFile(input);
                     if (Interpr is not null)
@@ -337,9 +373,14 @@ namespace FileDBReader.src
             var ext = OutputFileExtension ?? DefaultFcFileFormat;
 
             //Preload Interpreter
-            Interpreter? Interpr = !String.IsNullOrEmpty(InterpreterPath) ?
-                    new Interpreter(Interpreter.ToInterpreterDoc(SecureIoHandler.ReadHandle(InterpreterPath))) :
-                    null;
+            Interpreter? Interpr = null;
+            if (!String.IsNullOrEmpty(InterpreterPath))
+            {
+                using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
+                if (interpreter_stream is null)
+                    return -1;
+                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+            }
 
             foreach (String s in InputFiles)
             {
@@ -354,9 +395,12 @@ namespace FileDBReader.src
             {
                 var path = Path.ChangeExtension(Path.GetFileNameWithoutExtension(InputFile), OutputFileExtension);
 
-                using (Stream input = SecureIoHandler.ReadHandle(InputFile))
+                using (var input = SecureIoHandler.ReadHandle(InputFile))
                 using (var output = SecureIoHandler.WriteHandle(path, overwrite))
                 {
+                    if (input is null || output is null)
+                        return;
+
                     XmlDocument exported = new XmlDocument();
                     exported.Load(input);
                     if (Interpr is not null)
