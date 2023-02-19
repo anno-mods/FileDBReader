@@ -62,7 +62,10 @@ namespace FileDBReader.src
         private void ConvertSingleNode(XmlNode match, Conversion conversion)
         {
             if (match.InnerText.Equals(""))
+            {
+                Console.WriteLine($"Empty node selected: {match.Name}");
                 return;
+            }
 
             if (Marking.IsMarked(match))
             {
