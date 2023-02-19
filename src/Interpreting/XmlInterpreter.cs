@@ -14,7 +14,7 @@ namespace FileDBReader
     /// <summary>
     /// converts hex strings in an xml file into their types using conversion rules set up in an external xml file.
     /// </summary>
-    public class XmlInterpreter : Converter
+    public class XmlInterpreter : ConverterBase
     {
         public XmlInterpreter(XmlDocument document, Interpreter interpreter) : base(document, interpreter) { }
 

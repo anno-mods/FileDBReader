@@ -13,7 +13,7 @@ namespace FileDBReader
     /// <summary>
     /// converts all text in an xml file into hex strings using conversion rules set up in an external xml file
     /// </summary>
-    public class XmlExporter : Converter
+    public class XmlExporter : ConverterBase
     {
         public XmlExporter(XmlDocument document, Interpreter interpreter) : base(document, interpreter) { }
 
