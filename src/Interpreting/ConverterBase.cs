@@ -8,13 +8,13 @@ using System.Xml;
 
 namespace FileDBReader.src
 {
-    public abstract class Converter
+    public abstract class ConverterBase
     {
         protected Interpreter Interpreter;
         protected XmlDocument DocumentToConvert;
         protected XmlDocumentMarking Marking;
 
-        public Converter(XmlDocument documentToConvert, Interpreter interpreter)
+        public ConverterBase(XmlDocument documentToConvert, Interpreter interpreter)
         {
             Interpreter = interpreter;
             DocumentToConvert = documentToConvert;
