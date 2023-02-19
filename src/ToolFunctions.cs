@@ -12,10 +12,9 @@ namespace FileDBReader.src
     {
         //file formats and names
         private static readonly String DefaultFileFormat = "filedb";
+        private static readonly String DefaultFcFileFormat = "fc";
         private static readonly String InterpretedFileSuffix = "_interpreted";
         private static readonly String ReinterpretedFileSuffix = "_exported";
-        private static readonly String FcImportedFileSuffix = "_fcimport";
-        private static readonly String FcExportedFileSuffix = "_fcexport";
 
         //error message
         private static readonly String IOErrorMessage = "File Path wrong, File in use or does not exist.";
@@ -329,9 +328,11 @@ namespace FileDBReader.src
         #endregion
 
         #region FcExport
-        public int FcFileExport(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
+        public int FcFileExport(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite, String OutputFileExtension)
         {
             int returncode = 0;
+
+            var ext = OutputFileExtension ?? DefaultFcFileFormat;
 
             //Preload Interpreter
             Interpreter? Interpr = !String.IsNullOrEmpty(InterpreterPath) ?
@@ -340,16 +341,16 @@ namespace FileDBReader.src
 
             foreach (String s in InputFiles)
             {
-                FcFileExport(s, Interpr, overwrite);
+                FcFileExport(s, Interpr, overwrite, ext);
             }
             return returncode;
         }
 
-        private void FcFileExport(String InputFile, Interpreter? Interpr, bool overwrite)
+        private void FcFileExport(String InputFile, Interpreter? Interpr, bool overwrite, String OutputFileExtension)
         {
             try
             {
-                var path = Path.ChangeExtension(Path.GetFileNameWithoutExtension(InputFile), "fc");
+                var path = Path.ChangeExtension(Path.GetFileNameWithoutExtension(InputFile), OutputFileExtension);
 
                 using (Stream input = SecureIoHandler.ReadHandle(InputFile))
                 using (var output = SecureIoHandler.WriteHandle(path, overwrite))
