@@ -17,9 +17,7 @@ namespace FileDBReader_Tests
     {
         //FileDB
         static Reader reader = new Reader();
-        static XmlExporter exporter = new XmlExporter();
         static Writer writer = new Writer();
-        static XmlInterpreter interpreter = new XmlInterpreter();
 
         //Fc Files
         static FcFileHelper FcFileHelper = new FcFileHelper();
@@ -195,8 +193,11 @@ namespace FileDBReader_Tests
             ExpectedDocument.Load(EXPECTED_PATH);
 
             //execute
-            var interpretedDocument = interpreter.Interpret(DecompressedDocument, Interpr);
-            var reinterpretedDocument = exporter.Export(interpretedDocument, Interpr);
+            var interpreter = new XmlInterpreter(DecompressedDocument, Interpr);
+            var interpretedDocument = interpreter.Run();
+
+            var exporter = new XmlExporter(interpretedDocument, Interpr);
+            var reinterpretedDocument = exporter.Run();
 
             using (MemoryStream ExpectedResultStream = new MemoryStream())
             using (MemoryStream ReinterpretedStream = new MemoryStream())
@@ -232,7 +233,8 @@ namespace FileDBReader_Tests
             Decompressed.Load(DecompressedFile);
 
             //Execute
-            var interpreted = interpreter.Interpret(Decompressed, Interpr);
+            var interpreter = new XmlInterpreter(Decompressed, Interpr);
+            var interpreted = interpreter.Run();
             interpretedResult = interpreted; 
 
             using (MemoryStream result = new MemoryStream())
@@ -248,7 +250,8 @@ namespace FileDBReader_Tests
             String INTERPRETER_PATH = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, InterpreterFile);
             var Interpr = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_PATH));
 
-            var reinterpreted = exporter.Export(Interpreted, Interpr);
+            var exporter = new XmlExporter(Interpreted, Interpr);
+            var reinterpreted = exporter.Run();
             reinterpretedResult = reinterpreted;
 
             using (MemoryStream ms = new MemoryStream())

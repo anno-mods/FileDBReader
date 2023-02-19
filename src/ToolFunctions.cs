@@ -31,9 +31,7 @@ namespace FileDBReader.src
         public ToolFunctions()
         {
             reader = new Reader();
-            exporter = new XmlExporter();
             writer = new Writer();
-            interpreter = new XmlInterpreter();
             FcFileHelper = new FcFileHelper();
         }
 
@@ -76,7 +74,8 @@ namespace FileDBReader.src
                     if (Interpr is not null)
                     {
                         Console.WriteLine($"Started interpreting {InputFile}");
-                        result = interpreter.Interpret(result, Interpr);
+                        var interpreter = new XmlInterpreter(result, Interpr);
+                        result = interpreter.Run();
                     }
                     result.Save(output);
                 }
@@ -144,7 +143,7 @@ namespace FileDBReader.src
                     if (interpreter is not null)
                     {
                         Console.WriteLine($"Started reinterpreting {InputFile}");
-                        result = exporter.Export(result, interpreter);
+                        result = exporter.Run();
                     }
                     writer.Write(result, output, CompressionVersion);
                 }
@@ -188,7 +187,7 @@ namespace FileDBReader.src
         }
 
         private int Interpret(String InputFile,
-            Interpreter? Interpr,
+            Interpreter Interpr,
             bool overwrite)
         {
             try
@@ -200,7 +199,8 @@ namespace FileDBReader.src
                 using (Stream output = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
                 {
                     baseDoc.Load(InputFile);
-                    baseDoc = interpreter.Interpret(baseDoc, Interpr);
+                    var interpreter = new XmlInterpreter(baseDoc, Interpr);
+                    baseDoc = interpreter.Run();
                     baseDoc.Save(output);
                 }
             }
@@ -248,7 +248,8 @@ namespace FileDBReader.src
                 using (Stream output = SecureIoHandler.ReadHandle(InputFile))
                 {
                     inputDoc.Load(input);
-                    var doc = exporter.Export(inputDoc, Interpr);
+                    var exporter = new XmlExporter(inputDoc, Interpr);
+                    var doc = exporter.Run();
                     {
                         doc.Save(output);
                     }
@@ -316,7 +317,8 @@ namespace FileDBReader.src
                     var result = FcFileHelper.ReadFcFile(input);
                     if (Interpr is not null)
                     {
-                        result = interpreter.Interpret(result, Interpr);
+                        var interpreter = new XmlInterpreter(result, Interpr);
+                        result = interpreter.Run();
                     }
                     result.Save(fs);
                 }
@@ -358,7 +360,8 @@ namespace FileDBReader.src
                     exported.Load(input);
                     if (Interpr is not null)
                     {
-                        exported = exporter.Export(exported, Interpr);
+                        var exporter = new XmlExporter(exported, Interpr);
+                        exported = exporter.Run();
                     }
                     FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(exported), ConversionMode.Write, output);
                 }

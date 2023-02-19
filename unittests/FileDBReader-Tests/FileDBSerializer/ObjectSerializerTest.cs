@@ -482,7 +482,7 @@ namespace FileDBSerializing.Tests
             interpreterDocument.Load(stream("<Converts><Converts>" +
                 "<Convert Path=\"//Item\" Type=\"String\" Encoding=\"UTF-8\"/>" +
                 "</Converts></Converts>"));
-            XmlDocument xmlWithBytes = new FileDBReader.XmlExporter().Export(xmlDocument, new(interpreterDocument));
+            XmlDocument xmlWithBytes = new FileDBReader.XmlExporter(xmlDocument, new(interpreterDocument)).Run();
             IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlWithBytes);
 
             Assert.AreEqual(3, doc.Roots.Count);
@@ -511,7 +511,7 @@ namespace FileDBSerializing.Tests
 
             // convert back to xml
             xmlWithBytes = new FileDbXmlConverter().ToXml(doc);
-            xmlDocument = new FileDBReader.XmlInterpreter().Interpret(xmlWithBytes, new(interpreterDocument));
+            xmlDocument = new FileDBReader.XmlInterpreter(xmlWithBytes, new(interpreterDocument)).Run();
             Assert.AreEqual(testInput, xmlDocument.InnerXml);
         }
 

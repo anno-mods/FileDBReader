@@ -17,8 +17,6 @@ namespace FileDBReader
         static String FILEFORMAT_DIRECTORY_NAME = "FileFormats";
 
         //FileDB
-        static XmlExporter exporter = new XmlExporter();
-        static XmlInterpreter interpreter = new XmlInterpreter();
         static ZlibFunctions zlib = new ZlibFunctions();
 
         static Reader reader = new Reader();
@@ -180,15 +178,20 @@ namespace FileDBReader
 
             Console.WriteLine("File Test: {0}", TESTFILE_NAME);
 
+
             //decompress
             var decompressed = reader.Read(File.OpenRead(TESTFILE));
             decompressed.Save(DECOMPRESSED_TESTFILE);
 
-            var interpreted = interpreter.Interpret(decompressed, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
+            var interpreter = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE));
+
+            var xmlinterpreter = new XmlInterpreter(decompressed, interpreter);
+            var interpreted = xmlinterpreter.Run();
             interpreted.Save(INTERPRETED_TESTFILE);
 
-            //to hex 
-            var Hexed = exporter.Export(interpreted, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
+            //to hex
+            var exporter = new XmlExporter(interpreted, interpreter);
+            var Hexed = exporter.Run();
             Hexed.Save(TOHEX_TESTFILE);
 
             //back to gamedata 
@@ -241,10 +244,15 @@ namespace FileDBReader
             var Read = FcFileHelper.ReadFcFile(SecureIoHandler.ReadHandle(TESTFILE));
             Read.Save(CDATAREAD_TESTFILE);
 
-            var Interpreted = interpreter.Interpret(Read, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
+
+            var interpreter = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE));
+
+            var xmlinterpreter = new XmlInterpreter(Read, interpreter);
+            var Interpreted = xmlinterpreter.Run();
             Interpreted.Save(INTERPRETED_TESTFILE);
 
-            var Reinterpreted = exporter.Export(Interpreted, new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_FILE)));
+            var exporter = new XmlExporter(Interpreted, interpreter);
+            var Reinterpreted = exporter.Run();
             Reinterpreted.Save(REINTERPRETED_TESTFILE);
 
             var Written = FcFileHelper.ConvertFile(FcFileHelper.XmlFileToStream(Reinterpreted), ConversionMode.Write, new MemoryStream());
