@@ -13,65 +13,15 @@ namespace FileDBReader
     /// <summary>
     /// converts all text in an xml file into hex strings using conversion rules set up in an external xml file
     /// </summary>
-    public class XmlExporter
+    public class XmlExporter : Converter
     {
-        public XmlExporter() {
+        public XmlExporter(XmlDocument document, Interpreter interpreter) : base(document, interpreter) { }
 
-        }
-
-        /// <summary>
-        /// Exports an xmldocument and returns the resulting xmldocument
-        /// </summary>
-        /// <param name="docpath">path of the input document</param>
-        /// <param name="interpreterPath">path of the interpreterfile</param>
-        /// <returns>the resulting document</returns>
-        public XmlDocument Export(String docpath, String interpreterPath) {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(docpath);
-            return Export(doc, new Interpreter(Interpreter.ToInterpreterDoc(interpreterPath)));
-        }
-
-        public XmlDocument Export(XmlDocument doc, Interpreter Interpreter)
-        {
-            //queue all conversions
-            foreach ((String path, Conversion conv) in Interpreter.Conversions)
-            {
-                ExportConversions(path, conv, ref doc);
-            }
-
-            if (Interpreter.HasDefaultType())
-            {
-                ExportDefaultType(Interpreter, ref doc);
-            }
-
-            foreach (InternalCompression comp in Interpreter.InternalCompressions)
-            {
-                ExportInternalCompression(comp, ref doc);
-            }
-
-            return doc;
-        }
-
-        private void ExportDefaultType(Interpreter Interpreter, ref XmlDocument doc)
-        {
-            String Inverse = Interpreter.GetCombinedXPath();
-            var Base = doc.SelectNodes("//*[text()]");
-            var toFilter = doc.SelectNodes(Inverse);
-            var defaults = Base.FilterOut(toFilter);
-            ConvertNodeSet(defaults, Interpreter.DefaultType);
-        }
-
-        private void ExportConversions(String path, Conversion conv, ref XmlDocument doc)
-        {
-            var Nodes = doc.SelectNodes(path);
-            ConvertNodeSet(Nodes.Cast<XmlNode>(), conv);
-        }
-
-        private void ExportInternalCompression(InternalCompression comp, ref XmlDocument doc)
+        protected override void InternalFileDB(InternalCompression comp)
         {
             InvalidTagNameHelper.RegisterReplaceOperations(comp.ReplacementOps);
 
-            var Nodes = doc.SelectNodes(comp.Path);
+            var Nodes = DocumentToConvert.SelectNodes(comp.Path);
             foreach (XmlNode node in Nodes)
             {
                 Writer fileWriter = new Writer();
@@ -99,38 +49,7 @@ namespace FileDBReader
             InvalidTagNameHelper.UnregisterReplaceOperations(comp.ReplacementOps);
         }
 
-        private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)
-        {
-            foreach (XmlNode match in matches)
-            {
-                try
-                {
-                    if (!match.InnerText.Equals(""))
-                    {
-                        switch (Conversion.Structure)
-                        {
-                            case ContentStructure.List:
-                                exportAsList(match, Conversion.Type, Conversion.Encoding, false);
-                                break;
-                            case ContentStructure.Default:
-                                ExportSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
-                                break;
-                            case ContentStructure.Cdata:
-                                exportAsList(match, Conversion.Type, Conversion.Encoding, true);
-                                break;
-                        }
-                    }
-                    
-                }
-                catch (InvalidConversionException e)
-                {
-                    Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                }
-                
-            }
-        }
-
-        private void exportAsList(XmlNode n, Type type, Encoding e, bool RespectCdata) {
+        protected override void AsList(XmlNode n, Type type, Encoding e, bool RespectCdata) {
             //don't do anything with empty nodes
             if (!n.InnerText.Equals("")) 
             {
@@ -162,7 +81,7 @@ namespace FileDBReader
             }
         }
 
-        private void ExportSingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum, bool RespectCdata) {
+        protected override void SingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum, bool RespectCdata) {
             String Text;
 
             if (!Enum.IsEmpty())

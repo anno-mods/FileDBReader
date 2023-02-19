@@ -11,66 +11,19 @@ using System.Xml;
 
 namespace FileDBReader
 {
-    //expected structure of interpreter
-    /*<Converts>
-          <Default Type ="int" />
-          <Converts>
-            <Convert Path ="//Text" Type ="String" />
-          </Converts>
-        </Converts>
-     */
-
     /// <summary>
     /// converts hex strings in an xml file into their types using conversion rules set up in an external xml file.
     /// </summary>
-    public class XmlInterpreter
+    public class XmlInterpreter : Converter
     {
-        public XmlInterpreter() {
+        public XmlInterpreter(XmlDocument document, Interpreter interpreter) : base(document, interpreter) { }
 
-        }
-
-        public XmlDocument Interpret(XmlDocument doc, Interpreter Interpreter)
-        {
-            //Convert Internal FileDBs before conversion
-            foreach (InternalCompression comp in Interpreter.InternalCompressions)
-            {
-                InterpretInternalFileDB(comp, ref doc);
-            }
-
-            //Dictionary stores Path -> Conversion
-            foreach ( (String path, Conversion conv) in Interpreter.Conversions)
-            {
-                InterpretConversion(path, conv, ref doc);
-            }
-
-            if (Interpreter.HasDefaultType())
-            {
-                InterpretDefaultType(Interpreter, ref doc);
-            }
-            return doc;
-        }
-
-        private void InterpretDefaultType(Interpreter Interpreter, ref XmlDocument doc)
-        {
-            String Inverse = Interpreter.GetCombinedXPath();
-            var Base = doc.SelectNodes("//*[text()]");
-            var toFilter = doc.SelectNodes(Inverse);
-            var defaults = Base.FilterOut(toFilter);
-            ConvertNodeSet(defaults, Interpreter.DefaultType);
-        }
-
-        private void InterpretConversion(String path, Conversion conv, ref XmlDocument doc)
-        {
-            var Nodes = doc.SelectNodes(path);
-            ConvertNodeSet(Nodes.Cast<XmlNode>(), conv);
-        }
-
-        private void InterpretInternalFileDB(InternalCompression comp, ref XmlDocument doc)
+        protected override void InternalFileDB(InternalCompression comp)
         {
             //Register All the nodes by merging dictionaries
             InvalidTagNameHelper.RegisterReplaceOperations(comp.ReplacementOps);
 
-            var nodes = doc.SelectNodes(comp.Path);
+            var nodes = DocumentToConvert.SelectNodes(comp.Path);
             foreach (XmlNode node in nodes)
             {
                 var bytearr = HexHelper.ToBytes(node.InnerText);
@@ -79,43 +32,14 @@ namespace FileDBReader
                 {
                     var decompressed = filereader.Read(ms);
                     node.InnerText = "";
-                    node.AppendChild(doc.ImportNode(decompressed.DocumentElement, true));
+                    node.AppendChild(DocumentToConvert.ImportNode(decompressed.DocumentElement, true));
                 }
             }
 
             InvalidTagNameHelper.UnregisterReplaceOperations(comp.ReplacementOps);
         }
 
-        private void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion Conversion)
-        {
-            foreach (XmlNode match in matches)
-            {
-                try
-                {
-                    if (!match.InnerText.Equals(""))
-                    {
-                        switch (Conversion.Structure)
-                        {
-                            case ContentStructure.List:
-                                InterpretAsList(match, Conversion.Type, false);
-                                break;
-                            case ContentStructure.Default:
-                                InterpretSingleNode(match, Conversion.Type, Conversion.Encoding, Conversion.Enum, false);
-                                break;
-                            case ContentStructure.Cdata:
-                                InterpretAsList(match, Conversion.Type, true);
-                                break;
-                        }
-                    }
-                }
-                catch (InvalidConversionException e)
-                {
-                    Console.WriteLine("Invalid Conversion at: {1}, Data: {0}, Target Type: {2}", e.ContentToConvert, e.NodeName, e.TargetType);
-                }
-            }
-        }
-
-        private void InterpretAsList(XmlNode n, Type type, bool FilterCDATA)
+        protected override void AsList(XmlNode n, Type type, Encoding e, bool FilterCDATA)
         {
             try
             {
@@ -138,7 +62,7 @@ namespace FileDBReader
             }
         }
 
-        private void InterpretSingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum, bool FilterCDATA)
+        protected override void SingleNode(XmlNode n, Type type, Encoding e, RuntimeEnum Enum, bool FilterCDATA)
         {
             try
             {
@@ -164,6 +88,7 @@ namespace FileDBReader
                 throw new InvalidConversionException(type, n.Name, "List Value");
             }
         }
+
         private bool BytesizeCheck(Type t, int BinHexLength, String NodeNameForErrorMessage)
         {
             if (t != typeof(String))
