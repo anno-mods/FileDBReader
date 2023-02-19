@@ -78,6 +78,10 @@ namespace FileDBReader {
 
             [Option('z', "replace_Names", Required = false, HelpText = "String Tuples of names that should be replaced")]
             public IEnumerable<String> ReplaceOperations { get; set; }
+
+            [Option('o', "outputFileExtension", Required = false, HelpText = OUTPUT_FILEFORMAT_HELP)]
+            public String OutputFileExtension { get; set; }
+
         }
 
         [Verb("toHex", HelpText = REINTERPRET_EXPL)]
@@ -94,6 +98,7 @@ namespace FileDBReader {
 
             [Option('z', "replace_Names", Required = false, HelpText = "String Tuples of names that should be replaced")]
             public IEnumerable<String> ReplaceOperations { get; set; }
+
         }
 
         [Verb("check_fileversion", HelpText = VERSION_EXPL)]
@@ -115,6 +120,7 @@ namespace FileDBReader {
 
             [Option('y', "overwrite", Required = false, Default = false)]
             public bool overwrite { get; set; }
+
         }
 
         [Verb("hextofc", HelpText = "Reverse operation of fctohex.")]
@@ -129,6 +135,10 @@ namespace FileDBReader {
 
             [Option('y', "overwrite", Required = false, Default = false)]
             public bool overwrite { get; set; }
+
+            [Option('o', "outputFileExtension", Required = false, HelpText = OUTPUT_FILEFORMAT_HELP)]
+            public String OutputFileExtension { get; set; }
+
         }
         #endregion
 
@@ -183,7 +193,7 @@ namespace FileDBReader {
                 //OPTIONS FOR FC FILE EXPORT
                 (FcExportOptions o) =>
                 {
-                    return Functions.FcFileExport(o.InputFiles, o.Interpreter, o.overwrite);
+                    return Functions.FcFileExport(o.InputFiles, o.Interpreter, o.overwrite, o.OutputFileExtension);
                 },
                 e => 1
             ) ;
