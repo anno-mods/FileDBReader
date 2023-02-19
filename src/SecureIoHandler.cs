@@ -9,7 +9,7 @@ namespace FileDBReader.src
     /// </summary>
     class SecureIoHandler
     {
-        public static Stream ReadHandle( String Filename )
+        public static Stream? ReadHandle( String Filename )
         {
             try
             {
@@ -25,16 +25,41 @@ namespace FileDBReader.src
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Could not open File: {0} - File does not exist", Filename);
-                throw;
             }
             catch (IOException)
             {
                 Console.WriteLine("Could not open File: {0} - File in Use or other unknown exception", Filename);
-                throw;
             }
+            return null;
         }
 
-        public static Stream WriteHandle ( String Filename, bool overwrite)
+        public static Stream? ReadHandleWithInterpreterRedirect(String Filename)
+        {
+            try
+            {
+                var execution_path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+                if (!File.Exists(Filename) && !Path.IsPathRooted(Filename))
+                {
+                    var speculative_new_path = Path.Combine(execution_path, "FileFormats", Filename);
+                    Console.WriteLine($"Could not find {Filename}. Redirecting to {speculative_new_path}");
+                    return File.OpenRead(speculative_new_path);
+                }
+
+                return File.OpenRead(Filename);
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("Could not open File: {0} - File does not exist", Filename);
+            }
+            catch (IOException)
+            {
+                Console.WriteLine("Could not open File: {0} - File in Use or other unknown exception", Filename);
+            }
+            return null;
+        }
+
+        public static Stream? WriteHandle ( String Filename, bool overwrite)
         {
             if (File.Exists(Filename) && !overwrite)
             {
@@ -50,13 +75,12 @@ namespace FileDBReader.src
                 catch (FileNotFoundException)
                 {
                     Console.WriteLine("Could not access File: {0} - File does not exist", Filename);
-                    throw;
                 }
                 catch (IOException)
                 {
                     Console.WriteLine("Could not access File: {0} - File in Use or other unknown exception", Filename);
-                    throw;
                 }
+                return null;
             }
         }
     }
