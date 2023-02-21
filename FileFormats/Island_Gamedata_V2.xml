@@ -96,17 +96,17 @@
     <Convert Path ="//Cam/KeyframeTypeVisibility/None" Type="Boolean"/>
     
     <!-- dlc12 -->
-	  <Convert Path ="//m_QuayReplacementExecuted" Type="Boolean" />
-	  <Convert Path ="//V2_VarMapData/SparseEnabled" Type="Boolean" />	
-	  <Convert Path ="//V2_VarMapData/block/mode" Type="Boolean" />
-	  <Convert Path ="//V2_VarMapData/block/x" Type="Int16" />
-	  <Convert Path ="//V2_VarMapData/block/y" Type="Int16" />
-	  <Convert Path ="//m_StaticTileGrid/SparseEnabled" Type="Boolean" />
-	  <Convert Path ="//m_StaticTileGrid/block/x" Type="Int16" />
-	  <Convert Path ="//m_StaticTileGrid/block/y" Type="Int16" />
-	  <Convert Path ="//m_StaticTileGrid/block/mode" Type="Boolean" />
-	  <Convert Path ="//m_StaticTileGrid/block/default" Type="Boolean" />
-	  <Convert Path ="//SeasonStartTime" Type="Int64"/>
-	  <Convert Path ="//SeasonEndTime" Type="Int64"/>
+    <Convert Path ="//m_QuayReplacementExecuted" Type="Boolean" />
+    <Convert Path ="//V2_VarMapData/SparseEnabled" Type="Boolean" />	
+    <Convert Path ="//V2_VarMapData/block/mode" Type="Boolean" />
+    <Convert Path ="//V2_VarMapData/block/x" Type="Int16" />
+    <Convert Path ="//V2_VarMapData/block/y" Type="Int16" />
+    <Convert Path ="//m_StaticTileGrid/SparseEnabled" Type="Boolean" />
+    <Convert Path ="//m_StaticTileGrid/block/x" Type="Int16" />
+    <Convert Path ="//m_StaticTileGrid/block/y" Type="Int16" />
+    <Convert Path ="//m_StaticTileGrid/block/mode" Type="Boolean" />
+    <Convert Path ="//m_StaticTileGrid/block/default" Type="Boolean" />
+    <Convert Path ="//SeasonStartTime" Type="Int64"/>
+    <Convert Path ="//SeasonEndTime" Type="Int64"/>
   </Converts>
 </Converts>
