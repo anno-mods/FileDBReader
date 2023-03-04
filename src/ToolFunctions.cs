@@ -21,9 +21,7 @@ namespace FileDBReader.src
 
         //tools
         private Reader reader;
-        private XmlExporter exporter;
         private Writer writer;
-        private XmlInterpreter interpreter;
         private FcFileHelper FcFileHelper;
 
 
@@ -158,6 +156,7 @@ namespace FileDBReader.src
 
                     if (interpreter is not null)
                     {
+                        XmlExporter exporter = new XmlExporter(result, interpreter);
                         Console.WriteLine($"Started reinterpreting {InputFile}");
                         result = exporter.Run();
                     }
