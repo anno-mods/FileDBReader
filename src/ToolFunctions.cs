@@ -270,8 +270,8 @@ namespace FileDBReader.src
             try
             {
                 String FileNameNew = Path.GetFileNameWithoutExtension(InputFile) + ReinterpretedFileSuffix + ".xml";
-                using (var input = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
-                using (var output = SecureIoHandler.ReadHandle(InputFile))
+                using (var input = SecureIoHandler.ReadHandle(InputFile))
+                using (var output = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
                 {
                     if (input is null || output is null)
                         return -1;
