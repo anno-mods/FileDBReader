@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +18,7 @@ namespace FileDBReader.src
         public ConverterBase(XmlDocument documentToConvert, Interpreter interpreter)
         {
             Interpreter = interpreter;
-            DocumentToConvert = documentToConvert;
-            Marking = XmlDocumentMarking.InitFrom(documentToConvert);            
+            DocumentToConvert = documentToConvert;         
         }
 
         public XmlDocument Run()
@@ -26,6 +26,14 @@ namespace FileDBReader.src
             foreach (InternalCompression comp in Interpreter.InternalCompressions)
             {
                 InternalFileDB(comp);
+            }
+            Marking = XmlDocumentMarking.InitFrom(DocumentToConvert);
+            var paths = Interpreter.InternalCompressions.Select(x => x.Path).ToArray();
+
+            foreach (string path in paths)
+            {
+                var nodes = DocumentToConvert.SelectNodes(path);
+                Marking.Mark(nodes?.Cast<XmlNode>().ToArray() ?? Enumerable.Empty<XmlNode>());
             }
 
             foreach ((String path, Conversion conv) in Interpreter.Conversions)

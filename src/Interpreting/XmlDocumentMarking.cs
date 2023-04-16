@@ -23,6 +23,14 @@ namespace FileDBReader.src
             unmarked.Remove(n);
         }
 
+        public void Mark(IEnumerable<XmlNode> nodes)
+        { 
+            foreach(XmlNode n in nodes)
+            {
+                Mark(n);
+            }
+        }
+
         public bool IsMarked(XmlNode n)
         {
             ThrowIfNotInDocument(n);

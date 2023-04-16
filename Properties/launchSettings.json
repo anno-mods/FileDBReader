@@ -1,7 +1,8 @@
 {
   "profiles": {
     "FileDBReader": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "decompress -f gamedata.data -i Island_Gamedata_V2.xml -y"
     }
   }
 }
