@@ -52,7 +52,6 @@ namespace FileDBReader_Tests
 
         #region INFOTIP_TEST 
 
-        [TestMethod, TestCategory("Version 2 -> infotip")]
         public void infotip_Decompress()
         {
             String COMPARE_DECOMPRESSED_FILE = "decompressed.xml";
@@ -61,7 +60,6 @@ namespace FileDBReader_Tests
             Assert.IsTrue(Test_Decompress(Folders.UNITTEST_INFOTIP_SUBDIR, INPUT_FILE, COMPARE_DECOMPRESSED_FILE, out var decompressed));
         }
 
-        [TestMethod, TestCategory("Version 2 -> infotip")]
         public void infotip_FileEquality_AfterCompressionCycle()
         {
             String COMPARE_RECOMPRESSED_FILE = "recompressed.bin";
@@ -71,7 +69,6 @@ namespace FileDBReader_Tests
             Assert.IsTrue(Test_DecompressAndRecompress(Folders.UNITTEST_INFOTIP_SUBDIR, INPUT_FILE, COMPARE_RECOMPRESSED_FILE, COMPRESSION_VERSION));
         }
 
-        [TestMethod, TestCategory("Version 2 -> infotip")]
         public void infotip_FileEquality_AfterInterpretation()
         {
             String COMPARE_REINTERPRETED_FILE = "reinterpreted.xml";

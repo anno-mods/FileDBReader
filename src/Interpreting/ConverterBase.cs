@@ -31,8 +31,8 @@ namespace FileDBReader.src
 
         public void InterpretConversion(String path, Conversion conv)
         {
-            var Nodes = DocumentToConvert.SelectNodes(path);
-            ConvertNodeSet(Nodes.Cast<XmlNode>().ToArray(), conv);
+            var Nodes = DocumentToConvert.SelectNodes(path)?.Cast<XmlNode>().ToArray();
+            ConvertNodeSet(Nodes, conv);
         }
 
         public void ConvertNodeSet(IEnumerable<XmlNode> matches, Conversion conversion)
