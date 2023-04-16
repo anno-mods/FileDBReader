@@ -37,7 +37,7 @@ namespace FileDBReader
                 { typeof(uint),     (s, Encoding)   => PrimitiveTypeConverter.GetBytes(uint.Parse(s))},
                 { typeof(long),     (s, Encoding)   => PrimitiveTypeConverter.GetBytes(long.Parse(s))},
                 { typeof(ulong),    (s, Encoding)   => PrimitiveTypeConverter.GetBytes(ulong.Parse(s))},
-                { typeof(float),    (s, Encoding)   => PrimitiveTypeConverter.GetBytes(float.Parse(s))},
+                { typeof(float),    (s, Encoding)   => PrimitiveTypeConverter.GetBytes(float.Parse(s, CultureInfo.InvariantCulture))},
                 { typeof(double),   (s, Encoding)   => PrimitiveTypeConverter.GetBytes(double.Parse(s))},
                 { typeof(String),   (s, Encoding)   => Encoding.GetBytes(s)}
             };
