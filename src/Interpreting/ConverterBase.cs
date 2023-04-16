@@ -21,31 +21,7 @@ namespace FileDBReader.src
             DocumentToConvert = documentToConvert;         
         }
 
-        public XmlDocument Run()
-        {
-            foreach (InternalCompression comp in Interpreter.InternalCompressions)
-            {
-                InternalFileDB(comp);
-            }
-            Marking = XmlDocumentMarking.InitFrom(DocumentToConvert);
-            var paths = Interpreter.InternalCompressions.Select(x => x.Path).ToArray();
-
-            foreach (string path in paths)
-            {
-                var nodes = DocumentToConvert.SelectNodes(path);
-                Marking.Mark(nodes?.Cast<XmlNode>().ToArray() ?? Enumerable.Empty<XmlNode>());
-            }
-
-            foreach ((String path, Conversion conv) in Interpreter.Conversions)
-            {
-                InterpretConversion(path, conv);
-            }
-
-            if (Interpreter.HasDefaultType())
-                DefaultType();
-
-            return DocumentToConvert;
-        }
+        public abstract XmlDocument Run();
 
         public void DefaultType()
         {
@@ -67,7 +43,7 @@ namespace FileDBReader.src
             }
         }
 
-        private void ConvertSingleNode(XmlNode match, Conversion conversion)
+        protected void ConvertSingleNode(XmlNode match, Conversion conversion)
         {
             if (match.InnerText.Equals(""))
             {

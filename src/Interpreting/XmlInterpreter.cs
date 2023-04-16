@@ -18,6 +18,32 @@ namespace FileDBReader
     {
         public XmlInterpreter(XmlDocument document, Interpreter interpreter) : base(document, interpreter) { }
 
+        public override XmlDocument Run()
+        {
+            foreach (InternalCompression comp in Interpreter.InternalCompressions)
+            {
+                InternalFileDB(comp);
+            }
+            Marking = XmlDocumentMarking.InitFrom(DocumentToConvert);
+            var paths = Interpreter.InternalCompressions.Select(x => x.Path).ToArray();
+
+            foreach (string path in paths)
+            {
+                var nodes = DocumentToConvert.SelectNodes(path);
+                Marking.Mark(nodes?.Cast<XmlNode>().ToArray() ?? Enumerable.Empty<XmlNode>());
+            }
+
+            foreach ((String path, Conversion conv) in Interpreter.Conversions)
+            {
+                InterpretConversion(path, conv);
+            }
+
+            if (Interpreter.HasDefaultType())
+                DefaultType();
+
+            return DocumentToConvert;
+        }
+
         protected override void InternalFileDB(InternalCompression comp)
         {
             //Register All the nodes by merging dictionaries

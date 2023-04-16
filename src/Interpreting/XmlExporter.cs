@@ -17,6 +17,32 @@ namespace FileDBReader
     {
         public XmlExporter(XmlDocument document, Interpreter interpreter) : base(document, interpreter) { }
 
+        public override XmlDocument Run()
+        {
+            Marking = XmlDocumentMarking.InitFrom(DocumentToConvert);
+            var paths = Interpreter.InternalCompressions.Select(x => x.Path).ToArray();
+            foreach (string path in paths)
+            {
+                var nodes = DocumentToConvert.SelectNodes(path);
+                Marking.Mark(nodes?.Cast<XmlNode>().ToArray() ?? Enumerable.Empty<XmlNode>());
+            }
+
+            foreach ((String path, Conversion conv) in Interpreter.Conversions)
+            {
+                InterpretConversion(path, conv);
+            }
+
+            if (Interpreter.HasDefaultType())
+                DefaultType();
+
+            foreach (InternalCompression comp in Interpreter.InternalCompressions)
+            {
+                InternalFileDB(comp);
+            }
+
+            return DocumentToConvert;
+        }
+
         protected override void InternalFileDB(InternalCompression comp)
         {
             InvalidTagNameHelper.RegisterReplaceOperations(comp.ReplacementOps);
