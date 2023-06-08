@@ -5,7 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <StartupObject>FileDBReader.CommandLineHandler</StartupObject>
     <Platforms>AnyCPU;x64</Platforms>
-    <Version>2.4</Version>
+    <Version>2.4.2</Version>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageId></PackageId>
     <Nullable>enable</Nullable>
@@ -65,44 +65,8 @@
     <None Update="dev_files\GGJ\gamedata.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="FileFormats\a7tinfo.xml">
+    <None Update="FileFormats\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\FcFile_2070.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\FcFile.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\Island_Gamedata_V2.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\rdp.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\tmc.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\ctt.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\infotip.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\listtest.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\internalfiledbtest.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\Island_Gamedata.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\Island_RD3D.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="FileFormats\map_Gamedata.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="dev_files\a7tinfo\moderate_atoll_ll_01.a7tinfo">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
