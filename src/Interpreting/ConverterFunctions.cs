@@ -10,6 +10,9 @@ namespace FileDBReader
     public static class ConverterFunctions
     {
         #region FunctionDictionaries
+        /// <summary>
+        /// Conversion Rules: Hex String to their Number Representation.
+        /// </summary>
         public static Dictionary<Type, Func<string, Encoding, String>> ConversionRulesImport = new Dictionary<Type, Func<string, Encoding, String>>
             {
                 { typeof(bool),   (s, Encoding) => PrimitiveTypeConverter.GetObject<bool>(HexHelper.ToBytes(s)).ToString()},
@@ -26,6 +29,9 @@ namespace FileDBReader
                 { typeof(String), (s, Encoding) => ToString(s, Encoding)}
             };
 
+        /// <summary>
+        /// Conversion Rules: Number Strings to their Hex Representation.
+        /// </summary>
         public static Dictionary<Type, Func<String, Encoding, byte[]>> ConversionRulesExport = new Dictionary<Type, Func<String, Encoding, byte[]>>
             {
                 { typeof(bool),     (s, Encoding)   => PrimitiveTypeConverter.GetBytes(bool.Parse(s))},
@@ -37,8 +43,16 @@ namespace FileDBReader
                 { typeof(uint),     (s, Encoding)   => PrimitiveTypeConverter.GetBytes(uint.Parse(s))},
                 { typeof(long),     (s, Encoding)   => PrimitiveTypeConverter.GetBytes(long.Parse(s))},
                 { typeof(ulong),    (s, Encoding)   => PrimitiveTypeConverter.GetBytes(ulong.Parse(s))},
-                { typeof(float),    (s, Encoding)   => PrimitiveTypeConverter.GetBytes(float.Parse(s, CultureInfo.InvariantCulture))},
-                { typeof(double),   (s, Encoding)   => PrimitiveTypeConverter.GetBytes(double.Parse(s))},
+                { typeof(float),    (s, Encoding)   => 
+                    {
+                        var normalized = s.Replace(",", ".");
+                        return PrimitiveTypeConverter.GetBytes(float.Parse(s, CultureInfo.InvariantCulture));
+                    }},
+                { typeof(double),   (s, Encoding)   => 
+                    {
+                        var normalized = s.Replace(",", ".");
+                        return PrimitiveTypeConverter.GetBytes(double.Parse(s, CultureInfo.InvariantCulture));
+                    }},
                 { typeof(String),   (s, Encoding)   => Encoding.GetBytes(s)}
             };
 

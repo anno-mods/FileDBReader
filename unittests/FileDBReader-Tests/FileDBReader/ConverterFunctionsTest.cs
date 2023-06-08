@@ -89,6 +89,22 @@ namespace FileDBReader_Tests
             Assert.IsTrue(StringConversion_Test_Generic(new UTF32Encoding()));
         }
 
+        [TestMethod]
+        public void InvariantFloatTests()
+        {
+            String float1 = "1.5";
+            var expected = BitConverter.GetBytes(1.5f);
+            var parsed = ConverterFunctions.ConversionRulesExport[typeof(float)](float1, Encoding.Unicode);
+            
+            String float2 = "1,5";
+            var parsed2 = ConverterFunctions.ConversionRulesExport[typeof(float)](float1, Encoding.Unicode);
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.AreEqual(parsed2[i], expected[i]);
+                Assert.AreEqual(parsed[i], expected[i]);
+            }
+        }
+
         #region HelpfulFunctions
         public bool StringConversion_Test_Generic(Encoding e)
         {
