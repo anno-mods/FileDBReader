@@ -97,7 +97,7 @@ namespace FileDBReader_Tests
             var parsed = ConverterFunctions.ConversionRulesExport[typeof(float)](float1, Encoding.Unicode);
             
             String float2 = "1,5";
-            var parsed2 = ConverterFunctions.ConversionRulesExport[typeof(float)](float1, Encoding.Unicode);
+            var parsed2 = ConverterFunctions.ConversionRulesExport[typeof(float)](float2, Encoding.Unicode);
             for (int i = 0; i < 4; i++)
             {
                 Assert.AreEqual(parsed2[i], expected[i]);
