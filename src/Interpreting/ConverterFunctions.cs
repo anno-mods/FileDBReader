@@ -46,12 +46,12 @@ namespace FileDBReader
                 { typeof(float),    (s, Encoding)   => 
                     {
                         var normalized = s.Replace(",", ".");
-                        return PrimitiveTypeConverter.GetBytes(float.Parse(s, CultureInfo.InvariantCulture));
+                        return PrimitiveTypeConverter.GetBytes(float.Parse(normalized, CultureInfo.InvariantCulture));
                     }},
                 { typeof(double),   (s, Encoding)   => 
                     {
                         var normalized = s.Replace(",", ".");
-                        return PrimitiveTypeConverter.GetBytes(double.Parse(s, CultureInfo.InvariantCulture));
+                        return PrimitiveTypeConverter.GetBytes(double.Parse(normalized, CultureInfo.InvariantCulture));
                     }},
                 { typeof(String),   (s, Encoding)   => Encoding.GetBytes(s)}
             };
