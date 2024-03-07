@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace FileDBReader.src
 {
     public class XmlDocumentMarking
     {
-        private List<XmlNode> unmarked;
+        private HashSet<XmlNode> unmarked;
         XmlDocument OriginalDocument;
 
         private XmlDocumentMarking()
@@ -52,7 +50,7 @@ namespace FileDBReader.src
         {
             XmlDocumentMarking marking = new XmlDocumentMarking();
             marking.OriginalDocument = doc;
-            marking.unmarked = doc.SelectNodes("//*[text()]").Cast<XmlNode>().ToList();
+            marking.unmarked = doc.SelectNodes("//*[text()]").Cast<XmlNode>().ToHashSet();
             return marking;
         }
 
