@@ -55,7 +55,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="FileDBSerializer\FileDBSerializer\FileDBSerializer.csproj" />
+    <ProjectReference Include="FileDBSerializer\FileDBSerializer\AnnoMods.BBDom.csproj" />
   </ItemGroup>
 
   <ItemGroup>

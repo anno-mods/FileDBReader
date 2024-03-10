@@ -1,5 +1,5 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
+﻿using AnnoMods.BBDom;
+using AnnoMods.ObjectSerializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,6 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 {
     public interface IDeserializationHandler
     {
-        public object? Handle(IEnumerable<BBNode> nodes, Type targetType, FileDBSerializerOptions options);
+        public object? Handle(IEnumerable<BBNode> nodes, Type targetType, BBSerializerOptions options);
     }
 }

@@ -1,10 +1,7 @@
-﻿using FileDBSerializing.EncodingAwareStrings;
-using FileDBSerializing.ObjectSerializer;
+﻿using AnnoMods.BBDom.EncodingAwareStrings;
+using AnnoMods.ObjectSerializer;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileDBReader_Tests.TestSerializationData
 {
@@ -28,7 +25,6 @@ namespace FileDBReader_Tests.TestSerializationData
         public List<AnyChild> FlatList { get; set; }
 
         public List<List<AnyChild>> NestedList { get; set; }
-
     }
 
     public class AnyChild

@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FileDBReader; 
+using FileDBReader;
+using AnnoMods.BBDom.Util;
 
 namespace FileDBReader_Tests
 {

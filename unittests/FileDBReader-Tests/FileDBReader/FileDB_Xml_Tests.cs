@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FileDBSerializing;
-using FileDBSerializing.Tests;
+using AnnoMods.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FileDBReader.src.XmlRepresentation;
 using System.Xml;
 using FileDBSerializer;
+using AnnoMods.BBDom;
+using AnnoMods.BBDom.XML;
 
 namespace FileDBReader_Tests
 {
@@ -37,11 +38,11 @@ namespace FileDBReader_Tests
         {
             var Expected = TestDataSources.BuildDocument();
 
-            XmlFileDbConverter serial = new(BBDocumentVersion.V2);
+            XmlToBBDocumentConverter converter = new();
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
 
-            var fromXml = serial.ToFileDb(workDoc);
+            var fromXml = converter.ToBBDocument(workDoc);
 
             Assert.IsTrue(fromXml.ElementCount == Expected.ElementCount);
             for (int i = 0; i < fromXml.ElementCount && i < Expected.ElementCount; i++)
@@ -55,11 +56,11 @@ namespace FileDBReader_Tests
         {
             var Expected = TestDataSources.BuildDocument();
 
-            XmlFileDbConverter serial = new(BBDocumentVersion.V1);
+            XmlToBBDocumentConverter converter = new();
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
 
-            var fromXml = serial.ToFileDb(workDoc);
+            var fromXml = converter.ToBBDocument(workDoc);
 
             Assert.IsTrue(fromXml.ElementCount == Expected.ElementCount);
             for (int i = 0; i < fromXml.ElementCount && i < Expected.ElementCount; i++)

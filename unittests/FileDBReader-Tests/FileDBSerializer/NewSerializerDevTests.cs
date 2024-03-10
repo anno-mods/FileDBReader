@@ -1,13 +1,14 @@
 ﻿using FileDBReader_Tests;
 using FileDBReader_Tests.TestSerializationData;
-using FileDBSerializing.ObjectSerializer;
-using FileDBSerializing.Tests.TestData;
+using AnnoMods.ObjectSerializer;
+using AnnoMods.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
 using FluentAssertions;
+using AnnoMods.BBDom;
 
-namespace FileDBSerializing.Tests
+namespace AnnoMods.Tests
 {
     [TestClass]
     public class NewSerializerDevTests
@@ -16,7 +17,7 @@ namespace FileDBSerializing.Tests
         public void NewObjectTest()
         {
             var obj = TestDataSources.GetSmallTestAsset();
-            FileDBSerializer<NewObject> objectserializer = new FileDBSerializer<NewObject>(BBDocumentVersion.V2);
+            BBSerializer<NewObject> objectserializer = new BBSerializer<NewObject>(BBDocumentVersion.V2);
             Stream result = File.Create("myfile.filedb");
             objectserializer.Serialize(result, obj);
         }
@@ -25,7 +26,7 @@ namespace FileDBSerializing.Tests
         public void NewDeserializerTest()
         {
             var obj = TestDataSources.GetDeserializerTestAsset();
-            FileDBSerializer<DeserObject> serializer = new(BBDocumentVersion.V2);
+            BBSerializer<DeserObject> serializer = new(BBDocumentVersion.V2);
             using (Stream result = File.Create("deser.filedb"))
             {
                 serializer.Serialize(result, obj);

@@ -1,12 +1,8 @@
-﻿using FileDBSerializer;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static FileDBSerializing.LookUps.FileDBLookupExtension;
+using static AnnoMods.BBDom.LookUps.FileDBLookupExtension;
 
-namespace FileDBSerializing.LookUps
+namespace AnnoMods.BBDom.LookUps
 {
     public static class FileDBDocumentLookupExtension
     {

@@ -1,5 +1,5 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
+﻿using AnnoMods.BBDom;
+using AnnoMods.ObjectSerializer;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     internal class FlatArrayHandler : ISerializationHandler
     {
-        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, BBSerializerOptions options)
         {
             var listInstance = item as IList;
             if (listInstance is null) 

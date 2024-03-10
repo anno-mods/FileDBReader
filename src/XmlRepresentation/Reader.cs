@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Xml;
-using FileDBSerializing;
 using System.IO;
-using FileDBSerializer;
+using AnnoMods.BBDom;
+using AnnoMods.BBDom.IO;
+using AnnoMods.BBDom.XML;
 
 namespace FileDBReader.src.XmlRepresentation
 {

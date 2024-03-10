@@ -1,5 +1,5 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
+﻿using AnnoMods.BBDom;
+using AnnoMods.ObjectSerializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     public class ReferenceArrayHandler : ISerializationHandler
     {
-        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, BBSerializerOptions options)
         {
             if (item is null && options.SkipReferenceArrayNullValues)
                 return Enumerable.Empty<BBNode>();

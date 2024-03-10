@@ -1,4 +1,8 @@
-﻿using FileDBSerializing;
+﻿using AnnoMods;
+using AnnoMods.BBDom;
+using AnnoMods.BBDom.IO;
+using AnnoMods.BBDom.XML;
+using AnnoMods.BBDom.Util;
 using System;
 using System.IO;
 using System.Xml;
@@ -20,8 +24,8 @@ namespace FileDBReader.src.XmlRepresentation
                 version = (BBDocumentVersion) FileVersion;
 
                 var documentWriter = new BBDocumentWriter(version.Value);
-                XmlFileDbConverter converter = new XmlFileDbConverter(version.Value);
-                var filedb = converter.ToFileDb(doc);
+                XmlToBBDocumentConverter converter = new XmlToBBDocumentConverter();
+                var filedb = converter.ToBBDocument(doc);
                 return documentWriter.WriteToStream(filedb, Stream);
             }
             catch (InvalidCastException ex)

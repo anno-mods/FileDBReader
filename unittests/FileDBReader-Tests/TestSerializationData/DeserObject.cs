@@ -1,10 +1,7 @@
-﻿using FileDBSerializing.EncodingAwareStrings;
-using FileDBSerializing.ObjectSerializer;
+﻿using AnnoMods.BBDom.EncodingAwareStrings;
+using AnnoMods.ObjectSerializer;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileDBReader_Tests.TestSerializationData
 {

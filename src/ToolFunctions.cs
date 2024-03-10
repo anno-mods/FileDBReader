@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
-using FileDBSerializing;
-using FileDBReader.src.XmlRepresentation; 
+using AnnoMods.BBDom.IO;
+using AnnoMods.BBDom.XML;
+using FileDBReader.src.XmlRepresentation;
 
 namespace FileDBReader.src
 {

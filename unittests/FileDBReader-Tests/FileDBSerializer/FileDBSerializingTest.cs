@@ -1,14 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.IO;
 using FileDBReader_Tests;
-using FileDBSerializer;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using System.Linq;
 
-namespace FileDBSerializing.Tests
+namespace AnnoMods.Tests
 {
     [TestClass]
     public class FileDBSerializingTest

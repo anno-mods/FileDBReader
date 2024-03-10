@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FileDBSerializing.ObjectSerializer
+namespace AnnoMods.ObjectSerializer
 {
     public static class PrimitiveTypeConverter
     {

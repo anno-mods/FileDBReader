@@ -1,5 +1,5 @@
 ﻿using FileDBSerializer.ObjectSerializer;
-using FileDBSerializing.Tests.TestData;
+using AnnoMods.Tests.TestData;
 using System.Collections.Generic;
 
 namespace FileDBReader_Tests.TestSerializationData.PropertyOrder

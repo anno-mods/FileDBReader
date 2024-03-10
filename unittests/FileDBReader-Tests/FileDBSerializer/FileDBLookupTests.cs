@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.LookUps;
 using FileDBReader_Tests;
-using FileDBSerializing.LookUps;
-using FileDBSerializer;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 
-namespace FileDBSerializing.Tests
+namespace AnnoMods.Tests
 {
     [TestClass]
     //todo (taubenangriff) Add some bigger tests for node lookups.

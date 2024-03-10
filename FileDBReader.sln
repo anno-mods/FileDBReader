@@ -7,9 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileDBReader", "FileDBReade
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileDBReader.Unit-Tests", "unittests\FileDBReader-Tests\FileDBReader.Unit-Tests.csproj", "{265AACA6-4471-4C5C-965F-CBAB72455E6E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileDBSerializer", "FileDBSerializer\FileDBSerializer\FileDBSerializer.csproj", "{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devplayground", "devplayground\Devplayground\Devplayground.csproj", "{63117E36-97CE-4195-BE87-0AFA5D25834B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnnoMods.BBDom", "FileDBSerializer\FileDBSerializer\AnnoMods.BBDom.csproj", "{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,14 +39,6 @@ Global
 		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Release|Any CPU.Build.0 = Release|x64
 		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Release|x64.ActiveCfg = Release|x64
 		{486A9596-EF22-4A90-8F2A-0029C9CD5DD2}.Release|x64.Build.0 = Release|x64
-		{63117E36-97CE-4195-BE87-0AFA5D25834B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63117E36-97CE-4195-BE87-0AFA5D25834B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63117E36-97CE-4195-BE87-0AFA5D25834B}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{63117E36-97CE-4195-BE87-0AFA5D25834B}.Debug|x64.Build.0 = Debug|Any CPU
-		{63117E36-97CE-4195-BE87-0AFA5D25834B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63117E36-97CE-4195-BE87-0AFA5D25834B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63117E36-97CE-4195-BE87-0AFA5D25834B}.Release|x64.ActiveCfg = Release|Any CPU
-		{63117E36-97CE-4195-BE87-0AFA5D25834B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

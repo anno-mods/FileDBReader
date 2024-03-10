@@ -1,6 +1,6 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.EncodingAwareStrings;
-using FileDBSerializing.ObjectSerializer;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.EncodingAwareStrings;
+using AnnoMods.ObjectSerializer;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -25,7 +25,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
         /// <param name="workingDocument"></param>
         /// <param name="options"></param>
         /// <returns>An attrib containing a byte representation of the value</returns>
-        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, BBSerializerOptions options)
         {
             if(item is null && options.SkipSimpleNullValues)
                 return Enumerable.Empty<BBNode>();

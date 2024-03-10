@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileDBSerializing.ObjectSerializer
+namespace AnnoMods.ObjectSerializer
 {
     //Set this attribute to achieve arrays without a wrapper around them
     [AttributeUsage(AttributeTargets.Property)]

@@ -1,4 +1,6 @@
-﻿using FileDBReader;
+﻿using AnnoMods.BBDom.Util;
+using AnnoMods.BBDom.XML;
+using FileDBReader;
 using FileDBReader.src;
 using FileDBReader.src.XmlRepresentation;
 using System;

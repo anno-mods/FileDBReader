@@ -1,7 +1,8 @@
-﻿using FileDBSerializing.LookUps;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.LookUps;
 using System;
 
-namespace FileDBSerializing.ObjectSerializer
+namespace AnnoMods.ObjectSerializer
 {
     public enum PolymorphRootNode
     {

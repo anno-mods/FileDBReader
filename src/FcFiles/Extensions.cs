@@ -24,21 +24,6 @@ namespace FileDBReader
 
             return Result.ToString();
         }
-
-        public static bool TryGetKey(this Dictionary<string, string> dict, String Value, out String result)
-        {
-            if (dict.ContainsValue(Value))
-            {
-                result = dict.First(x => x.Value.Equals(Value)).Key;
-                return true;
-            }
-            else
-            {
-                result = null;
-                return false;
-            }
-        }
-
         /// <summary>
         /// Adds an Element to a Dictionary under the condition that both value and key are unique.
         /// </summary>

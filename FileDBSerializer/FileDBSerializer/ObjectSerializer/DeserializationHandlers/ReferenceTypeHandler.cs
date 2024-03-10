@@ -1,16 +1,15 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.LookUps;
-using FileDBSerializing.ObjectSerializer;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.LookUps;
+using AnnoMods.ObjectSerializer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 {
     public class ReferenceTypeHandler : IDeserializationHandler
     {
-        public object? Handle(IEnumerable<BBNode> nodes, Type targetType, FileDBSerializerOptions options)
+        public object? Handle(IEnumerable<BBNode> nodes, Type targetType, BBSerializerOptions options)
         {
             if (nodes.Count() != 1)
                 throw new InvalidOperationException("ReferenceTypeHandler can handle exactly one node");
