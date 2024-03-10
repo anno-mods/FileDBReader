@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AnnoMods.BBDom
 {
@@ -20,7 +17,7 @@ namespace AnnoMods.BBDom
             if (Versions.Contains(version))
                 return;
             else
-                throw new InvalidOperationException("Invalid FileDBVersion!!!");
+                throw new InvalidOperationException("Invalid BBDocumentVersion!");
         }
 
         public static byte[] GetMagicBytes(BBDocumentVersion version)

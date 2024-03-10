@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using AnnoMods.BBDom;
 using AnnoMods.BBDom.IO;
 using AnnoMods.BBDom.XML;
-using FileDBReader.src.XmlRepresentation;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 
 namespace FileDBReader.src
 {
@@ -21,15 +20,10 @@ namespace FileDBReader.src
         private static readonly String IOErrorMessage = "File Path wrong, File in use or does not exist.";
 
         //tools
-        private Reader reader;
-        private Writer writer;
         private FcFileHelper FcFileHelper;
-
 
         public ToolFunctions()
         {
-            reader = new Reader();
-            writer = new Writer();
             FcFileHelper = new FcFileHelper();
         }
 
@@ -75,8 +69,7 @@ namespace FileDBReader.src
                     if (fs is null || output is null)
                         return -1;
 
-                    XmlDocument result;
-                    result = reader.Read(fs);
+                    var result = BBDocument.LoadStream(fs).ToXmlDocument(); 
                     if (Interpr is not null)
                     {
                         Console.WriteLine($"Started interpreting {InputFile}");
@@ -144,6 +137,8 @@ namespace FileDBReader.src
             int CompressionVersion,
             bool overwrite)
         {
+
+            var version = (BBDocumentVersion)CompressionVersion;
             try
             {
                 XmlDocument result = new XmlDocument();
@@ -161,7 +156,7 @@ namespace FileDBReader.src
                         Console.WriteLine($"Started reinterpreting {InputFile}");
                         result = exporter.Run();
                     }
-                    writer.Write(result, output, CompressionVersion);
+                    result.ToBBDocument().WriteToStream(output, version);
                 }
             }
             catch (Exception other)

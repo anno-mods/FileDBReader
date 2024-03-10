@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FileDBReader;
-using System.Xml;
-using System.IO;
-using FileDBReader.src;
-using FileDBReader.src.XmlRepresentation;
-using AnnoMods.BBDom;
+﻿using AnnoMods.BBDom;
 using AnnoMods.BBDom.IO;
+using AnnoMods.BBDom.XML;
+using FileDBReader;
+using FileDBReader.src;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
+using System.Xml;
 
 namespace FileDBReader_Tests
 {
     [TestClass]
     public class FileConversionTests
     {
-        //FileDB
-        static Reader reader = new Reader();
-        static Writer writer = new Writer();
-
         //Fc Files
         static FcFileHelper FcFileHelper = new FcFileHelper();
 
@@ -163,15 +155,18 @@ namespace FileDBReader_Tests
 
         public bool Test_DecompressAndRecompress(String UnittestSubdir, String FileIn, String ExpectedResult, int CompressionVersion)
         {
+            var version = (BBDocumentVersion)CompressionVersion; 
+
             var COMPARE_EXPECTED_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UnittestSubdir, ExpectedResult);
             var INPUT_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UnittestSubdir, FileIn);
-            
-            var decompressed = reader.Read(File.OpenRead(INPUT_PATH));
+
+            using var fs = File.OpenRead(INPUT_PATH);
+            var xmlDocument = BBDocument.LoadStream(fs).ToXmlDocument();
 
             using (MemoryStream result = new MemoryStream())
             using (FileStream expected = File.OpenRead( COMPARE_EXPECTED_PATH ))
             {
-                var recompressed = writer.Write(decompressed, result, CompressionVersion);
+                xmlDocument.ToBBDocument().WriteToStream(result, version);
                 return StreamsAreEqual(result, expected);
             }
         }
@@ -213,12 +208,14 @@ namespace FileDBReader_Tests
             var COMPARE_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_EXPECTED_DIR, UnittestSubdir, ExpectedResult);
             var INPUT_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, UnittestSubdir, FileIn);
 
-            var decompressed = reader.Read( File.OpenRead( INPUT_PATH ) );
-            decompressedResult = decompressed;
+            using var fs = File.OpenRead(INPUT_PATH);
+            var xmlDocument = BBDocument.LoadStream(fs).ToXmlDocument(); 
+            decompressedResult = xmlDocument;
+
             using (MemoryStream ms = new MemoryStream())
             using (FileStream expected = File.OpenRead( COMPARE_PATH ))
             {
-                decompressed.Save(ms);
+                xmlDocument.Save(ms);
                 return StreamsAreEqual(ms, expected);
             }
         }
@@ -263,10 +260,12 @@ namespace FileDBReader_Tests
 
         public bool Test_Recompress(XmlDocument Reinterpreted, String FileRecompressed, int CompressionVersion)
         {
+            var version = (BBDocumentVersion)CompressionVersion;
+
             using (MemoryStream TargetStream = new MemoryStream())
             using (FileStream expected = File.OpenRead(FileRecompressed))
             {
-                writer.Write(Reinterpreted, TargetStream, CompressionVersion);
+                Reinterpreted.ToBBDocument().WriteToStream(TargetStream, version);
                 return StreamsAreEqual(TargetStream, expected);
             }
         }

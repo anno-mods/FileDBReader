@@ -1,10 +1,8 @@
-﻿using AnnoMods.BBDom.Util;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.Util;
 using AnnoMods.BBDom.XML;
 using FileDBReader.src;
-using FileDBReader.src.XmlRepresentation;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -55,10 +53,9 @@ namespace FileDBReader
             foreach (XmlNode node in nodes)
             {
                 var bytearr = HexHelper.ToBytes(node.InnerText);
-                var filereader = new Reader();
                 using (MemoryStream ms = new MemoryStream(bytearr))
                 {
-                    var decompressed = filereader.Read(ms);
+                    var decompressed = BBDocument.LoadStream(ms).ToXmlDocument();
                     node.InnerText = "";
                     node.AppendChild(DocumentToConvert.ImportNode(decompressed.DocumentElement, true));
                 }
