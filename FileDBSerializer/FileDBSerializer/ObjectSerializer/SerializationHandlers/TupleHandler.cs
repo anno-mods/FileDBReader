@@ -6,7 +6,7 @@ namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     internal class TupleHandler : ISerializationHandler
     {
-        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, BBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             var tuple = item as ITuple;
             if (tuple is null)

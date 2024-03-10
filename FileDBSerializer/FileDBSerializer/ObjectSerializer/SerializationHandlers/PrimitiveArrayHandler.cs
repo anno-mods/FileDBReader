@@ -12,7 +12,7 @@ namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
         {
         }
 
-        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, BBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             var arrayInstance = item as Array;
             if (arrayInstance is null && options.SkipSimpleNullValues)

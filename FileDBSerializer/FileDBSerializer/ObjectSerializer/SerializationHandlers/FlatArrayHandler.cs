@@ -7,7 +7,7 @@ namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     internal class FlatArrayHandler : ISerializationHandler
     {
-        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, BBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             var listInstance = item as IList;
             if (listInstance is null) 

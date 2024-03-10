@@ -6,7 +6,7 @@ namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     public class ReferenceTypeHandler : ISerializationHandler
     {
-        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, BBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             if (item is null && options.SkipSimpleNullValues)
                 return Enumerable.Empty<BBNode>();

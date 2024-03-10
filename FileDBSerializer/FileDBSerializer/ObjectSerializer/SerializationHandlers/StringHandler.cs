@@ -17,7 +17,7 @@ namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
         /// <param name="workingDocument"></param>
         /// <param name="options"></param>
         /// <returns>Attrib containing the string in the byte representation specified either by encodingawarestring or default encoding</returns>
-        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, BBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             if (item is null && options.SkipSimpleNullValues)
                 return Enumerable.Empty<BBNode>();

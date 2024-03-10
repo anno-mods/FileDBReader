@@ -1,14 +1,11 @@
-﻿using System;
+﻿using AnnoMods.BBDom.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AnnoMods.BBDom.IO;
 
 namespace AnnoMods.BBDom
 {
-    public class BBDocument : IBBDocument
+    public class BBDocument
     {
         public List<BBNode> Roots { get; set; }
         public TagSection TagSection { get; set; }

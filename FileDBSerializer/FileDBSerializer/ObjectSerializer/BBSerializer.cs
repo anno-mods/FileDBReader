@@ -50,7 +50,7 @@ namespace AnnoMods.BBDom.ObjectSerializer
         //serializes from a filedb document into an object
         public object Deserialize(Stream serializationStream)
         {
-            IBBDocument? doc = null; 
+            BBDocument? doc = null; 
 
             //autodetect version?
             var Version = VersionDetector.GetCompressionVersion(serializationStream);

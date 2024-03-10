@@ -20,12 +20,6 @@ namespace AnnoMods.BBDom.IO
             { BBDocumentVersion.V3, (s) => new BBStructureWriter(s) }
         };
 
-        public static BBDocument GetDocument(BBDocumentVersion version)
-        {
-            Versioning.EnsureVersion(version);
-            return new BBDocument();
-        }
-
         public static IBBStructureParser GetParser(BBDocumentVersion version, Stream source)
         {
             Versioning.EnsureVersion(version);

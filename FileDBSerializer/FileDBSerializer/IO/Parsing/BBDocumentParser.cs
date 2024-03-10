@@ -37,7 +37,7 @@ public class BBDocumentParser
     {
         if (!source.CanRead) throw new ArgumentException("Stream needs to be readable!");
         CurrentStream = source;
-        bbdoc = DependencyVersions.GetDocument(Version);
+        bbdoc = new BBDocument();
         parser = DependencyVersions.GetParser(Version, source);
         parser.RegisterDocument(bbdoc);
     }

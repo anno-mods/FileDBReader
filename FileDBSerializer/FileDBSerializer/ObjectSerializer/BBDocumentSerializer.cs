@@ -20,7 +20,7 @@ namespace AnnoMods.BBDom.ObjectSerializer
 
         private void InitTargetDocument()
         {
-            TargetDocument = DependencyVersions.GetDocument(Options.Version);
+            TargetDocument = new BBDocument();
         }
 
         //serializes an object into a filedb document
