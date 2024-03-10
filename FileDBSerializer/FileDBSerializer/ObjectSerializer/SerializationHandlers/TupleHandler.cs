@@ -1,14 +1,8 @@
-﻿using AnnoMods.BBDom;
-using AnnoMods.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     internal class TupleHandler : ISerializationHandler
     {

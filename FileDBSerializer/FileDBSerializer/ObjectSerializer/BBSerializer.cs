@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AnnoMods.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     /// <summary>
     /// Abstracts BBDoc Serialization into an IFormatter

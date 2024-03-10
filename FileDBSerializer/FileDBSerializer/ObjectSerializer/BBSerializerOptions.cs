@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AnnoMods.BBDom;
 
-namespace AnnoMods.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     public class BBSerializerOptions
     {

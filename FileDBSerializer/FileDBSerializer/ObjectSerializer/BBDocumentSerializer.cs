@@ -1,12 +1,11 @@
 ﻿using AnnoMods.BBDom;
 using AnnoMods.BBDom.IO;
-using FileDBSerializer.ObjectSerializer;
-using FileDBSerializer.ObjectSerializer.SerializationHandlers;
+using AnnoMods.BBDom.ObjectSerializer.SerializationHandlers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace AnnoMods.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     public class BBDocumentSerializer 
     {

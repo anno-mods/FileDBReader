@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AnnoMods.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     /// <summary>
     /// Set this attribute to rename the property in serialized FileDB.

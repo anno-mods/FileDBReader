@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace AnnoMods.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     public static class BBConvert
     {

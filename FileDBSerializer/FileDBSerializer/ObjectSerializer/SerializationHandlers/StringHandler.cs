@@ -1,12 +1,9 @@
-﻿using AnnoMods.BBDom;
-using AnnoMods.BBDom.EncodingAwareStrings;
-using AnnoMods.ObjectSerializer;
+﻿using AnnoMods.BBDom.EncodingAwareStrings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     /// <summary>
     /// Creates a FileDBNode that represents a single string object.

@@ -1,10 +1,7 @@
-﻿using FileDBSerializer.ObjectSerializer.SerializationHandlers;
-using AnnoMods.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 
-namespace FileDBSerializer.ObjectSerializer.HandlerSelector
+namespace AnnoMods.BBDom.ObjectSerializer.HandlerSelector
 {
     public class TopLevelHandlerSelector : IHandlerSelector
     {

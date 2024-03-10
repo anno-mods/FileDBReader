@@ -1,11 +1,7 @@
-﻿using AnnoMods.BBDom;
-using AnnoMods.BBDom.EncodingAwareStrings;
-using AnnoMods.ObjectSerializer;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     /// <summary>
     /// A Handler for simple primitive values

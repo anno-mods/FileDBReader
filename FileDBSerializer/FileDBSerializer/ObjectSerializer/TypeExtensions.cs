@@ -1,6 +1,4 @@
-﻿using AnnoMods.BBDom;
-using AnnoMods.BBDom.EncodingAwareStrings;
-using FileDBSerializer.ObjectSerializer;
+﻿using AnnoMods.BBDom.EncodingAwareStrings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace AnnoMods.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     internal static class TypeExtensions
     {

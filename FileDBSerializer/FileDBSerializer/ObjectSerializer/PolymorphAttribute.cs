@@ -2,7 +2,7 @@
 using AnnoMods.BBDom.LookUps;
 using System;
 
-namespace AnnoMods.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     public enum PolymorphRootNode
     {

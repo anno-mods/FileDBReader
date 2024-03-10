@@ -1,6 +1,6 @@
 ﻿using FileDBReader_Tests;
 using FileDBReader_Tests.TestSerializationData;
-using AnnoMods.ObjectSerializer;
+using AnnoMods.BBDom.ObjectSerializer;
 using AnnoMods.Tests.TestData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;

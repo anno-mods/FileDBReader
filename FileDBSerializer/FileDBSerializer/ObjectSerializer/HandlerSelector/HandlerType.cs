@@ -1,4 +1,4 @@
-﻿namespace FileDBSerializer.ObjectSerializer.HandlerSelector
+﻿namespace AnnoMods.BBDom.ObjectSerializer.HandlerSelector
 {
     public enum HandlerType
     {

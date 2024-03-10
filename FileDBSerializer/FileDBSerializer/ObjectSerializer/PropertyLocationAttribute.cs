@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileDBSerializer.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     /// <summary>
     /// PropertyLocationAttribute can be added to a Class to inform that its Properties should be serialized in a specific location in relation to its base class.

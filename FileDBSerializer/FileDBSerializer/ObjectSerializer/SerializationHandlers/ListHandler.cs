@@ -1,11 +1,9 @@
-﻿using AnnoMods.BBDom;
-using AnnoMods.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     public class ListHandler : ISerializationHandler
     {

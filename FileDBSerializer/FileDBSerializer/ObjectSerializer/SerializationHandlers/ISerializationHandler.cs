@@ -1,9 +1,6 @@
-﻿using AnnoMods.BBDom;
-using AnnoMods.ObjectSerializer;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     public interface ISerializationHandler
     {

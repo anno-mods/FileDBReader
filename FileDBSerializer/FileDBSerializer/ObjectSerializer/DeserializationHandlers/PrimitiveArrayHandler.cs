@@ -1,11 +1,9 @@
-﻿using AnnoMods.BBDom;
-using AnnoMods.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.DeserializationHandlers
 {
     public class PrimitiveArrayHandler : IDeserializationHandler
     {

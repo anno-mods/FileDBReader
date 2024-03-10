@@ -1,5 +1,5 @@
 ﻿using AnnoMods.BBDom.Util;
-using AnnoMods.ObjectSerializer;
+using AnnoMods.BBDom.ObjectSerializer;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

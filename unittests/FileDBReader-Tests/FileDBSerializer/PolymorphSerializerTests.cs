@@ -1,6 +1,6 @@
 ﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.ObjectSerializer;
 using AnnoMods.BBDom.XML;
-using AnnoMods.ObjectSerializer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Text;

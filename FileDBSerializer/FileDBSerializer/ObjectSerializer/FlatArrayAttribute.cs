@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AnnoMods.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     //Set this attribute to achieve arrays without a wrapper around them
     [AttributeUsage(AttributeTargets.Property)]

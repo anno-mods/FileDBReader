@@ -1,11 +1,9 @@
-﻿using AnnoMods.BBDom;
-using AnnoMods.BBDom.LookUps;
-using AnnoMods.ObjectSerializer;
+﻿using AnnoMods.BBDom.LookUps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.DeserializationHandlers
 {
     public class ReferenceTypeHandler : IDeserializationHandler
     {

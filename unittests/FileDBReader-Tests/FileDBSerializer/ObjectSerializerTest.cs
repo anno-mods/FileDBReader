@@ -1,7 +1,7 @@
 ﻿using AnnoMods.BBDom;
 using AnnoMods.BBDom.IO;
 using AnnoMods.BBDom.XML;
-using AnnoMods.ObjectSerializer;
+using AnnoMods.BBDom.ObjectSerializer;
 using AnnoMods.Tests.TestData;
 using FileDBReader.src;
 using FileDBReader_Tests;

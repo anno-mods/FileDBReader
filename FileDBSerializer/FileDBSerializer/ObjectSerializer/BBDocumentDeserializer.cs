@@ -1,10 +1,9 @@
-﻿using AnnoMods.BBDom;
-using AnnoMods.BBDom.LookUps;
-using FileDBSerializer.ObjectSerializer.DeserializationHandlers;
+﻿using AnnoMods.BBDom.LookUps;
+using AnnoMods.BBDom.ObjectSerializer.DeserializationHandlers;
 using System;
 using System.Linq;
 
-namespace AnnoMods.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     public class BBDocumentDeserializer<T> where T : class, new()
     {
