@@ -9,8 +9,6 @@ namespace FileDBReader.src.XmlRepresentation
 {
     public class Reader
     {
-        FileDbXmlConverter FileDbToXml = new FileDbXmlConverter();
-
         public Reader()
         { 
         
@@ -23,9 +21,8 @@ namespace FileDBReader.src.XmlRepresentation
             Console.WriteLine("[READER]: Autodetected FileVersion = {0}", FileVersion);
             input.Position = 0;
 
-            var parser = new BBDocumentParser(FileVersion);
-            BBDocument filedb = parser.LoadBBDocument(input);
-            return FileDbToXml.ToXml(filedb);
+            var bbdoc = BBDocument.LoadStream(input);
+            return bbdoc.ToXmlDocument();
 
             Console.WriteLine("[READER]: Only Version 1 and 2 are supported");
             throw new InvalidFileDBException();

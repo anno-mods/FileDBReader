@@ -23,13 +23,10 @@ namespace FileDBReader_Tests
         public void XmlToFiledbTest()
         {
             var workDoc = TestDataSources.BuildDocument();
-
             var Expected = new XmlDocument();
             Expected.Load(expectedPath);
 
-            FileDbXmlConverter ser = new FileDbXmlConverter();
-            var x = ser.ToXml(workDoc);
-
+            var x = workDoc.ToXmlDocument(); 
             XmlDocumentEqual(Expected, x);
         }
 
@@ -38,11 +35,10 @@ namespace FileDBReader_Tests
         {
             var Expected = TestDataSources.BuildDocument();
 
-            XmlToBBDocumentConverter converter = new();
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
 
-            var fromXml = converter.ToBBDocument(workDoc);
+            var fromXml = workDoc.ToBBDocument();
 
             Assert.IsTrue(fromXml.ElementCount == Expected.ElementCount);
             for (int i = 0; i < fromXml.ElementCount && i < Expected.ElementCount; i++)
@@ -56,11 +52,9 @@ namespace FileDBReader_Tests
         {
             var Expected = TestDataSources.BuildDocument();
 
-            XmlToBBDocumentConverter converter = new();
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
-
-            var fromXml = converter.ToBBDocument(workDoc);
+            var fromXml = workDoc.ToBBDocument();
 
             Assert.IsTrue(fromXml.ElementCount == Expected.ElementCount);
             for (int i = 0; i < fromXml.ElementCount && i < Expected.ElementCount; i++)

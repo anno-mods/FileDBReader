@@ -22,10 +22,8 @@ namespace FileDBReader.src.XmlRepresentation
             try
             {
                 version = (BBDocumentVersion) FileVersion;
-
                 var documentWriter = new BBDocumentWriter(version.Value);
-                XmlToBBDocumentConverter converter = new XmlToBBDocumentConverter();
-                var filedb = converter.ToBBDocument(doc);
+                var filedb = doc.ToBBDocument();
                 return documentWriter.WriteToStream(filedb, Stream);
             }
             catch (InvalidCastException ex)

@@ -70,11 +70,11 @@ namespace FileDBReader_Tests.FileDBSerializer
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
-            BBDocument doc = new XmlToBBDocumentConverter().ToBBDocument(xmlDocument);
+            BBDocument doc = xmlDocument.ToBBDocument();
 
             // serialize & deserialize
             BBDocumentDeserializer<PolymorphOnPathContainer> deserializer = new(new() { Version = BBDocumentVersion.V1 });
-            var obj = deserializer.GetObjectStructureFromFileDBDocument(doc);
+            var obj = deserializer.GetObjectStructureFromBBDocument(doc);
 
             Assert.IsNotNull(obj);
             var first = obj.List?[0] as PolymorphOnPathContainer.ValueItem;
@@ -85,10 +85,10 @@ namespace FileDBReader_Tests.FileDBSerializer
             Assert.AreEqual(2, third?.None?[1]?.ObjectId);
 
             BBDocumentSerializer serializer = new(new() { Version = BBDocumentVersion.V1 });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            doc = serializer.WriteObjectStructureToBBDocument(obj);
 
             // convert back to xml
-            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            xmlDocument = doc.ToXmlDocument();
             Assert.AreEqual(testInput, xmlDocument.InnerXml);
         }
 
@@ -153,11 +153,11 @@ namespace FileDBReader_Tests.FileDBSerializer
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
-            BBDocument doc = new XmlToBBDocumentConverter().ToBBDocument(xmlDocument);
+            BBDocument doc = xmlDocument.ToBBDocument();
 
             // serialize & deserialize
             BBDocumentDeserializer<PolymorphOnValueContainer> deserializer = new(new() { Version = BBDocumentVersion.V1 });
-            var obj = deserializer.GetObjectStructureFromFileDBDocument(doc);
+            var obj = deserializer.GetObjectStructureFromBBDocument(doc);
 
             Assert.IsNotNull(obj);
             Assert.AreEqual(3, obj.TemplateElement?.Length);
@@ -171,10 +171,10 @@ namespace FileDBReader_Tests.FileDBSerializer
             Assert.AreEqual(3, third?.Position?[0]);
 
             BBDocumentSerializer serializer = new(new() { Version = BBDocumentVersion.V1 });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            doc = serializer.WriteObjectStructureToBBDocument(obj);
 
             // convert back to xml
-            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            xmlDocument = doc.ToXmlDocument();
             Assert.AreEqual(testInput, xmlDocument.InnerXml);
         }
     }

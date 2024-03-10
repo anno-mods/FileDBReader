@@ -39,7 +39,7 @@ namespace AnnoMods.ObjectSerializer
         public static BBDocument SerializeObjectToDocument<SourceType>(SourceType Source, BBSerializerOptions Options) where SourceType : class, new()
         { 
             var serializer = new BBDocumentSerializer(Options);
-            return serializer.WriteObjectStructureToFileDBDocument(Source);
+            return serializer.WriteObjectStructureToBBDocument(Source);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace AnnoMods.ObjectSerializer
         public static TargetType? DeserializeObjectFromDocument<TargetType>(BBDocument document, BBSerializerOptions Options) where TargetType : class, new()
         {
             var deserializer = new BBDocumentDeserializer<TargetType>(Options);
-            return deserializer.GetObjectStructureFromFileDBDocument(document);
+            return deserializer.GetObjectStructureFromBBDocument(document);
         }
 
 

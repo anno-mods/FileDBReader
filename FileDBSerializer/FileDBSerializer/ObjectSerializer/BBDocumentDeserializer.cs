@@ -19,7 +19,7 @@ namespace AnnoMods.ObjectSerializer
             TargetType = TargetObject.GetType();
         }
 
-        public T GetObjectStructureFromFileDBDocument(IBBDocument doc)
+        public T GetObjectStructureFromBBDocument(IBBDocument doc)
         {
             var targetType = typeof(T);
 

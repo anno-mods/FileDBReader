@@ -25,7 +25,7 @@ namespace AnnoMods.ObjectSerializer
         }
 
         //serializes an object into a filedb document
-        public BBDocument WriteObjectStructureToFileDBDocument(object graph)
+        public BBDocument WriteObjectStructureToBBDocument(object graph)
         {
             IEnumerable<PropertyInfo> properties = graph.GetType().GetPropertiesWithOrder();
             TargetDocument.Roots = SerializePropertyCollection(properties, graph).ToList();

@@ -41,7 +41,7 @@ namespace AnnoMods.ObjectSerializer
         public void Serialize(Stream serializationStream, object graph)
         {
             BBDocumentSerializer builder = new BBDocumentSerializer(Options);
-            var doc = builder.WriteObjectStructureToFileDBDocument(graph);
+            var doc = builder.WriteObjectStructureToBBDocument(graph);
             BBDocumentWriter GenericSerializer = new BBDocumentWriter(Options.Version);
             GenericSerializer.WriteToStream(doc, serializationStream);
         }
@@ -59,7 +59,7 @@ namespace AnnoMods.ObjectSerializer
             doc = parser.LoadBBDocument(serializationStream);
              
             BBDocumentDeserializer<T> deserializer = new BBDocumentDeserializer<T>(Options);            
-            return deserializer.GetObjectStructureFromFileDBDocument(doc);
+            return deserializer.GetObjectStructureFromBBDocument(doc);
         }
         #endregion
     }
