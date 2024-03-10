@@ -1,11 +1,10 @@
-﻿using FileDBSerializing.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace FileDBSerializer.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     public class RenamedPropertyHelper
     {

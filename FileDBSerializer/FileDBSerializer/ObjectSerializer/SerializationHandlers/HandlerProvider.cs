@@ -1,10 +1,10 @@
-﻿using FileDBSerializer.ObjectSerializer.HandlerSelector;
+﻿using AnnoMods.BBDom.ObjectSerializer.HandlerSelector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     public class HandlerProvider
     {

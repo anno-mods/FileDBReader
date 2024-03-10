@@ -1,19 +1,21 @@
-﻿using System;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.IO;
+using AnnoMods.BBDom.XML;
+using AnnoMods.BBDom.ObjectSerializer;
+using AnnoMods.Tests.TestData;
+using FileDBReader.src;
+using FileDBReader_Tests;
+using FileDBReader_Tests.TestSerializationData.PropertyOrder;
+using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using FileDBReader.src.XmlRepresentation;
-using FileDBReader_Tests;
-using FileDBSerializing.ObjectSerializer;
-using FileDBSerializing.Tests.TestData;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FluentAssertions;
-using FileDBReader_Tests.TestSerializationData.PropertyOrder;
 
-namespace FileDBSerializing.Tests
+namespace AnnoMods.Tests
 {
     [TestClass]
     public class ObjectSerializerTest
@@ -26,7 +28,7 @@ namespace FileDBSerializing.Tests
             var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version1.filedb");
 
             var obj = TestDataSources.GetTestAsset();
-            FileDBSerializer<RootObject> objectserializer = new FileDBSerializer<RootObject>(FileDBDocumentVersion.Version1);
+            BBSerializer<RootObject> objectserializer = new BBSerializer<RootObject>(BBDocumentVersion.V1);
             
             Stream result = new MemoryStream();
             objectserializer.Serialize(result, obj);
@@ -40,7 +42,7 @@ namespace FileDBSerializing.Tests
             var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
 
             var obj = TestDataSources.GetTestAsset();
-            FileDBSerializer<RootObject> objectserializer = new FileDBSerializer<RootObject>(FileDBDocumentVersion.Version2);
+            BBSerializer<RootObject> objectserializer = new BBSerializer<RootObject>(BBDocumentVersion.V2);
             MemoryStream result = new MemoryStream();
             objectserializer.Serialize(result, obj);
 
@@ -52,12 +54,12 @@ namespace FileDBSerializing.Tests
         {
             var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version1.filedb");
 
-            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version1);
-            IFileDBDocument doc = parser.LoadFileDBDocument(x);
+            BBDocumentParser parser = new BBDocumentParser(BBDocumentVersion.V1);
+            BBDocument doc = parser.LoadBBDocument(x);
 
-            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+            BBDocumentDeserializer<RootObject> objectdeserializer = new BBDocumentDeserializer<RootObject>(new() { Version = BBDocumentVersion.V1 });
 
-            var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
+            var DeserializedDocument = objectdeserializer.GetObjectStructureFromBBDocument(doc);
 
             DeserializedDocument.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
         }
@@ -67,12 +69,12 @@ namespace FileDBSerializing.Tests
         {
             var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
 
-            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version2);
-            IFileDBDocument doc = parser.LoadFileDBDocument(x);
+            BBDocumentParser parser = new BBDocumentParser(BBDocumentVersion.V2);
+            BBDocument doc = parser.LoadBBDocument(x);
 
-            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+            BBDocumentDeserializer<RootObject> objectdeserializer = new BBDocumentDeserializer<RootObject>(new() { Version = BBDocumentVersion.V1 });
 
-            var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
+            var DeserializedDocument = objectdeserializer.GetObjectStructureFromBBDocument(doc);
 
             DeserializedDocument.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
         }
@@ -84,7 +86,7 @@ namespace FileDBSerializing.Tests
 
             var obj = TestDataSources.GetTestAsset();
 
-            Stream Result = FileDBConvert.SerializeObject(obj, new() { Version = FileDBDocumentVersion.Version2 });
+            Stream Result = BBConvert.SerializeObject(obj, new() { Version = BBDocumentVersion.V2 });
 
             Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, Result));
         }
@@ -93,7 +95,7 @@ namespace FileDBSerializing.Tests
         public void StaticConvertTest_Deserialize()
         {
             var source = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
-            RootObject? result = FileDBConvert.DeserializeObject<RootObject>(source, new() { Version = FileDBDocumentVersion.Version2 });
+            RootObject? result = BBConvert.DeserializeObject<RootObject>(source, new() { Version = BBDocumentVersion.V2 });
 
             result.Should().BeEquivalentTo(TestDataSources.GetTestAsset());
         }
@@ -109,7 +111,7 @@ namespace FileDBSerializing.Tests
             var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version1.filedb");
 
             var obj = TestDataSources.GetTestAssetRenamed();
-            FileDBSerializer<RenamedRootObject> objectserializer = new FileDBSerializer<RenamedRootObject>(FileDBDocumentVersion.Version1);
+            BBSerializer<RenamedRootObject> objectserializer = new BBSerializer<RenamedRootObject>(BBDocumentVersion.V1);
 
             Stream result = new MemoryStream();
             objectserializer.Serialize(result, obj);
@@ -123,7 +125,7 @@ namespace FileDBSerializing.Tests
             var expected = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
 
             var obj = TestDataSources.GetTestAssetRenamed();
-            FileDBSerializer<RenamedRootObject> objectserializer = new FileDBSerializer<RenamedRootObject>(FileDBDocumentVersion.Version2);
+            BBSerializer<RenamedRootObject> objectserializer = new BBSerializer<RenamedRootObject>(BBDocumentVersion.V2);
             MemoryStream result = new MemoryStream();
             objectserializer.Serialize(result, obj);
 
@@ -137,12 +139,12 @@ namespace FileDBSerializing.Tests
         {
             var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version1.filedb");
 
-            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version1);
-            IFileDBDocument doc = parser.LoadFileDBDocument(x);
+            BBDocumentParser parser = new BBDocumentParser(BBDocumentVersion.V1);
+            BBDocument doc = parser.LoadBBDocument(x);
 
-            FileDBDocumentDeserializer<RenamedRootObject> objectdeserializer = new FileDBDocumentDeserializer<RenamedRootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+            BBDocumentDeserializer<RenamedRootObject> objectdeserializer = new BBDocumentDeserializer<RenamedRootObject>(new() { Version = BBDocumentVersion.V1 });
 
-            var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
+            var DeserializedDocument = objectdeserializer.GetObjectStructureFromBBDocument(doc);
 
             DeserializedDocument.Should().BeEquivalentTo(TestDataSources.GetTestAssetRenamed());
         }
@@ -152,12 +154,12 @@ namespace FileDBSerializing.Tests
         {
             var x = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
 
-            DocumentParser parser = new DocumentParser(FileDBDocumentVersion.Version2);
-            IFileDBDocument doc = parser.LoadFileDBDocument(x);
+            BBDocumentParser parser = new BBDocumentParser(BBDocumentVersion.V2);
+            BBDocument doc = parser.LoadBBDocument(x);
 
-            FileDBDocumentDeserializer<RenamedRootObject> objectdeserializer = new FileDBDocumentDeserializer<RenamedRootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+            BBDocumentDeserializer<RenamedRootObject> objectdeserializer = new BBDocumentDeserializer<RenamedRootObject>(new() { Version = BBDocumentVersion.V1 });
 
-            var DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc);
+            var DeserializedDocument = objectdeserializer.GetObjectStructureFromBBDocument(doc);
 
             DeserializedDocument.Should().BeEquivalentTo(TestDataSources.GetTestAssetRenamed());
         }
@@ -171,7 +173,7 @@ namespace FileDBSerializing.Tests
 
             var obj = TestDataSources.GetTestAssetRenamed();
 
-            Stream Result = FileDBConvert.SerializeObject(obj, new() { Version = FileDBDocumentVersion.Version2 });
+            Stream Result = BBConvert.SerializeObject(obj, new() { Version = BBDocumentVersion.V2 });
 
             Assert.IsTrue(FileConversionTests.StreamsAreEqual(expected, Result));
         }
@@ -180,7 +182,7 @@ namespace FileDBSerializing.Tests
         public void StaticConvertTestRenamed_Deserialize()
         {
             var source = File.OpenRead("FileDBSerializer/Testfiles/objectserializing/version2.filedb");
-            RenamedRootObject? result = FileDBConvert.DeserializeObject<RenamedRootObject>(source, new() { Version = FileDBDocumentVersion.Version2 });
+            RenamedRootObject? result = BBConvert.DeserializeObject<RenamedRootObject>(source, new() { Version = BBDocumentVersion.V2 });
 
             result.Should().BeEquivalentTo(TestDataSources.GetTestAssetRenamed());
         }
@@ -192,29 +194,28 @@ namespace FileDBSerializing.Tests
         public void SkipSimpleNullValues()
         {
             // test default setting
-            FileDBSerializerOptions options = new() { Version = FileDBDocumentVersion.Version1 };
+            BBSerializerOptions options = new() { Version = BBDocumentVersion.V1 };
             Assert.IsTrue(options.SkipSimpleNullValues); 
             
             // all null
             var obj = new RootObject();
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+
+            BBDocument doc = BBConvert.SerializeObjectToDocument(obj, new() { Version = BBDocumentVersion.V1 });
+            XmlDocument xmlDocument = doc.ToXmlDocument();
+
             Assert.AreEqual("<Content />", xmlDocument.InnerXml);
 
             // all null, SkipReferenceArrayNullValues = false
-            serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipReferenceArrayNullValues = false });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            doc = BBConvert.SerializeObjectToDocument(obj, new() { Version = BBDocumentVersion.V1, SkipReferenceArrayNullValues = false });
+            xmlDocument = doc.ToXmlDocument();
             Assert.AreEqual(
                 "<Content>" +
                 "<RefArray />" +
                 "</Content>", xmlDocument.InnerXml);
 
             // all null, SkipSimpleNullValues = false
-            serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipSimpleNullValues = false });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            doc = BBConvert.SerializeObjectToDocument(obj, new() { Version = BBDocumentVersion.V1, SkipSimpleNullValues = false });
+            xmlDocument = doc.ToXmlDocument();
             Assert.AreEqual(
                 "<Content>" +
                 "<RootCount></RootCount>" + // TODO: why are simple null values not self-closing?
@@ -225,9 +226,8 @@ namespace FileDBSerializing.Tests
                 "</Content>", xmlDocument.InnerXml);
 
             // all null, SkipSimpleNullValues = false, SkipListNullValues = false
-            serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipSimpleNullValues = false, SkipListNullValues = false });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            doc = BBConvert.SerializeObjectToDocument(obj, new() { Version = BBDocumentVersion.V1, SkipSimpleNullValues = false, SkipListNullValues = false });
+            xmlDocument = doc.ToXmlDocument();
             Assert.AreEqual(
                 "<Content>" +
                 "<RootCount></RootCount>" + // TODO: why are simple null values not self-closing?
@@ -241,9 +241,9 @@ namespace FileDBSerializing.Tests
 
 
             // all null, SkipSimpleNullValues = false, SkipListNullValues = false, SkipReferenceArrayNullValues = false
-            serializer = new(new() { Version = FileDBDocumentVersion.Version1, SkipSimpleNullValues = false, SkipListNullValues = false, SkipReferenceArrayNullValues = false });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+
+            doc = BBConvert.SerializeObjectToDocument(obj, new() { Version = BBDocumentVersion.V1, SkipSimpleNullValues = false, SkipListNullValues = false, SkipReferenceArrayNullValues = false });
+            xmlDocument = doc.ToXmlDocument();
             Assert.AreEqual(
                 "<Content>" +
                 "<RootCount></RootCount>" + // TODO: why are simple null values not self-closing?
@@ -272,15 +272,12 @@ namespace FileDBSerializing.Tests
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(invalidReferenceArrayXML);
+            BBDocument doc = xmlDoc.ToBBDocument();
 
-            XmlFileDbConverter xmlFileDbConverter = new XmlFileDbConverter(FileDBDocumentVersion.Version1);
-
-            IFileDBDocument doc = xmlFileDbConverter.ToFileDb(xmlDoc);
-
-            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
+            BBDocumentDeserializer<RootObject> objectdeserializer = new BBDocumentDeserializer<RootObject>(new() { Version = BBDocumentVersion.V1 });
 
             RootObject DeserializedDocument;
-            Assert.ThrowsException<InvalidOperationException>(() => DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(doc));
+            Assert.ThrowsException<InvalidOperationException>(() => DeserializedDocument = objectdeserializer.GetObjectStructureFromBBDocument(doc));
         }
 
         [TestMethod]
@@ -294,16 +291,12 @@ namespace FileDBSerializing.Tests
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(emptyReferenceArrayXML);
 
-            XmlFileDbConverter xmlFileDbConverter = new XmlFileDbConverter(FileDBDocumentVersion.Version1);
+            BBSerializerOptions options = new() { Version = BBDocumentVersion.V1 };
 
-            IFileDBDocument fromXML = xmlFileDbConverter.ToFileDb(xmlDoc);
-            FileDBDocumentDeserializer<RootObject> objectdeserializer = new FileDBDocumentDeserializer<RootObject>(new() { Version = FileDBDocumentVersion.Version1 });
-            RootObject? DeserializedDocument = objectdeserializer.GetObjectStructureFromFileDBDocument(fromXML);
-
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            IFileDBDocument toXml = serializer.WriteObjectStructureToFileDBDocument(DeserializedDocument);
-            XmlDocument xmlDocumentResult = new FileDbXmlConverter().ToXml(toXml);
-
+            BBDocument fromXML = xmlDoc.ToBBDocument();
+            RootObject deserializedDocument = BBConvert.DeserializeObjectFromDocument<RootObject>(fromXML, options)!;
+            BBDocument bbdoc = BBConvert.SerializeObjectToDocument(deserializedDocument, options);
+            XmlDocument xmlDocumentResult = bbdoc.ToXmlDocument();
             Assert.AreEqual(emptyReferenceArrayXML, xmlDocumentResult.InnerXml);
         }
 
@@ -320,9 +313,8 @@ namespace FileDBSerializing.Tests
             obj.BeforeID = 1;
             obj.BeforeList = new List<ChildElement>();
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            var doc = BBConvert.SerializeObjectToDocument(obj, new() { Version = BBDocumentVersion.V1 });
+            XmlDocument xmlDocument = doc.ToXmlDocument();
 
             Assert.AreEqual(
                 "<Content>" +
@@ -343,9 +335,8 @@ namespace FileDBSerializing.Tests
             obj.AfterID = 2;
             obj.AfterList = new List<ChildElement>();
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            var doc = BBConvert.SerializeObjectToDocument(obj, new() { Version = BBDocumentVersion.V1 });
+            XmlDocument xmlDocument = doc.ToXmlDocument();
 
             Assert.AreEqual(
                 "<Content>" +
@@ -367,9 +358,8 @@ namespace FileDBSerializing.Tests
             obj.EndList = new List<ChildElement>();
             obj.SecondIntArr = new int[] { 0, 1 };
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            var doc = BBConvert.SerializeObjectToDocument(obj, new() { Version = BBDocumentVersion.V1 });
+            XmlDocument xmlDocument = doc.ToXmlDocument();
 
             Assert.AreEqual(
                 "<Content>" +
@@ -402,9 +392,8 @@ namespace FileDBSerializing.Tests
 
             var obj = new ParentObject() { Before = before, After = after, Mixed = mixed };
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            IFileDBDocument doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-            XmlDocument xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            var doc = BBConvert.SerializeObjectToDocument(obj, new() { Version = BBDocumentVersion.V1 });
+            XmlDocument xmlDocument = doc.ToXmlDocument();
 
             string nestedXML =
                 "<Content>" +
@@ -446,20 +435,20 @@ namespace FileDBSerializing.Tests
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream("<Content></Content>"));
-            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlDocument);
+            BBDocument doc = xmlDocument.ToBBDocument();
+
+            var options = new BBSerializerOptions() { Version = BBDocumentVersion.V1 };
 
             // serialize & deserialize
-            FileDBDocumentDeserializer<FlatStringArrayContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            var obj = deserializer.GetObjectStructureFromFileDBDocument(doc);
+            var obj = BBConvert.DeserializeObjectFromDocument<FlatStringArrayContainer>(doc, options)!;
 
             Assert.IsNotNull(obj);
             Assert.IsTrue(obj.Item!.Count == 0);
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
-
+            doc = BBConvert.SerializeObjectToDocument(obj, options);
             // convert back to xml
-            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            xmlDocument = doc.ToXmlDocument();
+
             Assert.AreEqual("<Content />", xmlDocument.InnerXml);
         }
 
@@ -478,23 +467,23 @@ namespace FileDBSerializing.Tests
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
 
-            XmlDocument interpreterDocument = new();
-            interpreterDocument.Load(stream("<Converts><Converts>" +
+            var interpreterXml = "<Converts><Converts>" +
                 "<Convert Path=\"//Item\" Type=\"String\" Encoding=\"UTF-8\"/>" +
-                "</Converts></Converts>"));
-            XmlDocument xmlWithBytes = new FileDBReader.XmlExporter(xmlDocument, new(interpreterDocument)).Run();
-            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlWithBytes);
+                "</Converts></Converts>";
+            var interpreter = Interpreter.LoadXml(interpreterXml); 
+            XmlDocument xmlWithBytes = new FileDBReader.XmlExporter(xmlDocument, interpreter).Run();
+            BBDocument doc = xmlWithBytes.ToBBDocument();
 
             Assert.AreEqual(3, doc.Roots.Count);
             Assert.IsTrue(doc.Roots[0] is Attrib);
             Assert.AreEqual("Item", doc.Roots[0].Name);
 
-            Assert.IsTrue(doc.Tags.Attribs.ContainsValue("Item"));  // make sure "Item" is only added as Attrib
-            Assert.IsTrue(!doc.Tags.Tags.ContainsValue("Item"));
+            Assert.IsTrue(doc.TagSection.Attribs.Values.Contains("Item"));  // make sure "Item" is only added as Attrib
+            Assert.IsTrue(!doc.TagSection.Tags.Values.Contains("Item"));
 
             // deserialize & serialize
-            FileDBDocumentDeserializer<FlatStringArrayContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            var obj = deserializer.GetObjectStructureFromFileDBDocument(doc);
+            BBDocumentDeserializer<FlatStringArrayContainer> deserializer = new(new() { Version = BBDocumentVersion.V1 });
+            var obj = deserializer.GetObjectStructureFromBBDocument(doc);
 
             Assert.IsNotNull(obj);
             Assert.IsNotNull(obj.Item);
@@ -503,15 +492,15 @@ namespace FileDBSerializing.Tests
             Assert.AreEqual("b", obj.Item[1]);
             Assert.AreEqual("c", obj.Item[2]);
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            BBDocumentSerializer serializer = new(new() { Version = BBDocumentVersion.V1 });
+            doc = serializer.WriteObjectStructureToBBDocument(obj);
 
-            Assert.IsTrue(doc.Tags.Attribs.ContainsValue("Item"));  // make sure "Item" is only added as Attrib
-            Assert.IsTrue(!doc.Tags.Tags.ContainsValue("Item"));
+            Assert.IsTrue(doc.TagSection.Attribs.Values.Contains("Item"));  // make sure "Item" is only added as Attrib
+            Assert.IsTrue(!doc.TagSection.Tags.Values.Contains("Item"));
 
             // convert back to xml
-            xmlWithBytes = new FileDbXmlConverter().ToXml(doc);
-            xmlDocument = new FileDBReader.XmlInterpreter(xmlWithBytes, new(interpreterDocument)).Run();
+            xmlWithBytes = doc.ToXmlDocument();
+            xmlDocument = new FileDBReader.XmlInterpreter(xmlWithBytes, interpreter).Run();
             Assert.AreEqual(testInput, xmlDocument.InnerXml);
         }
 
@@ -538,11 +527,12 @@ namespace FileDBSerializing.Tests
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
-            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlDocument);
+            BBDocument doc = xmlDocument.ToBBDocument();
+
+            BBSerializerOptions options = new() { Version = BBDocumentVersion.V1 };
 
             // serialize & deserialize
-            FileDBDocumentDeserializer<PrimitiveListArrayContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            var obj = deserializer.GetObjectStructureFromFileDBDocument(doc);
+            var obj = BBConvert.DeserializeObjectFromDocument<PrimitiveListArrayContainer>(doc, options);
 
             Assert.IsNotNull(obj);
             Assert.IsNotNull(obj.Single);
@@ -553,11 +543,10 @@ namespace FileDBSerializing.Tests
             Assert.AreEqual("00-01-36-36", BitConverter.ToString(obj.Flat![0]));
             Assert.AreEqual("00-01-37-37", BitConverter.ToString(obj.Flat[1]));
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            doc = BBConvert.SerializeObjectToDocument(obj, options);
 
             // convert back to xml
-            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            xmlDocument = doc.ToXmlDocument();
             Assert.AreEqual(testInput, xmlDocument.InnerXml);
         }
 
@@ -586,11 +575,12 @@ namespace FileDBSerializing.Tests
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
-            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlDocument);
+            BBDocument doc = xmlDocument.ToBBDocument();
+
+            BBSerializerOptions options = new() { Version = BBDocumentVersion.V1 };
 
             // serialize & deserialize
-            FileDBDocumentDeserializer<EmptyAttribTestContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            var obj = deserializer.GetObjectStructureFromFileDBDocument(doc);
+            var obj = BBConvert.DeserializeObjectFromDocument<EmptyAttribTestContainer>(doc, options);
 
             Assert.IsNotNull(obj);
 
@@ -608,11 +598,11 @@ namespace FileDBSerializing.Tests
 
             Assert.IsNull(obj.MissingNullableInt);
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
-            doc = serializer.WriteObjectStructureToFileDBDocument(obj);
+            BBDocumentSerializer serializer = new(new() { Version = BBDocumentVersion.V1 });
+            doc = serializer.WriteObjectStructureToBBDocument(obj);
 
             // convert back to xml
-            xmlDocument = new FileDbXmlConverter().ToXml(doc);
+            xmlDocument = doc.ToXmlDocument();
             Assert.AreEqual(testInput, xmlDocument.InnerXml);
         }
     }

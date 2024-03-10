@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileDBSerializing.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     /// <summary>
-    /// Set this attribute to rename the property in serialized FileDB.
+    /// Set this attribute to rename the property in serialized BB.
     /// Useful for items named eg. "default", which is a C# keyword and can't be used as Property name.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]

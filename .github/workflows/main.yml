@@ -37,7 +37,7 @@ jobs:
       run: |
         tar --exclude='*.pdb' --exclude='./dev_files' --exclude='./ref' --exclude='*.runtimeconfig.dev.json' -caf FileDBReader-Linux.zip FileDBReader-Linux
         tar --exclude='*.pdb' --exclude='./dev_files' --exclude='./ref' --exclude='*.runtimeconfig.dev.json' -caf FileDBReader.zip FileDBReader
-        tar -caf FileDBSerializer.zip -C FileDBReader/ FileDBSerializer.dll
+        tar -caf AnnoModsBBDom.zip -C FileDBReader/ AnnoMods.BBDom.dll
     
     - name: Upload FileDBSerializer
       uses: actions/upload-artifact@v2.2.4
@@ -47,5 +47,5 @@ jobs:
         path: |
           FileDBReader.zip
           FileDBReader-Linux.zip
-          FileDBSerializer.zip
+          AnnoModsBBDom.zip
         

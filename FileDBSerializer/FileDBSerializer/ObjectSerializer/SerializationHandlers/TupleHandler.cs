@@ -1,22 +1,16 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     internal class TupleHandler : ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             var tuple = item as ITuple;
             if (tuple is null)
-                throw new ArgumentException("Tuples to write top FileDB must not be null.");
+                throw new ArgumentException("Tuples to write top BB must not be null.");
 
             for (int i = 0; i < tuple.Length; i++)
             {
@@ -33,7 +27,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
                 else
                 {
                     var result = handler.Handle(tuple_entry, options.NoneTag, workingDocument, options);
-                    var tag = workingDocument.AddTag(tagName);
+                    var tag = workingDocument.CreateTag(tagName);
                     tag.AddChildren(result);
                     yield return tag;
                 }

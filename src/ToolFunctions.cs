@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.IO;
+using AnnoMods.BBDom.XML;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using System.Xml;
-using FileDBSerializing;
-using FileDBReader.src.XmlRepresentation; 
 
 namespace FileDBReader.src
 {
@@ -20,15 +20,10 @@ namespace FileDBReader.src
         private static readonly String IOErrorMessage = "File Path wrong, File in use or does not exist.";
 
         //tools
-        private Reader reader;
-        private Writer writer;
         private FcFileHelper FcFileHelper;
-
 
         public ToolFunctions()
         {
-            reader = new Reader();
-            writer = new Writer();
             FcFileHelper = new FcFileHelper();
         }
 
@@ -50,7 +45,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             foreach (String s in InputFiles)
@@ -74,8 +69,7 @@ namespace FileDBReader.src
                     if (fs is null || output is null)
                         return -1;
 
-                    XmlDocument result;
-                    result = reader.Read(fs);
+                    var result = BBDocument.LoadStream(fs).ToXmlDocument(); 
                     if (Interpr is not null)
                     {
                         Console.WriteLine($"Started interpreting {InputFile}");
@@ -88,7 +82,7 @@ namespace FileDBReader.src
             catch (IOException) {
                 return -1;
             }
-            catch (InvalidFileDBException exception)
+            catch (InvalidBBException exception)
             {
                 Console.WriteLine($"File {InputFile} is not a valid FileDB Document: {exception.Message}");
                 return -1;
@@ -122,7 +116,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
             
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
@@ -143,6 +137,8 @@ namespace FileDBReader.src
             int CompressionVersion,
             bool overwrite)
         {
+
+            var version = (BBDocumentVersion)CompressionVersion;
             try
             {
                 XmlDocument result = new XmlDocument();
@@ -160,7 +156,7 @@ namespace FileDBReader.src
                         Console.WriteLine($"Started reinterpreting {InputFile}");
                         result = exporter.Run();
                     }
-                    writer.Write(result, output, CompressionVersion);
+                    result.ToBBDocument().WriteToStream(output, version);
                 }
             }
             catch (Exception other)
@@ -189,7 +185,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
@@ -248,7 +244,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
@@ -329,7 +325,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             foreach (String s in InputFiles)
@@ -378,7 +374,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             foreach (String s in InputFiles)

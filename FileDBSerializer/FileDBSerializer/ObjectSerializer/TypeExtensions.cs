@@ -1,5 +1,4 @@
-﻿using FileDBSerializer.ObjectSerializer;
-using FileDBSerializing.EncodingAwareStrings;
+﻿using AnnoMods.BBDom.EncodingAwareStrings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace FileDBSerializing.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     internal static class TypeExtensions
     {
@@ -140,11 +139,11 @@ namespace FileDBSerializing.ObjectSerializer
         }
     }
 
-    internal static class FileDBNodeExtensions
+    internal static class BBNodeExtensions
     {
-        internal static IEnumerable<FileDBNode> AsEnumerable(this FileDBNode node)
+        internal static IEnumerable<BBNode> AsEnumerable(this BBNode node)
         {
-            return new FileDBNode[] { node };
+            return new BBNode[] { node };
         }
     }
 

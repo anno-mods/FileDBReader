@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileDBSerializing.EncodingAwareStrings
+namespace AnnoMods.BBDom.EncodingAwareStrings
 {
     public abstract class EncodingAwareString
     {

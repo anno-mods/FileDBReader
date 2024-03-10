@@ -1,20 +1,17 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     public class ReferenceArrayHandler : ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             if (item is null && options.SkipReferenceArrayNullValues)
-                return Enumerable.Empty<FileDBNode>();
+                return Enumerable.Empty<BBNode>();
 
-            Tag t = workingDocument.AddTag(tagName);
+            Tag t = workingDocument.CreateTag(tagName);
 
             var arrayInstance = item as Array;
             if (arrayInstance is null) 
@@ -26,7 +23,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             if (size == 0)
                 return t.AsEnumerable();
 
-            var size_node = workingDocument.AddAttrib(options.ArraySizeTag);
+            var size_node = workingDocument.CreateAttrib(options.ArraySizeTag);
             size_node.Content = BitConverter.GetBytes(size);
             t.AddChild(size_node);
 
@@ -41,7 +38,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 
                 if (itemHandler is TupleHandler)
                 {
-                    var none = workingDocument.AddTag(options.NoneTag);
+                    var none = workingDocument.CreateTag(options.NoneTag);
                     none.AddChildren(created);
                     t.AddChild(none);
                 }

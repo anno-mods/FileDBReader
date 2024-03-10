@@ -1,14 +1,10 @@
-﻿using System;
+﻿using AnnoMods.BBDom.EncodingAwareStrings;
+using AnnoMods.BBDom.ObjectSerializer;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using System.Runtime.Serialization;
-using FileDBSerializing.EncodingAwareStrings;
-using FileDBSerializing.ObjectSerializer;
 
-namespace FileDBSerializing.Tests.TestData
+namespace AnnoMods.Tests.TestData
 {
     public record RootObject
     {

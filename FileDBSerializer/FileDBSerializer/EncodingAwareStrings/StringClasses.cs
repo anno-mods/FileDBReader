@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileDBSerializing.EncodingAwareStrings
+namespace AnnoMods.BBDom.EncodingAwareStrings
 {
     /// <summary>
     /// Represents a String in UTF8 encoding

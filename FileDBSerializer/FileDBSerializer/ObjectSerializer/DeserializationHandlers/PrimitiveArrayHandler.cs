@@ -1,11 +1,9 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.DeserializationHandlers
 {
     public class PrimitiveArrayHandler : IDeserializationHandler
     {
@@ -13,7 +11,7 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
         {
         }
 
-        public object? Handle(IEnumerable<FileDBNode> nodes, Type targetType, FileDBSerializerOptions options)
+        public object? Handle(IEnumerable<BBNode> nodes, Type targetType, BBSerializerOptions options)
         {
             var actualTargetType = targetType.GetNullableType();
             var elem_type = actualTargetType.GetElementType()!;

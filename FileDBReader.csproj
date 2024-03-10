@@ -5,7 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <StartupObject>FileDBReader.CommandLineHandler</StartupObject>
     <Platforms>AnyCPU;x64</Platforms>
-    <Version>2.4.4</Version>
+    <Version>3.0</Version>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <PackageId></PackageId>
     <Nullable>enable</Nullable>
@@ -35,14 +35,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="AnnoMods.Interpreter\**" />
     <Compile Remove="Binary\**" />
     <Compile Remove="FileDBSerializer\**" />
     <Compile Remove="FileFormatDoc\**" />
     <Compile Remove="unittests\**" />
+    <EmbeddedResource Remove="AnnoMods.Interpreter\**" />
     <EmbeddedResource Remove="Binary\**" />
     <EmbeddedResource Remove="FileDBSerializer\**" />
     <EmbeddedResource Remove="FileFormatDoc\**" />
     <EmbeddedResource Remove="unittests\**" />
+    <None Remove="AnnoMods.Interpreter\**" />
     <None Remove="Binary\**" />
     <None Remove="FileDBSerializer\**" />
     <None Remove="FileFormatDoc\**" />
@@ -55,7 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="FileDBSerializer\FileDBSerializer\FileDBSerializer.csproj" />
+    <ProjectReference Include="FileDBSerializer\FileDBSerializer\AnnoMods.BBDom.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,10 +1,7 @@
-﻿using FileDBSerializer.ObjectSerializer.SerializationHandlers;
-using FileDBSerializing.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 
-namespace FileDBSerializer.ObjectSerializer.HandlerSelector
+namespace AnnoMods.BBDom.ObjectSerializer.HandlerSelector
 {
     public class TopLevelHandlerSelector : IHandlerSelector
     {
@@ -30,7 +27,7 @@ namespace FileDBSerializer.ObjectSerializer.HandlerSelector
             if (propertyType.IsReference())
                 return Selectors.ReferenceTypeHandlerService.GetHandlerFor(itemType, customAttributes);
 
-            throw new InvalidOperationException($"PropertyType {propertyType.Name} could not be resolved to a FileDB document element.");
+            throw new InvalidOperationException($"PropertyType {propertyType.Name} could not be resolved to a BB document element.");
 
         }
     }

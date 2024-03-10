@@ -1,8 +1,8 @@
-﻿using FileDBReader;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.Util;
+using AnnoMods.BBDom.XML;
 using FileDBReader.src;
-using FileDBReader.src.XmlRepresentation;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -45,19 +45,21 @@ namespace FileDBReader
 
         protected override void InternalFileDB(InternalCompression comp)
         {
+            var version = (BBDocumentVersion)comp.CompressionVersion;
+            Versioning.EnsureVersion(version);
+
             InvalidTagNameHelper.RegisterReplaceOperations(comp.ReplacementOps);
 
             var Nodes = DocumentToConvert.SelectNodes(comp.Path);
             foreach (XmlNode node in Nodes)
             {
-                Writer fileWriter = new Writer();
-
                 var contentNode = node.SelectSingleNode("./Content");
                 XmlDocument xmldoc = new XmlDocument();
                 XmlNode f = xmldoc.ImportNode(contentNode, true);
                 xmldoc.AppendChild(xmldoc.ImportNode(f, true));
 
-                var stream = fileWriter.Write(xmldoc, new MemoryStream(), comp.CompressionVersion);
+                using var stream = new MemoryStream();
+                xmldoc.ToBBDocument().WriteToStream(stream, version);
 
                 //Convert This String To Hex Data
                 node.InnerText = HexHelper.ToBinHex(stream);

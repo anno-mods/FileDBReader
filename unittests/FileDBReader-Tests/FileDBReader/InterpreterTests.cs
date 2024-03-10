@@ -20,7 +20,7 @@ namespace FileDBReader_Tests
             //this just has to run. The interpreter is as broken as it can get, we just don't want to crash the application :D
             String INPUT_FILENAME = "interpreter_broken.xml";
             var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
-            Interpreter Interpr = new Interpreter(Interpreter.ToInterpreterDoc(path));
+            var interpr = Interpreter.LoadFromFile(path);
         }
 
         [TestMethod]
@@ -29,7 +29,7 @@ namespace FileDBReader_Tests
             //this just has to run. The interpreter is as broken as it can get, we just want to see if it crashes the application :D
             String INPUT_FILENAME = "interpreter_brokenxml.xml";
             var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
-            Interpreter Interpr = new Interpreter(Interpreter.ToInterpreterDoc(path));
+            var interpr = Interpreter.LoadFromFile(path);
         }
 
         [TestMethod]
@@ -62,19 +62,19 @@ namespace FileDBReader_Tests
         {
             String INPUT_FILENAME = "Interpreter_demo.xml";
             var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
-            Interpreter InterpreterSerialized = new Interpreter(Interpreter.ToInterpreterDoc(path));
+            Interpreter InterpreterLoaded = Interpreter.LoadFromFile(path);
             Interpreter InterpreterManual = BuildTestInterpreter();
 
             //assert default type
-            Assert.AreEqual(InterpreterManual.DefaultType.Encoding, InterpreterSerialized.DefaultType.Encoding);
-            Assert.AreEqual(InterpreterManual.DefaultType.Structure, InterpreterSerialized.DefaultType.Structure);
-            Assert.AreEqual(InterpreterManual.DefaultType.Type, InterpreterSerialized.DefaultType.Type);
+            Assert.AreEqual(InterpreterManual.DefaultType.Encoding, InterpreterLoaded.DefaultType.Encoding);
+            Assert.AreEqual(InterpreterManual.DefaultType.Structure, InterpreterLoaded.DefaultType.Structure);
+            Assert.AreEqual(InterpreterManual.DefaultType.Type, InterpreterLoaded.DefaultType.Type);
 
             //check enum
             foreach (KeyValuePair<String, String> k in InterpreterManual.DefaultType.Enum)
             {
-                if (InterpreterSerialized.DefaultType.Enum.ContainsKey(k.Key))
-                    Assert.AreEqual(k.Value, InterpreterSerialized.DefaultType.Enum[k.Key]);
+                if (InterpreterLoaded.DefaultType.Enum.ContainsKey(k.Key))
+                    Assert.AreEqual(k.Value, InterpreterLoaded.DefaultType.Enum[k.Key]);
                 else Assert.Fail();
             }
         }
@@ -84,12 +84,12 @@ namespace FileDBReader_Tests
         {
             String INPUT_FILENAME = "Interpreter_demo.xml";
             var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
-            Interpreter InterpreterSerialized = new Interpreter(Interpreter.ToInterpreterDoc(path));
+            Interpreter InterpreterLoaded = Interpreter.LoadFromFile(path);
             Interpreter InterpreterManual = BuildTestInterpreter(); 
 
             //Assert all conversions in this interpreter!!!
             var CompressionsManual = InterpreterManual.Conversions;
-            var CompressionsSerialized = InterpreterSerialized.Conversions;
+            var CompressionsSerialized = InterpreterLoaded.Conversions;
 
             if (CompressionsManual.Count == CompressionsSerialized.Count)
             {
@@ -118,7 +118,7 @@ namespace FileDBReader_Tests
         {
             String INPUT_FILENAME = "Interpreter_demo.xml";
             var path = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, INPUT_FILENAME);
-            Interpreter InterpreterSerialized = new Interpreter(Interpreter.ToInterpreterDoc(path));
+            Interpreter InterpreterSerialized = Interpreter.LoadFromFile(path);
             Interpreter InterpreterManual = BuildTestInterpreter();
 
             //Assert internal Compression

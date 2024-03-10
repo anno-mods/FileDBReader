@@ -1,13 +1,9 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     public class PrimitiveArrayHandler : ISerializationHandler
     {
@@ -16,13 +12,13 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
         {
         }
 
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             var arrayInstance = item as Array;
             if (arrayInstance is null && options.SkipSimpleNullValues)
-                return Enumerable.Empty<FileDBNode>();
+                return Enumerable.Empty<BBNode>();
 
-            Attrib attr = workingDocument.AddAttrib(tagName);
+            Attrib attr = workingDocument.CreateAttrib(tagName);
 
             if (arrayInstance is null)
             {

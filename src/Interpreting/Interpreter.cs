@@ -19,7 +19,7 @@ namespace FileDBReader.src
         public List<(String, Conversion)> Conversions = new List<(String, Conversion)>();
         public Conversion DefaultType;
 
-        public static XmlDocument ToInterpreterDoc(Stream InterpreterStream)
+        private static XmlDocument ToInterpreterDoc(Stream InterpreterStream)
         {
             XmlDocument doc = new XmlDocument();
             try
@@ -29,28 +29,29 @@ namespace FileDBReader.src
             }
             catch (Exception e)
             {
-                Console.WriteLine("[INTERPRETER]: Could not load Interpreter from Stream: {1}", e.Message);
+                Console.WriteLine("[INTERPRETER]: Could not load Interpreter from Stream: {0}. Proceeding without an Interpreter.", e.Message);
                 //return an empty interpreter document.
                 doc.LoadXml("<Converts></Converts>");
                 return doc;
             }
         }
 
-        public static XmlDocument ToInterpreterDoc(String InterpreterPath) 
+        public static Interpreter LoadFrom(Stream InterpreterStream)
         {
-            XmlDocument doc = new XmlDocument();
-            try
-            {
-                doc.Load(InterpreterPath);
-                return doc;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("[INTERPRETER]: Could not load Interpreter at {0}, {1}", InterpreterPath, e.Message);
-                //return an empty interpreter document.
-                doc.LoadXml("<Converts></Converts>");
-                return doc;
-            }
+            return new Interpreter(ToInterpreterDoc(InterpreterStream));
+        }
+
+        public static Interpreter LoadFromFile(String InterpreterPath) 
+        {
+            using var fs = File.OpenRead(InterpreterPath);
+            return LoadFrom(fs);
+        }
+
+        public static Interpreter LoadXml(String xmlString)
+        {
+            XmlDocument doc = new XmlDocument(); 
+            doc.LoadXml(xmlString);
+            return new Interpreter(doc);
         }
 
         public String GetCombinedXPath()
@@ -61,11 +62,6 @@ namespace FileDBReader.src
             foreach (InternalCompression internalFileDB in InternalCompressions)
                 StringList.Add(internalFileDB.Path);
             return String.Join(" | ", StringList);
-        }
-
-        public Interpreter()
-        { 
-        
         }
 
         public void AddConversion(XmlNode Convert)
@@ -110,7 +106,9 @@ namespace FileDBReader.src
             }
         }
 
-        public Interpreter(XmlDocument InterpreterDoc)
+        public Interpreter() { }
+
+        private Interpreter(XmlDocument InterpreterDoc)
         {
             XmlNode DefaultAttribNode = null;
             DefaultAttribNode = InterpreterDoc.SelectSingleNode("/Converts/Default");

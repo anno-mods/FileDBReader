@@ -1,12 +1,9 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     public interface ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options);
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options);
     }
 }

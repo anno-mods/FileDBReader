@@ -1,6 +1,6 @@
-﻿using FileDBSerializer.ObjectSerializer.HandlerSelector;
+﻿using AnnoMods.BBDom.ObjectSerializer.HandlerSelector;
 
-namespace FileDBSerializer.ObjectSerializer
+namespace AnnoMods.BBDom.ObjectSerializer
 {
     public class Selectors
     {

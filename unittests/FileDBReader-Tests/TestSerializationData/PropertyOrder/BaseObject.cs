@@ -1,4 +1,4 @@
-﻿using FileDBSerializing.Tests.TestData;
+﻿using AnnoMods.Tests.TestData;
 
 namespace FileDBReader_Tests.TestSerializationData.PropertyOrder
 {

@@ -1,21 +1,19 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     public class ReferenceTypeHandler : ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             if (item is null && options.SkipSimpleNullValues)
-                return Enumerable.Empty<FileDBNode>();
+                return Enumerable.Empty<BBNode>();
 
             //Get the instance of the property for our specific object as well as the properties of its type.
 
-            Tag t = workingDocument.AddTag(tagName);
+            Tag t = workingDocument.CreateTag(tagName);
 
             if (item is null) return t.AsEnumerable();
 

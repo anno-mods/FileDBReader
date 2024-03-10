@@ -1,20 +1,18 @@
-﻿using FileDBSerializing;
-using FileDBSerializing.ObjectSerializer;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
+namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     public class ListHandler : ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, BBDocument workingDocument, BBSerializerOptions options)
         {
             if(item is null && options.SkipListNullValues)
-                return Enumerable.Empty<FileDBNode>();
+                return Enumerable.Empty<BBNode>();
 
-            Tag t = workingDocument.AddTag(tagName);
+            Tag t = workingDocument.CreateTag(tagName);
 
             var listInstance = item as IList;
             if (listInstance is null)
@@ -27,7 +25,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             {
                 var itemHandler = HandlerProvider.GetHandlerFor(listContentType);
                 var created = itemHandler.Handle(listEntry, options.NoneTag, workingDocument, options);
-                foreach (FileDBNode none in created)
+                foreach (BBNode none in created)
                 {
                     t.AddChild(none);
                 }

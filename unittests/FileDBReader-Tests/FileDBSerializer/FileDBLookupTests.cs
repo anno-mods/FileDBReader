@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FileDBSerializing;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.LookUps;
 using FileDBReader_Tests;
-using FileDBSerializing.LookUps;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Linq;
 
-namespace FileDBSerializing.Tests
+namespace AnnoMods.Tests
 {
     [TestClass]
     //todo (taubenangriff) Add some bigger tests for node lookups.
@@ -17,16 +14,16 @@ namespace FileDBSerializing.Tests
         [TestMethod]
         public void LookUpTest_Attribute()
         {
-            IFileDBDocument document = TestDataSources.BuildDocument<FileDBDocument_V2>();
+            BBDocument document = TestDataSources.BuildDocument();
             Attrib floatattr = (Attrib)document.SelectNodes("TestRootOne/FloatAttrib_Child").First();
-            Attrib a = new Attrib() { Content = BitConverter.GetBytes(33.2f)};
-            CollectionAssert.AreEquivalent(a.Content, floatattr.Content);
+            var content = BitConverter.GetBytes(33.2f); 
+            CollectionAssert.AreEquivalent(content, floatattr.Content);
         }
 
         [TestMethod]
         public void LookUpTest_Tag()
         {
-            IFileDBDocument document = TestDataSources.BuildDocument<FileDBDocument_V2>();
+            BBDocument document = TestDataSources.BuildDocument();
             Tag Tag = (Tag)document.SelectNodes("TestRootOne/None").First();
             var TagName = "None";
             Assert.AreEqual(TagName, Tag.GetName());
@@ -35,7 +32,7 @@ namespace FileDBSerializing.Tests
         [TestMethod]
         public void LookUpTest_Attrib_Single()
         { 
-            IFileDBDocument document = TestDataSources.BuildDocument<FileDBDocument_V2>();
+            BBDocument document = TestDataSources.BuildDocument();
             Attrib? floatattr = document.SelectSingleNode("TestRootOne/FloatAttrib_Child") as Attrib;
             var bytes = BitConverter.GetBytes(33.2f);
             CollectionAssert.AreEquivalent(bytes, floatattr?.Content);
@@ -44,7 +41,7 @@ namespace FileDBSerializing.Tests
         [TestMethod]
         public void LookUpTest_Tag_Single()
         {
-            IFileDBDocument document = TestDataSources.BuildDocument<FileDBDocument_V2>();
+            BBDocument document = TestDataSources.BuildDocument();
             Tag? Tag = document.SelectSingleNode("TestRootOne/None") as Tag;
             var TagName = "None";
             Assert.AreEqual(TagName, Tag?.GetName());
