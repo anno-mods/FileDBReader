@@ -27,7 +27,7 @@ namespace AnnoMods.BBDom.ObjectSerializer.HandlerSelector
             if (propertyType.IsReference())
                 return Selectors.ReferenceTypeHandlerService.GetHandlerFor(itemType, customAttributes);
 
-            throw new InvalidOperationException($"PropertyType {propertyType.Name} could not be resolved to a FileDB document element.");
+            throw new InvalidOperationException($"PropertyType {propertyType.Name} could not be resolved to a BB document element.");
 
         }
     }

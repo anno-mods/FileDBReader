@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AnnoMods.BBDom
 {
-    public enum FileDBNodeType { Tag, Attrib }
+    public enum BBNodeType { Tag, Attrib }
 
     public abstract class BBNode
     {
@@ -17,7 +17,7 @@ namespace AnnoMods.BBDom
 
         public string Name { get => GetName(); }
 
-        public FileDBNodeType NodeType;
+        public BBNodeType NodeType;
         public abstract string GetNameWithFallback();
 
         public abstract string GetName();

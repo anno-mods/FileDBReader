@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace AnnoMods.BBDom
 {
-    [DebuggerDisplay("[FileDB_Tag: ID = {ID}, Name = {Name}, ChildCount = {ChildCount}]")]
+    [DebuggerDisplay("[BB_Tag: ID = {ID}, Name = {Name}, ChildCount = {ChildCount}]")]
     public class Tag : BBNode
     {
         public List<BBNode> Children = new List<BBNode>();
@@ -24,7 +24,7 @@ namespace AnnoMods.BBDom
         internal Tag()
         {
             Bytesize = 0;
-            NodeType = FileDBNodeType.Tag;
+            NodeType = BBNodeType.Tag;
         }
 
         #region AddChildren
@@ -49,7 +49,7 @@ namespace AnnoMods.BBDom
         public override string GetNameWithFallback() => ParentDoc.TagSection.GetTagName(ID) ?? "t_" + ID;
 
         public override string GetName() => ParentDoc.TagSection.GetTagName(ID)
-            ?? throw new InvalidFileDBException($"ID {ID} does not correspond to a Name in this Documents Tags Section.");
+            ?? throw new InvalidBBException($"ID {ID} does not correspond to a Name in this Documents Tags Section.");
 
         public int GetChildCountRecursive()
         {

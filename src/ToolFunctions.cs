@@ -82,7 +82,7 @@ namespace FileDBReader.src
             catch (IOException) {
                 return -1;
             }
-            catch (InvalidFileDBException exception)
+            catch (InvalidBBException exception)
             {
                 Console.WriteLine($"File {InputFile} is not a valid FileDB Document: {exception.Message}");
                 return -1;

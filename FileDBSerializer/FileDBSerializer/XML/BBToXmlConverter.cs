@@ -21,7 +21,7 @@ namespace AnnoMods.BBDom.XML
             ConvertCollection(Root, bbdoc.Roots);                
 
             stopWatch.Stop();
-            Console.WriteLine("FILEDB to XML conversion took: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
+            Console.WriteLine("BB to XML conversion took: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
 
             return doc; 
         }
@@ -33,17 +33,17 @@ namespace AnnoMods.BBDom.XML
         /// <param name="node">the XML node result, if provided. </param>
         /// <returns>True if the serialization was successful</returns>
         /// <exception cref="Exception"><paramref name="n"/> is of an unknown Node Type</exception>
-        private bool TryConstructXmlNodeFromFileDBNode(BBNode n, out XmlNode node)
+        private bool TryConstructXmlNodeFromBBNode(BBNode n, out XmlNode node)
         {
-            if (n.NodeType == FileDBNodeType.Attrib)
+            if (n.NodeType == BBNodeType.Attrib)
                 return (node = AttribToXmlNode((Attrib)n)) is XmlNode;
-            else if (n.NodeType == FileDBNodeType.Tag)
+            else if (n.NodeType == BBNodeType.Tag)
                 return (node = TagToXmlNode((Tag)n)) is XmlNode;
             throw new InvalidOperationException(); 
         }
 
         /// <summary>
-        /// Serializes a Collection of FileDBNodes and adds them to their <paramref name="parent">parent XML node</paramref>
+        /// Serializes a Collection of BBNodes and adds them to their <paramref name="parent">parent XML node</paramref>
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="children"></param>
@@ -51,7 +51,7 @@ namespace AnnoMods.BBDom.XML
         {
             foreach (BBNode n in children)
             {
-                if (TryConstructXmlNodeFromFileDBNode(n, out var childxmlnode))
+                if (TryConstructXmlNodeFromBBNode(n, out var childxmlnode))
                     parent.AppendChild(childxmlnode);
             }
         }

@@ -15,7 +15,7 @@ namespace AnnoMods.BBDom.IO
             Version = version;
         }
 
-        public Stream WriteToStream(BBDocument filedb, Stream target)
+        public Stream WriteToStream(BBDocument BB, Stream target)
         {
             if (!target.CanWrite) throw new ArgumentException("Stream needs to be writable!");
 
@@ -23,16 +23,16 @@ namespace AnnoMods.BBDom.IO
             stopWatch.Start();
 
             _structureWriter = DependencyVersions.GetWriter(Version, target);
-            _structureWriter.WriteNodeCollection(filedb.Roots);
+            _structureWriter.WriteNodeCollection(BB.Roots);
             _structureWriter.WriteNodeTerminator();
-            _structureWriter.WriteTagSection(filedb);
+            _structureWriter.WriteTagSection(BB);
             _structureWriter.WriteMagicBytes();
             _structureWriter.Flush();
 
             target.Position = 0;
 
             stopWatch.Stop();
-            Console.WriteLine("FILEDB writing took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
+            Console.WriteLine("BB writing took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
             return target;
         }
     }

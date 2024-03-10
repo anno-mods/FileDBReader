@@ -6,7 +6,7 @@ using System.Linq;
 namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
 {
     /// <summary>
-    /// Creates a FileDBNode that represents a single string object.
+    /// Creates a BBNode that represents a single string object.
     /// </summary>
     public class StringHandler : ISerializationHandler
     {

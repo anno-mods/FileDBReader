@@ -39,7 +39,7 @@ namespace AnnoMods.BBDom
         }
 
         /// <summary>
-        /// Writes a FileDBDocument to a Stream.
+        /// Writes a BBDocument to a Stream.
         /// </summary>
         /// <param name="version">The document version that should be used for writing</param>
         /// <param name="s">The Stream that should be written to.</param>

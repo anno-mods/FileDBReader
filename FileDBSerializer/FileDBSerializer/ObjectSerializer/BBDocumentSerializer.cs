@@ -23,7 +23,7 @@ namespace AnnoMods.BBDom.ObjectSerializer
             TargetDocument = new BBDocument();
         }
 
-        //serializes an object into a filedb document
+        //serializes an object into a BB document
         public BBDocument WriteObjectStructureToBBDocument(object graph)
         {
             IEnumerable<PropertyInfo> properties = graph.GetType().GetPropertiesWithOrder();

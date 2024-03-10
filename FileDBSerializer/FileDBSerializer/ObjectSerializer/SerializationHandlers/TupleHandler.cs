@@ -10,7 +10,7 @@ namespace AnnoMods.BBDom.ObjectSerializer.SerializationHandlers
         {
             var tuple = item as ITuple;
             if (tuple is null)
-                throw new ArgumentException("Tuples to write top FileDB must not be null.");
+                throw new ArgumentException("Tuples to write top BB must not be null.");
 
             for (int i = 0; i < tuple.Length; i++)
             {

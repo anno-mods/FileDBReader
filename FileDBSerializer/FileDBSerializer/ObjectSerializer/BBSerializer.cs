@@ -37,7 +37,7 @@ namespace AnnoMods.BBDom.ObjectSerializer
         }
         #endregion
 
-        //serializes an object into a filedb document
+        //serializes an object into a BB document
         public void Serialize(Stream serializationStream, object graph)
         {
             BBDocumentSerializer builder = new BBDocumentSerializer(Options);
@@ -47,7 +47,7 @@ namespace AnnoMods.BBDom.ObjectSerializer
         }
 
         #region DESERIALIZING
-        //serializes from a filedb document into an object
+        //serializes from a BB document into an object
         public object Deserialize(Stream serializationStream)
         {
             BBDocument? doc = null; 

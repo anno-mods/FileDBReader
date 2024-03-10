@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AnnoMods.BBDom.LookUps
 {
-    public static class FileDBLookupExtension
+    public static class BBLookupExtension
     {
         //Delegate for LookupFilters.
         public delegate bool LookupCondition(BBNode node);
@@ -67,12 +67,12 @@ namespace AnnoMods.BBDom.LookUps
         }
 
         /// <summary>
-        /// Selects a single FileDBNode in a FileDBNode Enumerable.
+        /// Selects a single BBNode in a BBNode Enumerable.
         /// </summary>
         /// <param name="Collection"></param>
         /// <param name="Lookup">Lookup Path of the node</param>
         /// <param name="condition">Condition matching the delegate type LookupConditon. This condition is matched only for the resulting nodes (last element of the lookup path)!.</param>
-        /// <returns>The first FileDBNode matching the given condition and Lookup, or null, if no such node is found.</returns>
+        /// <returns>The first BBNode matching the given condition and Lookup, or null, if no such node is found.</returns>
         public static BBNode? SelectSingleNode(this IEnumerable<BBNode> Collection, String Lookup, LookupCondition condition)
         {
             try

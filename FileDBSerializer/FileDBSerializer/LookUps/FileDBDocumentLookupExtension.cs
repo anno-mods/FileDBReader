@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using static AnnoMods.BBDom.LookUps.FileDBLookupExtension;
+using static AnnoMods.BBDom.LookUps.BBLookupExtension;
 
 namespace AnnoMods.BBDom.LookUps
 {
-    public static class FileDBDocumentLookupExtension
+    public static class BBDocumentLookupExtension
     {
         #region BBDocumentLookups
         public static IEnumerable<BBNode> SelectNodes(this BBDocument document, String Lookup)

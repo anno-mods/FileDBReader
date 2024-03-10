@@ -5,7 +5,7 @@ using System.IO;
 
 namespace AnnoMods.BBDom
 {
-    [DebuggerDisplay("[FileDB_Attrib: ID = {ID}, Name = {Name}, Size = {Bytesize}]")]
+    [DebuggerDisplay("[BB_Attrib: ID = {ID}, Name = {Name}, Size = {Bytesize}]")]
     public class Attrib : BBNode
     {
         private byte[] _content;
@@ -25,12 +25,12 @@ namespace AnnoMods.BBDom
 
         internal Attrib()
         {
-            NodeType = FileDBNodeType.Attrib;
+            NodeType = BBNodeType.Attrib;
         }
         public override string GetNameWithFallback() => ParentDoc.TagSection.GetAttribName(ID) ?? "a_" + ID;
 
         public override string GetName() => ParentDoc.TagSection.GetAttribName(ID)
-            ?? throw new InvalidFileDBException($"ID {ID} does not correspond to a Name in this Documents Tags Section.");
+            ?? throw new InvalidBBException($"ID {ID} does not correspond to a Name in this Documents Tags Section.");
 
 
         public MemoryStream ContentToStream()

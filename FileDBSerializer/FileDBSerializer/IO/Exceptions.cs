@@ -2,16 +2,16 @@
 
 namespace AnnoMods.BBDom.IO
 {
-    public class InvalidFileDBException : Exception
+    public class InvalidBBException : Exception
     {
-        public InvalidFileDBException()
+        public InvalidBBException()
         { }
 
-        public InvalidFileDBException(string message)
+        public InvalidBBException(string message)
         : base(message)
         { }
 
-        public InvalidFileDBException(string message, Exception inner)
+        public InvalidBBException(string message, Exception inner)
             : base(message, inner)
         { }
     }

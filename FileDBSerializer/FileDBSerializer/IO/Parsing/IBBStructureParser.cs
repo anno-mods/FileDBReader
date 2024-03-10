@@ -60,7 +60,7 @@ namespace AnnoMods.BBDom.IO
     }
 }
 
-public static class IFileDBParserExtensions
+public static class IBBParserExtensions
 {
     public static Attrib CreateAttrib(this IBBStructureParser parser, int bytesize, int ID, BBDocument parent)
     {

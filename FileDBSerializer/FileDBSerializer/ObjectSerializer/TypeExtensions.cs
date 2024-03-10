@@ -139,7 +139,7 @@ namespace AnnoMods.BBDom.ObjectSerializer
         }
     }
 
-    internal static class FileDBNodeExtensions
+    internal static class BBNodeExtensions
     {
         internal static IEnumerable<BBNode> AsEnumerable(this BBNode node)
         {

@@ -30,30 +30,30 @@ namespace AnnoMods.BBDom.IO
         void WriteNodeTerminator();
     }
 
-    public static class IFileDBWriterExtensions
+    public static class IBBWriterExtensions
     {
-        public static void WriteNode(this IBBStructureWriter filedbwriter, BBNode n)
+        public static void WriteNode(this IBBStructureWriter BBwriter, BBNode n)
         {
-            if (n.NodeType == FileDBNodeType.Tag)
-                filedbwriter.WriteTag((Tag)n);
-            else if (n.NodeType == FileDBNodeType.Attrib)
-                filedbwriter.WriteAttrib((Attrib)n);
+            if (n.NodeType == BBNodeType.Tag)
+                BBwriter.WriteTag((Tag)n);
+            else if (n.NodeType == BBNodeType.Attrib)
+                BBwriter.WriteAttrib((Attrib)n);
         }
 
-        public static void WriteNodeCollection(this IBBStructureWriter filedbwriter, IEnumerable<BBNode> collection)
+        public static void WriteNodeCollection(this IBBStructureWriter BBwriter, IEnumerable<BBNode> collection)
         {
             foreach (BBNode n in collection)
             {
-                filedbwriter.WriteNode(n);
+                BBwriter.WriteNode(n);
             }
         }
 
-        public static void WriteTagSection(this IBBStructureWriter filedbwriter, TagSection tagSection, int nodeCount)
+        public static void WriteTagSection(this IBBStructureWriter BBwriter, TagSection tagSection, int nodeCount)
         {
-            (int tagOffset, int attribOffset) = filedbwriter.WriteTagsAndAttribs(tagSection);
+            (int tagOffset, int attribOffset) = BBwriter.WriteTagsAndAttribs(tagSection);
 
-            filedbwriter.WriteNodeCountSection(nodeCount);
-            filedbwriter.WriteTagOffsets(tagOffset, attribOffset);
+            BBwriter.WriteNodeCountSection(nodeCount);
+            BBwriter.WriteTagOffsets(tagOffset, attribOffset);
         }
 
         public static void Flush(this IBBStructureWriter writer)

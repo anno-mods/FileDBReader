@@ -26,17 +26,17 @@ namespace AnnoMods.BBDom.XML
             {
                 foreach (XmlNode n in xml.FirstChild.ChildNodes)
                 {
-                    doc.Roots.Add(XmlNodeToFileDBNode(n, null));
+                    doc.Roots.Add(XmlNodeToBBNode(n, null));
                 }
             }
             else throw new InvalidXmlDocumentInputException("The XML document provided is missing a root Node! Conversion was terminated!");
 
             stopWatch.Stop();
-            Console.WriteLine("XML to FILEDB conversion took: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
+            Console.WriteLine("XML to BB conversion took: " + stopWatch.Elapsed.TotalMilliseconds + " ms");
             return doc;
         }
 
-        private BBNode XmlNodeToFileDBNode(XmlNode n, Tag parent)
+        private BBNode XmlNodeToBBNode(XmlNode n, Tag parent)
         {
             //Attrib
             if ((n.FirstChild != null && n.FirstChild.NodeType == XmlNodeType.Text) || 
@@ -62,7 +62,7 @@ namespace AnnoMods.BBDom.XML
             
             foreach (XmlNode child in n.ChildNodes)
             {
-                tag.Children.Add(XmlNodeToFileDBNode(child, tag));
+                tag.Children.Add(XmlNodeToBBNode(child, tag));
             }
             return tag;
         }

@@ -55,11 +55,11 @@ public class BBDocumentParser
         }
         catch (IOException ex)
         {
-            throw new InvalidFileDBException("Reached end of file while parsing");
+            throw new InvalidBBException("Reached end of file while parsing");
         }
 
         stopWatch.Stop();
-        Console.WriteLine("FILEDB Deserialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
+        Console.WriteLine("BB Deserialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
         return bbdoc;
     }
 
@@ -73,7 +73,7 @@ public class BBDocumentParser
         }
         catch (ArgumentException e)
         {
-            throw new InvalidFileDBException("Definition of Tag Dictionary is invalid!");
+            throw new InvalidBBException("Definition of Tag Dictionary is invalid!");
         }
     }
 
@@ -90,7 +90,7 @@ public class BBDocumentParser
             //make sure we don't mess up with the stream. if anything is wrong in the document, 99% of the time we will get a problematic bytesize sooner or later.
             if (bytesize > CurrentStream?.Length - CurrentStream?.Position)
             {
-                throw new InvalidFileDBException("bytesize was larger than bytes left to read.");
+                throw new InvalidBBException("bytesize was larger than bytes left to read.");
             }
 
             switch (State)
@@ -112,7 +112,7 @@ public class BBDocumentParser
                     else CurrentTag = null;
                     break;
                 default:
-                    throw new InvalidFileDBException("Undefined State");
+                    throw new InvalidBBException("Undefined State");
             }
         }
     }
