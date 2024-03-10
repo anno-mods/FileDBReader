@@ -59,7 +59,7 @@ public class BBDocumentParser
         }
 
         stopWatch.Stop();
-        Console.WriteLine("BB Deserialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
+        Console.WriteLine("BBDocument loaded in {0} ms", stopWatch.Elapsed.TotalMilliseconds);
         return bbdoc;
     }
 

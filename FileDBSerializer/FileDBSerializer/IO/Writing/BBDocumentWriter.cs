@@ -32,7 +32,7 @@ namespace AnnoMods.BBDom.IO
             target.Position = 0;
 
             stopWatch.Stop();
-            Console.WriteLine("BB writing took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
+            Console.WriteLine("BB Document written in {0} ms", stopWatch.Elapsed.TotalMilliseconds);
             return target;
         }
     }
