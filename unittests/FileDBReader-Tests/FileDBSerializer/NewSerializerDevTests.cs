@@ -16,7 +16,7 @@ namespace FileDBSerializing.Tests
         public void NewObjectTest()
         {
             var obj = TestDataSources.GetSmallTestAsset();
-            FileDBSerializer<NewObject> objectserializer = new FileDBSerializer<NewObject>(FileDBDocumentVersion.Version2);
+            FileDBSerializer<NewObject> objectserializer = new FileDBSerializer<NewObject>(BBDocumentVersion.V2);
             Stream result = File.Create("myfile.filedb");
             objectserializer.Serialize(result, obj);
         }
@@ -25,7 +25,7 @@ namespace FileDBSerializing.Tests
         public void NewDeserializerTest()
         {
             var obj = TestDataSources.GetDeserializerTestAsset();
-            FileDBSerializer<DeserObject> serializer = new(FileDBDocumentVersion.Version2);
+            FileDBSerializer<DeserObject> serializer = new(BBDocumentVersion.V2);
             using (Stream result = File.Create("deser.filedb"))
             {
                 serializer.Serialize(result, obj);

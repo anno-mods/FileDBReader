@@ -8,6 +8,7 @@ using FileDBSerializing.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FileDBReader.src.XmlRepresentation;
 using System.Xml;
+using FileDBSerializer;
 
 namespace FileDBReader_Tests
 {
@@ -20,7 +21,7 @@ namespace FileDBReader_Tests
         //this does not need two versions because I am just comparing xml to object structure (which is sorta the same for both versions).
         public void XmlToFiledbTest()
         {
-            var workDoc = TestDataSources.BuildDocument<FileDBDocument_V1>();
+            var workDoc = TestDataSources.BuildDocument();
 
             var Expected = new XmlDocument();
             Expected.Load(expectedPath);
@@ -34,16 +35,16 @@ namespace FileDBReader_Tests
         [TestMethod]
         private void FileDBToXmlTest_v2()
         {
-            var Expected = TestDataSources.BuildDocument<FileDBDocument_V2>();
+            var Expected = TestDataSources.BuildDocument();
 
-            XmlFileDbConverter serial = new(FileDBDocumentVersion.Version2);
+            XmlFileDbConverter serial = new(BBDocumentVersion.V2);
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
 
             var fromXml = serial.ToFileDb(workDoc);
 
-            Assert.IsTrue(fromXml.ELEMENT_COUNT == Expected.ELEMENT_COUNT);
-            for (int i = 0; i < fromXml.ELEMENT_COUNT && i < Expected.ELEMENT_COUNT; i++)
+            Assert.IsTrue(fromXml.ElementCount == Expected.ElementCount);
+            for (int i = 0; i < fromXml.ElementCount && i < Expected.ElementCount; i++)
             {
                 FileDBSerializingTest.AreEqual(fromXml.Roots.ElementAt(i), Expected.Roots.ElementAt(i));
             }
@@ -52,16 +53,16 @@ namespace FileDBReader_Tests
         [TestMethod]
         private void FileDBToXmlTest_v1()
         {
-            var Expected = TestDataSources.BuildDocument<FileDBDocument_V1>();
+            var Expected = TestDataSources.BuildDocument();
 
-            XmlFileDbConverter serial = new(FileDBDocumentVersion.Version1);
+            XmlFileDbConverter serial = new(BBDocumentVersion.V1);
             var workDoc = new XmlDocument();
             workDoc.Load(expectedPath);
 
             var fromXml = serial.ToFileDb(workDoc);
 
-            Assert.IsTrue(fromXml.ELEMENT_COUNT == Expected.ELEMENT_COUNT);
-            for (int i = 0; i < fromXml.ELEMENT_COUNT && i < Expected.ELEMENT_COUNT; i++)
+            Assert.IsTrue(fromXml.ElementCount == Expected.ElementCount);
+            for (int i = 0; i < fromXml.ElementCount && i < Expected.ElementCount; i++)
             {
                 FileDBSerializingTest.AreEqual(fromXml.Roots.ElementAt(i), Expected.Roots.ElementAt(i));
             }

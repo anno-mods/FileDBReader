@@ -2,6 +2,7 @@
 using System.Text;
 using System.Xml;
 using FileDBReader.src.XmlRepresentation;
+using FileDBSerializer;
 using FileDBSerializing;
 using FileDBSerializing.ObjectSerializer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -69,10 +70,10 @@ namespace FileDBReader_Tests.FileDBSerializer
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
-            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlDocument);
+            BBDocument doc = new XmlFileDbConverter(BBDocumentVersion.V1).ToFileDb(xmlDocument);
 
             // serialize & deserialize
-            FileDBDocumentDeserializer<PolymorphOnPathContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            FileDBDocumentDeserializer<PolymorphOnPathContainer> deserializer = new(new() { Version = BBDocumentVersion.V1 });
             var obj = deserializer.GetObjectStructureFromFileDBDocument(doc);
 
             Assert.IsNotNull(obj);
@@ -83,7 +84,7 @@ namespace FileDBReader_Tests.FileDBSerializer
             var third = obj.List?[1] as PolymorphOnPathContainer.ComplexItem;
             Assert.AreEqual(2, third?.None?[1]?.ObjectId);
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            FileDBDocumentSerializer serializer = new(new() { Version = BBDocumentVersion.V1 });
             doc = serializer.WriteObjectStructureToFileDBDocument(obj);
 
             // convert back to xml
@@ -152,10 +153,10 @@ namespace FileDBReader_Tests.FileDBSerializer
             // load from XML
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
-            IFileDBDocument doc = new XmlFileDbConverter(FileDBDocumentVersion.Version1).ToFileDb(xmlDocument);
+            BBDocument doc = new XmlFileDbConverter(BBDocumentVersion.V1).ToFileDb(xmlDocument);
 
             // serialize & deserialize
-            FileDBDocumentDeserializer<PolymorphOnValueContainer> deserializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            FileDBDocumentDeserializer<PolymorphOnValueContainer> deserializer = new(new() { Version = BBDocumentVersion.V1 });
             var obj = deserializer.GetObjectStructureFromFileDBDocument(doc);
 
             Assert.IsNotNull(obj);
@@ -169,7 +170,7 @@ namespace FileDBReader_Tests.FileDBSerializer
             var third = obj.TemplateElement?[2].Element;
             Assert.AreEqual(3, third?.Position?[0]);
 
-            FileDBDocumentSerializer serializer = new(new() { Version = FileDBDocumentVersion.Version1 });
+            FileDBDocumentSerializer serializer = new(new() { Version = BBDocumentVersion.V1 });
             doc = serializer.WriteObjectStructureToFileDBDocument(obj);
 
             // convert back to xml

@@ -7,7 +7,6 @@ namespace FileDBReader.src.XmlRepresentation
 {
     public class Writer
     {
-        DocumentWriter DocumentWriter = new DocumentWriter(); 
         public Writer()
         { 
         
@@ -15,14 +14,15 @@ namespace FileDBReader.src.XmlRepresentation
 
         public Stream Write(XmlDocument doc, Stream Stream, int FileVersion)
         {
-            FileDBDocumentVersion? version = null;
+            BBDocumentVersion? version = null;
             try
             {
-                version = (FileDBDocumentVersion) FileVersion;
+                version = (BBDocumentVersion) FileVersion;
 
+                var documentWriter = new BBDocumentWriter(version.Value);
                 XmlFileDbConverter converter = new XmlFileDbConverter(version.Value);
                 var filedb = converter.ToFileDb(doc);
-                return DocumentWriter.WriteFileDBToStream(filedb, Stream);
+                return documentWriter.WriteToStream(filedb, Stream);
             }
             catch (InvalidCastException ex)
             {

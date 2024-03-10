@@ -1,5 +1,6 @@
 ﻿using FileDBReader.src;
 using FileDBReader.src.XmlRepresentation;
+using FileDBSerializer;
 using FileDBSerializing;
 using FileDBSerializing.LookUps;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
 using System.Xml;
 
 namespace FileDBReader
@@ -27,31 +29,13 @@ namespace FileDBReader
 
         public static void Main(String[] args)
         {
-            /*
-            var deserializer = new FileDBDeserializer<FileDBDocument_V1>();
-            var V2Document = deserializer.Deserialize("dev_files/island/0x0.tmc");
-
-            FileDBSerializer serializer = new FileDBSerializer();
-            var outstream = serializer.Serialize(V2Document, new MemoryStream());
-
-            Stopwatch watch = new Stopwatch();
-            watch.Start(); 
-            var filestream = File.Create("version2.bin");
-            outstream.Position = 0;
-            outstream.CopyTo(filestream);
-            filestream.Close();
-            watch.Stop();
-            Console.WriteLine("File Writing Operation took: {0} ms", watch.Elapsed.TotalMilliseconds);
-
-            Console.WriteLine("Finished Test File: file.db");
-            */
         }
 
         private static void NodelookupTest()
         {
-            DocumentParser ser = new DocumentParser(FileDBDocumentVersion.Version1);
+            BBDocumentParser ser = new BBDocumentParser(BBDocumentVersion.V1);
 
-            var fdoc = ser.LoadFileDBDocument(File.OpenRead("dev_files/a7tinfo/moderate_atoll_ll_01.a7tinfo"));
+            var fdoc = ser.LoadBBDocument(File.OpenRead("dev_files/a7tinfo/moderate_atoll_ll_01.a7tinfo"));
             fdoc.SelectNodes("MapTemplate/Size");
         }
 

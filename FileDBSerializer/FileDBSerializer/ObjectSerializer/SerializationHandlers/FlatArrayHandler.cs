@@ -12,7 +12,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     internal class FlatArrayHandler : ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, FileDBSerializerOptions options)
         {
             var listInstance = item as IList;
             if (listInstance is null) 
@@ -24,7 +24,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
             {
                 var itemHandler = HandlerProvider.GetHandlerFor(listContentType);
                 var created = itemHandler.Handle(listEntry, tagName, workingDocument, options);
-                foreach(FileDBNode tag in created)
+                foreach(BBNode tag in created)
                 {
                     yield return tag;
                 }

@@ -7,6 +7,6 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     public interface ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options);
+        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, FileDBSerializerOptions options);
     }
 }

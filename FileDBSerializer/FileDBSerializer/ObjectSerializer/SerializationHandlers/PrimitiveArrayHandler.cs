@@ -16,13 +16,13 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
         {
         }
 
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, FileDBSerializerOptions options)
         {
             var arrayInstance = item as Array;
             if (arrayInstance is null && options.SkipSimpleNullValues)
-                return Enumerable.Empty<FileDBNode>();
+                return Enumerable.Empty<BBNode>();
 
-            Attrib attr = workingDocument.AddAttrib(tagName);
+            Attrib attr = workingDocument.CreateAttrib(tagName);
 
             if (arrayInstance is null)
             {

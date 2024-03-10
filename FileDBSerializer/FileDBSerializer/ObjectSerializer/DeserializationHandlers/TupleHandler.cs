@@ -10,7 +10,7 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 {
     public class TupleHandler : IDeserializationHandler
     {
-        public object? Handle(IEnumerable<FileDBNode> nodes, Type targetType, FileDBSerializerOptions options)
+        public object? Handle(IEnumerable<BBNode> nodes, Type targetType, FileDBSerializerOptions options)
         {
             var actualTargetType = targetType.GetNullableType();
             var tupleContentTypes = actualTargetType.GetGenericArguments();

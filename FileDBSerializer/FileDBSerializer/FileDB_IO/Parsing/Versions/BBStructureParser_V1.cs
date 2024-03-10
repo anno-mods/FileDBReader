@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBSerializer;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace FileDBSerializing
 {
-    internal class FileDBParser_V1 : IFileDBParser
+    internal class BBStructureParser_V1 : IBBStructureParser
     {
         public BinaryReader Reader { get; }
-        public IFileDBDocument? TargetDocument { get; set; } 
+        public BBDocument? TargetDocument { get; set; } 
 
-        public FileDBParser_V1(Stream s)
+        public BBStructureParser_V1(Stream s)
         {
             Reader = new BinaryReader(s);
         }

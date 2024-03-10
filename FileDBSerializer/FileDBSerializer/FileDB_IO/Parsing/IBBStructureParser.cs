@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBSerializer;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace FileDBSerializing
 {
-    public interface IFileDBParser
+    public interface IBBStructureParser
     {
         public BinaryReader Reader { get; }
-        public IFileDBDocument? TargetDocument { get; set; }
+        public BBDocument? TargetDocument { get; set; }
 
         /// <summary>
         /// Reads the Next Nodes ID and bytesize from the Reader and advances its position.
@@ -58,7 +59,7 @@ namespace FileDBSerializing
         /// <returns>the constructed attribute.</returns>
         Attrib ReadAttrib(int bytesize, int ID, Tag ParentTag);
 
-        void RegisterDocument(IFileDBDocument doc)
+        void RegisterDocument(BBDocument doc)
         {
             TargetDocument = doc;
         }
@@ -66,14 +67,14 @@ namespace FileDBSerializing
 
     public static class IFileDBParserExtensions
     {
-        public static Attrib CreateAttrib(this IFileDBParser parser, int bytesize, int ID, IFileDBDocument parent)
+        public static Attrib CreateAttrib(this IBBStructureParser parser, int bytesize, int ID, BBDocument parent)
         {
             byte[] Content;
             Content = parser.ReadAttribContent(bytesize);
             return new Attrib() { ID = ID, Bytesize = bytesize, Content = Content, ParentDoc = parent};
         }
 
-        public static States DetermineState(this IFileDBParser parser, int ID)
+        public static States DetermineState(this IBBStructureParser parser, int ID)
         {
             switch (ID)
             {

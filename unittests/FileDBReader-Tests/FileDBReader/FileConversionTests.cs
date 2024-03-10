@@ -28,7 +28,7 @@ namespace FileDBReader_Tests
         {
             String INPUT_FILENAME = "version1.tmc";
             var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
-            Assert.IsTrue(FileDBSerializing.VersionDetector.GetCompressionVersion(File.OpenRead(STRING_PATH)) == FileDBSerializing.FileDBDocumentVersion.Version1);
+            Assert.IsTrue(FileDBSerializing.VersionDetector.GetCompressionVersion(File.OpenRead(STRING_PATH)) == FileDBSerializing.BBDocumentVersion.V1);
         }
 
         [TestMethod, TestCategory("version")]
@@ -36,7 +36,7 @@ namespace FileDBReader_Tests
         {
             String INPUT_FILENAME = "version2.bin";
             var STRING_PATH = Path.Combine(Folders.UNITTEST_FILE_DIR, Folders.UNITTEST_FILE_TESTFILES_DIR, Folders.UNITTEST_VERSION_SUBDIR, INPUT_FILENAME);
-            Assert.IsTrue(FileDBSerializing.VersionDetector.GetCompressionVersion(File.OpenRead(STRING_PATH)) == FileDBSerializing.FileDBDocumentVersion.Version2);
+            Assert.IsTrue(FileDBSerializing.VersionDetector.GetCompressionVersion(File.OpenRead(STRING_PATH)) == FileDBSerializing.BBDocumentVersion.V2);
         }
         #endregion
 

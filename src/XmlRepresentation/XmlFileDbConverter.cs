@@ -1,4 +1,5 @@
-﻿using FileDBSerializing;
+﻿using FileDBSerializer;
+using FileDBSerializing;
 using System;
 using System.Diagnostics;
 using System.Xml;
@@ -7,7 +8,7 @@ namespace FileDBReader.src.XmlRepresentation
 {
     public class XmlFileDbConverter
     {
-        IFileDBDocument filedb;
+        BBDocument filedb;
 
         private ushort TagID;
         private ushort AttribID;
@@ -15,9 +16,9 @@ namespace FileDBReader.src.XmlRepresentation
         private static readonly ushort TAG_START = 1; //0x01 0x00
         private static readonly ushort ATTRIB_START = 32768; //0x01 0x80
 
-        private FileDBDocumentVersion _version;
+        private BBDocumentVersion _version;
 
-        public XmlFileDbConverter(FileDBDocumentVersion version)
+        public XmlFileDbConverter(BBDocumentVersion version)
         {
             _version = version;
         }
@@ -28,7 +29,7 @@ namespace FileDBReader.src.XmlRepresentation
             AttribID = (ushort)(ATTRIB_START + 1);
         }
 
-        public IFileDBDocument ToFileDb(XmlDocument xml)
+        public BBDocument ToFileDb(XmlDocument xml)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -51,7 +52,7 @@ namespace FileDBReader.src.XmlRepresentation
             return filedb;
         }
 
-        private FileDBNode XmlNodeToFileDBNode(XmlNode n, Tag parent)
+        private BBNode XmlNodeToFileDBNode(XmlNode n, Tag parent)
         {
             //This is the closest we can determine this shit.
             if ((n.FirstChild != null && n.FirstChild.NodeType == XmlNodeType.Text) || 
@@ -64,7 +65,7 @@ namespace FileDBReader.src.XmlRepresentation
         private Attrib XmlNodeToAttrib(XmlNode n, Tag parent)
         {
             var Content = HexHelper.ToBytes(n.InnerText);
-            var Attrib = filedb.AddAttrib(InvalidTagNameHelper.GetReverseCorrection(n.Name));
+            var Attrib = filedb.CreateAttrib(InvalidTagNameHelper.GetReverseCorrection(n.Name));
             Attrib.Content = Content;
             Attrib.Parent = parent;
             return Attrib;
@@ -72,7 +73,7 @@ namespace FileDBReader.src.XmlRepresentation
 
         private Tag XmlNodeToTag(XmlNode n, Tag parent)
         {
-            var tag = filedb.AddTag(InvalidTagNameHelper.GetReverseCorrection(n.Name));
+            var tag = filedb.CreateTag(InvalidTagNameHelper.GetReverseCorrection(n.Name));
             tag.Parent = parent;
             
             foreach (XmlNode child in n.ChildNodes)

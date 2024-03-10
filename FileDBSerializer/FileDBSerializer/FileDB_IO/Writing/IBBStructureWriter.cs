@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FileDBSerializer;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace FileDBSerializing
 {
-    public interface IFileDBWriter
+    public interface IBBStructureWriter
     {
         //has to be public for extension methods, meh
         public BinaryWriter Writer { get; }
@@ -14,8 +15,8 @@ namespace FileDBSerializing
 
 
         #region Tag Section
-        void RemoveNonesAndWriteTagSection(IFileDBDocument forDocument);
-        (int, int) WriteTagSection(TagSection tagSection);
+        void WriteTagSection(BBDocument forDocument);
+        (int, int) WriteTagsAndAttribs(TagSection tagSection);
         void WriteNodeCountSection(int nodeCount);
         void WriteTagOffsets(int tagOffset, int attribOffset);
         #endregion
@@ -25,7 +26,7 @@ namespace FileDBSerializing
         /// </summary>
         /// <param name="dict"></param>
         /// <returns>The offset to the dictionary in the current writing stream</returns>
-        int WriteDictionary(Dictionary<ushort, String> dict);
+        int WriteDictionary(IReadOnlyDictionary<ushort, String> dict);
 
         void WriteMagicBytes();
         void WriteNodeTerminator();
@@ -33,7 +34,7 @@ namespace FileDBSerializing
 
     public static class IFileDBWriterExtensions
     {
-        public static void WriteNode(this IFileDBWriter filedbwriter, FileDBNode n)
+        public static void WriteNode(this IBBStructureWriter filedbwriter, BBNode n)
         {
             if (n.NodeType == FileDBNodeType.Tag)
                 filedbwriter.WriteTag((Tag)n);
@@ -41,29 +42,23 @@ namespace FileDBSerializing
                 filedbwriter.WriteAttrib((Attrib)n);
         }
 
-        public static void WriteNodeCollection(this IFileDBWriter filedbwriter, IEnumerable<FileDBNode> collection)
+        public static void WriteNodeCollection(this IBBStructureWriter filedbwriter, IEnumerable<BBNode> collection)
         {
-            foreach (FileDBNode n in collection)
+            foreach (BBNode n in collection)
             {
                 filedbwriter.WriteNode(n);
             }
         }
 
-        public static void RemoveNonesAndWriteTagSection(this IFileDBWriter filedbwriter, TagSection tagSection, int nodeCount)
+        public static void WriteTagSection(this IBBStructureWriter filedbwriter, TagSection tagSection, int nodeCount)
         {
-            tagSection.Tags.Remove(1);
-            tagSection.Attribs.Remove(32768);
-
-            (int tagOffset, int attribOffset) = filedbwriter.WriteTagSection(tagSection);
-
-            tagSection.Tags.Add(1, "None");
-            tagSection.Attribs.Add(32768, "None");
+            (int tagOffset, int attribOffset) = filedbwriter.WriteTagsAndAttribs(tagSection);
 
             filedbwriter.WriteNodeCountSection(nodeCount);
             filedbwriter.WriteTagOffsets(tagOffset, attribOffset);
         }
 
-        public static void Flush(this IFileDBWriter writer)
+        public static void Flush(this IBBStructureWriter writer)
         {
             writer.Writer?.Flush();
         }

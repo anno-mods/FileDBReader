@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBSerializer;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace FileDBSerializing
 {
-    internal class FileDBParser_V2 : IFileDBParser
+    internal class BBStructureParser_V2 : IBBStructureParser
     {
         public BinaryReader Reader { get; }
-        public IFileDBDocument? TargetDocument { get; set; }
+        public BBDocument? TargetDocument { get; set; }
 
-        public FileDBParser_V2(Stream s)
+        public BBStructureParser_V2(Stream s)
         {
             Reader = new BinaryReader(s);
         }
@@ -46,7 +47,7 @@ namespace FileDBSerializing
 
         public byte[] ReadAttribContent(int bytesize)
         {
-            int ContentSize = MemoryBlocks.GetBlockSpace(bytesize, FileDBDocument_V2.ATTRIB_BLOCK_SIZE);
+            int ContentSize = MemoryBlocks.GetBlockSpace(bytesize, Versioning.GetBlockSize(BBDocumentVersion.V2));
             byte[] Content = Reader!.ReadBytes(ContentSize);
             Array.Resize<byte>(ref Content, bytesize);
             return Content;

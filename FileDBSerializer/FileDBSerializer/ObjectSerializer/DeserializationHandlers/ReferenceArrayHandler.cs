@@ -11,7 +11,7 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 {
     public class ReferenceArrayHandler : IDeserializationHandler
     {
-        public object? Handle(IEnumerable<FileDBNode> nodes, Type targetType, FileDBSerializerOptions options)
+        public object? Handle(IEnumerable<BBNode> nodes, Type targetType, FileDBSerializerOptions options)
         {
             if (nodes.Count() != 1)
                 throw new InvalidOperationException("ReferenceArrayHandler can handle exactly one node");

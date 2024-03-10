@@ -142,9 +142,9 @@ namespace FileDBSerializing.ObjectSerializer
 
     internal static class FileDBNodeExtensions
     {
-        internal static IEnumerable<FileDBNode> AsEnumerable(this FileDBNode node)
+        internal static IEnumerable<BBNode> AsEnumerable(this BBNode node)
         {
-            return new FileDBNode[] { node };
+            return new BBNode[] { node };
         }
     }
 

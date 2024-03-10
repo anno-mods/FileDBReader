@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBSerializer;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace FileDBSerializing
 {
-    internal class FileDBWriter_V2 : IFileDBWriter
+    internal class BBStructureWriter_V2 : IBBStructureWriter
     {
         public BinaryWriter Writer { get; }
 
-        private static int MemBlockSize = FileDBDocument_V2.ATTRIB_BLOCK_SIZE;
+        private static int MemBlockSize = Versioning.GetBlockSize(BBDocumentVersion.V2);
 
-        public FileDBWriter_V2(Stream s)
+        public BBStructureWriter_V2(Stream s)
         {
             Writer = new BinaryWriter(s);
         }
@@ -31,7 +32,7 @@ namespace FileDBSerializing
             WriteNodeTerminator();
         }
 
-        public int WriteDictionary(Dictionary<ushort, string> dict)
+        public int WriteDictionary(IReadOnlyDictionary<ushort, string> dict)
         {
             int Offset = (int)Writer!.BaseStream.Position;
             Writer.Write(dict.Count);
@@ -57,26 +58,20 @@ namespace FileDBSerializing
 
         public virtual void WriteMagicBytes()
         {
-            Writer!.Write(Versioning.GetMagicBytes(FileDBDocumentVersion.Version2));
+            Writer!.Write(Versioning.GetMagicBytes(BBDocumentVersion.V2));
         }
 
 
         #region Tag Section
-        public virtual void RemoveNonesAndWriteTagSection(IFileDBDocument forDocument)
+        public virtual void WriteTagSection(BBDocument forDocument)
         {
-            TagSection tagSection = forDocument.Tags;
+            TagSection tagSection = forDocument.TagSection;;
 
-            tagSection.Tags.Remove(1);
-            tagSection.Attribs.Remove(32768);
-
-            (int tagOffset, int attribOffset) = this.WriteTagSection(tagSection);
+            (int tagOffset, int attribOffset) = this.WriteTagsAndAttribs(tagSection);
             this.WriteTagOffsets(tagOffset, attribOffset);
-
-            tagSection.Tags.Add(1, "None");
-            tagSection.Attribs.Add(32768, "None");
         }
 
-        public (int, int) WriteTagSection(TagSection tagSection)
+        public (int, int) WriteTagsAndAttribs(TagSection tagSection)
         {
             int TagsOffset = WriteDictionary(tagSection.Tags);
             int AttribsOffset = WriteDictionary(tagSection.Attribs);
@@ -96,7 +91,7 @@ namespace FileDBSerializing
         }
         #endregion
 
-        public void WriteNodeID(FileDBNode node)
+        public void WriteNodeID(BBNode node)
         {
             Writer!.Write(node.Bytesize);
             Writer.Write(node.ID);

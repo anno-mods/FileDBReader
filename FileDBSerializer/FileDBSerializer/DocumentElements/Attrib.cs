@@ -5,7 +5,7 @@ using System.IO;
 namespace FileDBSerializing
 {
     [DebuggerDisplay("[FileDB_Attrib: ID = {ID}, Name = {Name}, Size = {Bytesize}]")]
-    public class Attrib : FileDBNode
+    public class Attrib : BBNode
     {
         private byte[] _content;
         public byte[] Content
@@ -22,21 +22,15 @@ namespace FileDBSerializing
             }
         }
 
-        public Attrib()
+        internal Attrib()
         {
             NodeType = FileDBNodeType.Attrib;
         }
-        public override String GetID()
-        {
-            if (ParentDoc.Tags.Attribs.TryGetValue((ushort)ID, out string value))
-                return value;
-            else return "a_" + ID;
-        }
+        public override String GetNameWithFallback() => ParentDoc.TagSection.GetAttribName(ID) ?? "a_" + ID;
 
-        public override string GetName()
-        {
-            return ParentDoc.Tags.Attribs[(ushort)ID];
-        }
+        public override string GetName() => ParentDoc.TagSection.GetAttribName(ID) 
+            ?? throw new InvalidFileDBException($"ID {ID} does not correspond to a Name in this Documents Tags Section.");
+
 
         public MemoryStream ContentToStream()
         {

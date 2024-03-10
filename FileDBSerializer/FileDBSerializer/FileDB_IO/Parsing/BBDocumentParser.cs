@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBSerializer;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -20,18 +21,18 @@ namespace FileDBSerializing
         Terminator 
     }
 
-    public class DocumentParser
+    public class BBDocumentParser
     {
-        private IFileDBDocument filedb;
-        private IFileDBParser parser;
+        private BBDocument bbdoc;
+        private IBBStructureParser parser;
 
         int CurrentLevel = 0;
         Tag? CurrentTag = null;
         Stream? CurrentStream = null;
 
-        public FileDBDocumentVersion Version { get; set; }
+        public BBDocumentVersion Version { get; }
 
-        public DocumentParser(FileDBDocumentVersion version)
+        public BBDocumentParser(BBDocumentVersion version)
         {
             Version = version;
         }
@@ -40,12 +41,12 @@ namespace FileDBSerializing
         {
             if (!source.CanRead) throw new ArgumentException("Stream needs to be readable!");
             CurrentStream = source;
-            filedb = DependencyVersions.GetDocument(Version);
+            bbdoc = DependencyVersions.GetDocument(Version);
             parser = DependencyVersions.GetParser(Version, source);
-            parser.RegisterDocument(filedb);
+            parser.RegisterDocument(bbdoc);
         }
 
-        public IFileDBDocument LoadFileDBDocument(Stream s)
+        public BBDocument LoadBBDocument(Stream s)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -63,15 +64,16 @@ namespace FileDBSerializing
 
             stopWatch.Stop();
             Console.WriteLine("FILEDB Deserialization took {0} ms", stopWatch.Elapsed.TotalMilliseconds);
-            return filedb;
+            return bbdoc;
         }
 
         private void ParseTagSection()
         {
             try
             {
-                TagSection t = parser.ReadTagSection(filedb.OFFSET_TO_OFFSETS);
-                filedb.Tags = t;
+                var offset = Versioning.GetOffsetToOffsets(Version);
+                TagSection t = parser.ReadTagSection(offset);
+                bbdoc.TagSection = t;
             }
             catch (ArgumentException e)
             {
@@ -119,12 +121,12 @@ namespace FileDBSerializing
             }
         }
 
-        private void AddNode(FileDBNode node)
+        private void AddNode(BBNode node)
         {
             if (CurrentLevel > 0)
                 CurrentTag.Children.Add(node);
             else
-                filedb.Roots.Add(node);
+                bbdoc.Roots.Add(node);
         }
 
         

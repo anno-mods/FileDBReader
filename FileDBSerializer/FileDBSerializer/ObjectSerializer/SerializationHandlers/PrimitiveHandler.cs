@@ -25,13 +25,13 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
         /// <param name="workingDocument"></param>
         /// <param name="options"></param>
         /// <returns>An attrib containing a byte representation of the value</returns>
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, FileDBSerializerOptions options)
         {
             if(item is null && options.SkipSimpleNullValues)
-                return Enumerable.Empty<FileDBNode>();
+                return Enumerable.Empty<BBNode>();
 
 
-            Attrib attr = workingDocument.AddAttrib(tagName);
+            Attrib attr = workingDocument.CreateAttrib(tagName);
 
             attr.Content = item is null ?
                     new byte[0]

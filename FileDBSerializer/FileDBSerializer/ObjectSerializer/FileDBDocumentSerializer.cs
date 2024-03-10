@@ -1,4 +1,5 @@
-﻿using FileDBSerializer.ObjectSerializer;
+﻿using FileDBSerializer;
+using FileDBSerializer.ObjectSerializer;
 using FileDBSerializer.ObjectSerializer.SerializationHandlers;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace FileDBSerializing.ObjectSerializer
     public class FileDBDocumentSerializer 
     {
         private FileDBSerializerOptions Options;
-        private IFileDBDocument TargetDocument;
+        private BBDocument TargetDocument;
 
         public FileDBDocumentSerializer(FileDBSerializerOptions options)
         {
@@ -23,7 +24,7 @@ namespace FileDBSerializing.ObjectSerializer
         }
 
         //serializes an object into a filedb document
-        public IFileDBDocument WriteObjectStructureToFileDBDocument(object graph)
+        public BBDocument WriteObjectStructureToFileDBDocument(object graph)
         {
             IEnumerable<PropertyInfo> properties = graph.GetType().GetPropertiesWithOrder();
             TargetDocument.Roots = SerializePropertyCollection(properties, graph).ToList();
@@ -34,7 +35,7 @@ namespace FileDBSerializing.ObjectSerializer
         }
 
         //Batch Serializing for a list of properties
-        private IEnumerable<FileDBNode> SerializePropertyCollection(IEnumerable<PropertyInfo> properties, object parentObject)
+        private IEnumerable<BBNode> SerializePropertyCollection(IEnumerable<PropertyInfo> properties, object parentObject)
         {
             foreach (var property in properties)
             {

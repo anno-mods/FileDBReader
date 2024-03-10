@@ -10,6 +10,6 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 {
     public interface IDeserializationHandler
     {
-        public object? Handle(IEnumerable<FileDBNode> nodes, Type targetType, FileDBSerializerOptions options);
+        public object? Handle(IEnumerable<BBNode> nodes, Type targetType, FileDBSerializerOptions options);
     }
 }

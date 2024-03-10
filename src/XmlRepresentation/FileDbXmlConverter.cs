@@ -9,7 +9,7 @@ namespace FileDBReader.src.XmlRepresentation
     public class FileDbXmlConverter
     {
         XmlDocument doc; 
-        public XmlDocument ToXml(IFileDBDocument filedb)
+        public XmlDocument ToXml(IBBDocument filedb)
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -33,7 +33,7 @@ namespace FileDBReader.src.XmlRepresentation
         /// <param name="node">the XML node result, if provided. </param>
         /// <returns>True if the serialization was successful</returns>
         /// <exception cref="Exception"><paramref name="n"/> is of an unknown Node Type</exception>
-        private bool TryConstructXmlNodeFromFileDBNode(FileDBNode n, out XmlNode node)
+        private bool TryConstructXmlNodeFromFileDBNode(BBNode n, out XmlNode node)
         {
             if (n.NodeType == FileDBNodeType.Attrib)
                 return (node = AttribToXmlNode((Attrib)n)) is XmlNode;
@@ -47,9 +47,9 @@ namespace FileDBReader.src.XmlRepresentation
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="children"></param>
-        private void ConvertCollection(XmlNode parent, IEnumerable<FileDBNode> children)
+        private void ConvertCollection(XmlNode parent, IEnumerable<BBNode> children)
         {
-            foreach (FileDBNode n in children)
+            foreach (BBNode n in children)
             {
                 if (TryConstructXmlNodeFromFileDBNode(n, out var childxmlnode))
                     parent.AppendChild(childxmlnode);
@@ -79,7 +79,7 @@ namespace FileDBReader.src.XmlRepresentation
 
         private XmlNode? TagToXmlNode(Tag t)
         {
-            String Name = t.GetID();
+            String Name = t.GetNameWithFallback();
             if (TryCreateNode(Name, out var node))
             {
                 ConvertCollection(node, t.Children);
@@ -90,7 +90,7 @@ namespace FileDBReader.src.XmlRepresentation
 
         private XmlNode? AttribToXmlNode(Attrib a)
         {
-            String Name = a.GetID();
+            String Name = a.GetNameWithFallback();
             if (TryCreateNode(Name, out var node))
             {
                 node.InnerText = a.Bytesize > 0 ? node.InnerText = HexHelper.ToBinHex(a.Content) : "";

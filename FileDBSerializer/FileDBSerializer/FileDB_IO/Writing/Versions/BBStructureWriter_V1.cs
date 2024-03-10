@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileDBSerializer;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace FileDBSerializing
 {
-    internal class FileDBWriter_V1 : IFileDBWriter
+    internal class BBStructureWriter_V1 : IBBStructureWriter
     {
         public BinaryWriter Writer { get; }
 
-        public FileDBWriter_V1(Stream s)
+        public BBStructureWriter_V1(Stream s)
         {
             Writer = new BinaryWriter(s);
         }
 
-        public void WriteNodeID(FileDBNode n)
+        public void WriteNodeID(BBNode n)
         {
             Writer!.Write((ushort)n.ID);
         }
@@ -36,21 +37,15 @@ namespace FileDBSerializing
         }
 
         #region Tag Section
-        public void RemoveNonesAndWriteTagSection(IFileDBDocument forDocument)
+        public void WriteTagSection(BBDocument forDocument)
         {
-            TagSection tagSection = forDocument.Tags;
+            TagSection tagSection = forDocument.TagSection;
 
-            tagSection.Tags.Remove(1);
-            tagSection.Attribs.Remove(32768);
-
-            (int tagOffset, int attribOffset) = this.WriteTagSection(tagSection);
+            (int tagOffset, int attribOffset) = this.WriteTagsAndAttribs(tagSection);
             this.WriteTagOffsets(tagOffset, attribOffset);
-
-            tagSection.Tags.Add(1, "None");
-            tagSection.Attribs.Add(32768, "None");
         }
 
-        public (int, int) WriteTagSection(TagSection tagSection)
+        public (int, int) WriteTagsAndAttribs(TagSection tagSection)
         {
             int offset = WriteDictionary(tagSection.Tags);
             WriteDictionary(tagSection.Attribs);
@@ -69,7 +64,7 @@ namespace FileDBSerializing
         }
         #endregion
 
-        public int WriteDictionary(Dictionary<ushort, string> dict)
+        public int WriteDictionary(IReadOnlyDictionary<ushort, string> dict)
         {
             int offset = (int)Writer!.Position();
             Writer!.Write7BitEncodedInt(dict.Count);

@@ -9,19 +9,19 @@ namespace FileDBSerializing
 {
     public static class VersionDetector
     {
-        public static FileDBDocumentVersion GetCompressionVersion(Stream fs)
+        public static BBDocumentVersion GetCompressionVersion(Stream fs)
         {
-            if (CheckVersion(fs, FileDBDocumentVersion.Version2))
-                return FileDBDocumentVersion.Version2;
-            else if (CheckVersion(fs, FileDBDocumentVersion.Version3))
-                return FileDBDocumentVersion.Version3;
+            if (CheckVersion(fs, BBDocumentVersion.V2))
+                return BBDocumentVersion.V2;
+            else if (CheckVersion(fs, BBDocumentVersion.V3))
+                return BBDocumentVersion.V3;
 
             //how can we determine Version 1 from Unknown here? :(
             else
-                return FileDBDocumentVersion.Version1;
+                return BBDocumentVersion.V1;
         }
 
-        private static bool CheckVersion(Stream stream, FileDBDocumentVersion version)
+        private static bool CheckVersion(Stream stream, BBDocumentVersion version)
         {
             long Position = stream.Position;
             var expectedMagics = Versioning.GetMagicBytes(version);

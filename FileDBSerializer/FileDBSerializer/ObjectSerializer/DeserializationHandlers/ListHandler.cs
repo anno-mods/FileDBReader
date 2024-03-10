@@ -11,7 +11,7 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 {
     public class ListHandler : IDeserializationHandler
     {
-        public object? Handle(IEnumerable<FileDBNode> nodes, Type targetType, FileDBSerializerOptions options)
+        public object? Handle(IEnumerable<BBNode> nodes, Type targetType, FileDBSerializerOptions options)
         {
             if (nodes.Count() != 1)
                 throw new InvalidOperationException("ListHandler can handle exactly one node");
@@ -47,7 +47,7 @@ namespace FileDBSerializer.ObjectSerializer.DeserializationHandlers
 
                 for (int i = 0; i < elemCount; i+=stride)
                 {
-                    FileDBNode[] tupleItems = new FileDBNode[stride];
+                    BBNode[] tupleItems = new BBNode[stride];
                     for (int j = 0; j < tupleItems.Length; j++)
                     {
                         tupleItems[j] = tag.Children.ElementAt(i + j);

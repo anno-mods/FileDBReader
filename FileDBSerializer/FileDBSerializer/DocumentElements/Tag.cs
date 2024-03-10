@@ -6,9 +6,9 @@ using System.Diagnostics;
 namespace FileDBSerializing
 {
     [DebuggerDisplay("[FileDB_Tag: ID = {ID}, Name = {Name}, ChildCount = {ChildCount}]")]
-    public class Tag : FileDBNode
+    public class Tag : BBNode
     {
-        public List<FileDBNode> Children = new List<FileDBNode>();
+        public List<BBNode> Children = new List<BBNode>();
         //we are only allowed to get bytesize because it is needed when writing. Otherwise, bytesize for tags is always 0!
         public int ChildCount
         {
@@ -20,18 +20,20 @@ namespace FileDBSerializing
 
         new int Bytesize { get; }
 
-        public Tag()
+        internal Tag()
         {
             Bytesize = 0;
             NodeType = FileDBNodeType.Tag;
         }
 
-        public void AddChild(FileDBNode node)
+        #region AddChildren
+
+        public void AddChild(BBNode node)
         {
             Children.Add(node);
         }
 
-        public void AddChildren(IEnumerable<FileDBNode> nodes)
+        public void AddChildren(IEnumerable<BBNode> nodes)
         {
             foreach (var _ in nodes)
             {
@@ -39,23 +41,20 @@ namespace FileDBSerializing
             }
         }
 
-        public override String GetID()
-        {
-            if (ParentDoc.Tags.Tags.TryGetValue((ushort)ID, out string value))
-                return value;
-            else return "t_" + ID;
-        }
+        public void AddChildren(params BBNode[] nodes) => AddChildren(nodes as IEnumerable<BBNode>);
 
-        public override string GetName()
-        {
-            return ParentDoc.Tags.Tags[(ushort)ID];
-        }
+        #endregion
+
+        public override String GetNameWithFallback() => ParentDoc.TagSection.GetTagName(ID) ?? "t_" + ID;
+
+        public override string GetName() => ParentDoc.TagSection.GetTagName(ID) 
+            ?? throw new InvalidFileDBException($"ID {ID} does not correspond to a Name in this Documents Tags Section.");
 
         public int GetChildCountRecursive()
         {
             int count = ChildCount;
 
-            foreach (FileDBNode child in Children)
+            foreach (BBNode child in Children)
             {
                 if (child is Tag t)
                 {

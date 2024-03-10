@@ -12,7 +12,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
 {
     internal class TupleHandler : ISerializationHandler
     {
-        public IEnumerable<FileDBNode> Handle(object? item, string tagName, IFileDBDocument workingDocument, FileDBSerializerOptions options)
+        public IEnumerable<BBNode> Handle(object? item, string tagName, IBBDocument workingDocument, FileDBSerializerOptions options)
         {
             var tuple = item as ITuple;
             if (tuple is null)
@@ -33,7 +33,7 @@ namespace FileDBSerializer.ObjectSerializer.SerializationHandlers
                 else
                 {
                     var result = handler.Handle(tuple_entry, options.NoneTag, workingDocument, options);
-                    var tag = workingDocument.AddTag(tagName);
+                    var tag = workingDocument.CreateTag(tagName);
                     tag.AddChildren(result);
                     yield return tag;
                 }

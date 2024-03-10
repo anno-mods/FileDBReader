@@ -22,7 +22,7 @@ namespace FileDBSerializing.ObjectSerializer
             TargetType = TargetObject.GetType();
         }
 
-        public T GetObjectStructureFromFileDBDocument(IFileDBDocument doc)
+        public T GetObjectStructureFromFileDBDocument(IBBDocument doc)
         {
             var targetType = typeof(T);
 

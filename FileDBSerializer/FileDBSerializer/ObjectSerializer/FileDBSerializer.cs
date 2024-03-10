@@ -20,7 +20,7 @@ namespace FileDBSerializing.ObjectSerializer
         private Type _type = typeof(T);
 
         #region Constructor
-        public FileDBSerializer(FileDBDocumentVersion version)
+        public FileDBSerializer(BBDocumentVersion version)
         {
             Options = new FileDBSerializerOptions();
             Options.Version = version;
@@ -37,21 +37,21 @@ namespace FileDBSerializing.ObjectSerializer
         {
             FileDBDocumentSerializer builder = new FileDBDocumentSerializer(Options);
             var doc = builder.WriteObjectStructureToFileDBDocument(graph);
-            DocumentWriter GenericSerializer = new DocumentWriter();
-            GenericSerializer.WriteFileDBToStream(doc, serializationStream);
+            BBDocumentWriter GenericSerializer = new BBDocumentWriter(Options.Version);
+            GenericSerializer.WriteToStream(doc, serializationStream);
         }
 
         #region DESERIALIZING
         //serializes from a filedb document into an object
         public object Deserialize(Stream serializationStream)
         {
-            IFileDBDocument? doc = null; 
+            IBBDocument? doc = null; 
 
             //autodetect version?
             var Version = VersionDetector.GetCompressionVersion(serializationStream);
 
-            DocumentParser parser = new DocumentParser(Version);
-            doc = parser.LoadFileDBDocument(serializationStream);
+            BBDocumentParser parser = new BBDocumentParser(Version);
+            doc = parser.LoadBBDocument(serializationStream);
              
             FileDBDocumentDeserializer<T> deserializer = new FileDBDocumentDeserializer<T>(Options);            
             return deserializer.GetObjectStructureFromFileDBDocument(doc);
