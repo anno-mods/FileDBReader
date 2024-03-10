@@ -55,8 +55,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./FileDBReader/FileDBSerializer.zip
-          asset_name: FileDBSerializer.zip
+          asset_path: ./FileDBReader/AnnoModsBBDom.zip
+          asset_name: AnnoModsBBDom.zip
           asset_content_type: application/zip
 
       - name: Upload FileDBReader (Linux)
