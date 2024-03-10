@@ -17,7 +17,7 @@ namespace AnnoMods.BBDom.IO
         {
             { BBDocumentVersion.V1, (s) => new BBStructureWriter_V1(s) },
             { BBDocumentVersion.V2, (s) => new BBStructureWriter_V2(s) },
-            { BBDocumentVersion.V3, (s) => new BBStructureWriter(s) }
+            { BBDocumentVersion.V3, (s) => new BBStructureWriter_V3(s) }
         };
 
         public static IBBStructureParser GetParser(BBDocumentVersion version, Stream source)

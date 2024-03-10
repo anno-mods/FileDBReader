@@ -2,9 +2,9 @@
 
 namespace AnnoMods.BBDom.IO
 {
-    internal class BBStructureWriter : BBStructureWriter_V2
+    internal class BBStructureWriter_V3 : BBStructureWriter_V2
     {
-        public BBStructureWriter(Stream s) : base(s)
+        public BBStructureWriter_V3(Stream s) : base(s)
         {
 
         }
