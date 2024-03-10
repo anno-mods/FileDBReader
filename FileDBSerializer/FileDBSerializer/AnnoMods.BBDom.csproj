@@ -41,8 +41,8 @@
     <AssemblyVersion>3.0</AssemblyVersion>
     <FileVersion>3.0</FileVersion>
     <RootNamespace>AnnoMods.BBDom</RootNamespace>
-    <PackageProjectUrl>https://github.com/anno-mods/BBReader/wiki/Using-AnnoMods.BBDom</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/anno-mods/BBReader</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/anno-mods/FileDBReader/wiki/Using-AnnoMods.BBDom</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/anno-mods/FileDBReader</RepositoryUrl>
   </PropertyGroup>
   
   <ItemGroup>
