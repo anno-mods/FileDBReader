@@ -1,6 +1,4 @@
-﻿using AnnoMods.BBDom;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace AnnoMods.BBDom.IO

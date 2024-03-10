@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using AnnoMods.BBDom;
+using System.Linq;
 
 namespace AnnoMods.BBDom.IO
 {
