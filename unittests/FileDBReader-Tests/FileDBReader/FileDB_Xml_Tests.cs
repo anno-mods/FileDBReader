@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AnnoMods.BBDom.XML;
 using AnnoMods.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FileDBReader.src.XmlRepresentation;
+using System;
+using System.Linq;
 using System.Xml;
-using FileDBSerializer;
-using AnnoMods.BBDom;
-using AnnoMods.BBDom.XML;
 
 namespace FileDBReader_Tests
 {

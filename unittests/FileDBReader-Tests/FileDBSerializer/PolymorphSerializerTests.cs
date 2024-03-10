@@ -1,11 +1,10 @@
-﻿using System.IO;
-using System.Text;
-using System.Xml;
-using FileDBReader.src.XmlRepresentation;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.XML;
 using AnnoMods.ObjectSerializer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AnnoMods.BBDom;
-using AnnoMods.BBDom.XML;
+using System.IO;
+using System.Text;
+using System.Xml;
 
 namespace FileDBReader_Tests.FileDBSerializer
 {

@@ -45,7 +45,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             foreach (String s in InputFiles)
@@ -116,7 +116,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
             
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
@@ -185,7 +185,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
@@ -244,7 +244,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             InvalidTagNameHelper.BuildAndAddReplaceOps(ReplaceOps);
@@ -325,7 +325,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             foreach (String s in InputFiles)
@@ -374,7 +374,7 @@ namespace FileDBReader.src
                 using var interpreter_stream = SecureIoHandler.ReadHandleWithInterpreterRedirect(InterpreterPath);
                 if (interpreter_stream is null)
                     return -1;
-                Interpr = new Interpreter(Interpreter.ToInterpreterDoc(interpreter_stream));
+                Interpr = Interpreter.LoadFrom(interpreter_stream);
             }
 
             foreach (String s in InputFiles)

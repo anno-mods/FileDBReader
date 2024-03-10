@@ -35,14 +35,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="AnnoMods.Interpreter\**" />
     <Compile Remove="Binary\**" />
     <Compile Remove="FileDBSerializer\**" />
     <Compile Remove="FileFormatDoc\**" />
     <Compile Remove="unittests\**" />
+    <EmbeddedResource Remove="AnnoMods.Interpreter\**" />
     <EmbeddedResource Remove="Binary\**" />
     <EmbeddedResource Remove="FileDBSerializer\**" />
     <EmbeddedResource Remove="FileFormatDoc\**" />
     <EmbeddedResource Remove="unittests\**" />
+    <None Remove="AnnoMods.Interpreter\**" />
     <None Remove="Binary\**" />
     <None Remove="FileDBSerializer\**" />
     <None Remove="FileFormatDoc\**" />

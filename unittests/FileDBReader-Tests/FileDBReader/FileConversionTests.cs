@@ -180,7 +180,7 @@ namespace FileDBReader_Tests
 
             String INTERPRETER_PATH = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, InterpreterFile);
 
-            var Interpr = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_PATH));
+            var Interpr = Interpreter.LoadFromFile(INTERPRETER_PATH);
             var DecompressedDocument = new XmlDocument();
             DecompressedDocument.Load(INPUT_PATH);
             var ExpectedDocument = new XmlDocument();
@@ -224,7 +224,7 @@ namespace FileDBReader_Tests
         {
             //setup
             String INTERPRETER_PATH = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, InterpreterFile);
-            var Interpr = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_PATH));
+            var Interpr = Interpreter.LoadFromFile(INTERPRETER_PATH);
             var Decompressed = new XmlDocument();
             Decompressed.Load(DecompressedFile);
 
@@ -244,7 +244,7 @@ namespace FileDBReader_Tests
         public bool Test_Reinterpret(XmlDocument Interpreted, String FileInterpreted, String InterpreterFile, out XmlDocument reinterpretedResult)
         {
             String INTERPRETER_PATH = Path.Combine(Folders.UNITTEST_INTERPRETER_DIR, InterpreterFile);
-            var Interpr = new Interpreter(Interpreter.ToInterpreterDoc(INTERPRETER_PATH));
+            var Interpr = Interpreter.LoadFromFile(INTERPRETER_PATH);
 
             var exporter = new XmlExporter(Interpreted, Interpr);
             var reinterpreted = exporter.Run();

@@ -1,21 +1,19 @@
-﻿using System;
+﻿using AnnoMods.BBDom;
+using AnnoMods.BBDom.IO;
+using AnnoMods.BBDom.XML;
+using AnnoMods.ObjectSerializer;
+using AnnoMods.Tests.TestData;
+using FileDBReader.src;
+using FileDBReader_Tests;
+using FileDBReader_Tests.TestSerializationData.PropertyOrder;
+using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using FileDBReader.src.XmlRepresentation;
-using FileDBReader_Tests;
-using AnnoMods.ObjectSerializer;
-using AnnoMods.Tests.TestData;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FluentAssertions;
-using FileDBReader_Tests.TestSerializationData.PropertyOrder;
-using Newtonsoft.Json.Linq;
-using AnnoMods.BBDom;
-using AnnoMods.BBDom.IO;
-using AnnoMods.BBDom.XML;
 
 namespace AnnoMods.Tests
 {
@@ -469,11 +467,11 @@ namespace AnnoMods.Tests
             XmlDocument xmlDocument = new();
             xmlDocument.Load(stream(testInput));
 
-            XmlDocument interpreterDocument = new();
-            interpreterDocument.Load(stream("<Converts><Converts>" +
+            var interpreterXml = "<Converts><Converts>" +
                 "<Convert Path=\"//Item\" Type=\"String\" Encoding=\"UTF-8\"/>" +
-                "</Converts></Converts>"));
-            XmlDocument xmlWithBytes = new FileDBReader.XmlExporter(xmlDocument, new(interpreterDocument)).Run();
+                "</Converts></Converts>";
+            var interpreter = Interpreter.LoadXml(interpreterXml); 
+            XmlDocument xmlWithBytes = new FileDBReader.XmlExporter(xmlDocument, interpreter).Run();
             BBDocument doc = xmlWithBytes.ToBBDocument();
 
             Assert.AreEqual(3, doc.Roots.Count);
@@ -502,7 +500,7 @@ namespace AnnoMods.Tests
 
             // convert back to xml
             xmlWithBytes = doc.ToXmlDocument();
-            xmlDocument = new FileDBReader.XmlInterpreter(xmlWithBytes, new(interpreterDocument)).Run();
+            xmlDocument = new FileDBReader.XmlInterpreter(xmlWithBytes, interpreter).Run();
             Assert.AreEqual(testInput, xmlDocument.InnerXml);
         }
 
