@@ -13,13 +13,13 @@ namespace AnnoMods.BBDom
         public static Tag CreateTag(this BBDocument doc, string Name)
         {
             var newTagId = doc.TagSection.GetOrCreateTagId(Name);
-            return new Tag() { ID = newTagId, ParentDoc = doc as BBDocument };
+            return new Tag() { ID = newTagId, ParentDoc = doc };
         }
 
         public static Attrib CreateAttrib(this BBDocument doc, string Name)
         {
             var newAttribId = doc.TagSection.GetOrCreateAttribId(Name);
-            return new Attrib() { ID = newAttribId, ParentDoc = doc as BBDocument };
+            return new Attrib() { ID = newAttribId, ParentDoc = doc };
         }
 
         public static Attrib CreateAttrib(this BBDocument doc, string Name, byte[] content)
