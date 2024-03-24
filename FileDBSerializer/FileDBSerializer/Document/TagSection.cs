@@ -33,8 +33,12 @@ namespace AnnoMods.BBDom
         {
             _tags = tags;
             _attribs = attribs;
-            MaxTagID = (ushort)(_tags.Keys.Max() + 1);
-            MaxAttribID = (ushort)(_attribs.Keys.Max() + 1);
+            MaxTagID = (ushort)(tags.Keys.Count() > 0 ? 
+                    _tags.Keys.Max() + 1 
+                    : NoneTag +1);
+            MaxAttribID = (ushort)(_attribs.Keys.Count() > 0 ? 
+                _attribs.Keys.Max() + 1 
+                : NoneAttrib + 1);
         }
 
         public string? GetTagName(int id)
