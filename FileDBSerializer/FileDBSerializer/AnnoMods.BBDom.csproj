@@ -5,11 +5,10 @@
     <Platforms>x64</Platforms>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>$(AssemblyName)</PackageId>
-    <Version>$(AssemblyVersion)</Version>
     <Authors>anno-mods</Authors>
     <Description>A C# library for Anno 1800's DOM files.</Description>
     <SignAssembly>False</SignAssembly>
-    <Version>3.0</Version>
+    <Version>3.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -38,8 +37,8 @@
   <PropertyGroup>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>3.0</AssemblyVersion>
-    <FileVersion>3.0</FileVersion>
+    <AssemblyVersion>3.0.1</AssemblyVersion>
+    <FileVersion>3.0.1</FileVersion>
     <RootNamespace>AnnoMods.BBDom</RootNamespace>
     <PackageProjectUrl>https://github.com/anno-mods/FileDBReader/wiki/Using-AnnoMods.BBDom</PackageProjectUrl>
     <RepositoryUrl>https://github.com/anno-mods/FileDBReader</RepositoryUrl>
