@@ -174,7 +174,8 @@ namespace FileDBReader.src
             IEnumerable<String> InputFiles,
             String InterpreterPath,
             bool overwrite,
-            IEnumerable<String> ReplaceOps)
+            IEnumerable<String> ReplaceOps,
+            bool InIsOut)
         {
             int returncode = 0;
 
@@ -192,7 +193,7 @@ namespace FileDBReader.src
 
             foreach (String s in InputFiles)
             {
-                var return_c = Interpret(s, Interpr, overwrite);
+                var return_c = Interpret(s, Interpr, overwrite, InIsOut);
                 if (return_c != 0)
                     returncode = return_c;
             }
@@ -201,12 +202,13 @@ namespace FileDBReader.src
 
         private int Interpret(String InputFile,
             Interpreter Interpr,
-            bool overwrite)
+            bool overwrite, 
+            bool InIsOut)
         {
             try
             {
                 var baseDoc = new XmlDocument();
-                String FileNameNew = Path.GetFileNameWithoutExtension(InputFile) + InterpretedFileSuffix + ".xml";
+                String FileNameNew = Path.Combine(InIsOut ? Path.GetDirectoryName(InputFile)! : "", Path.GetFileNameWithoutExtension(InputFile) + InterpretedFileSuffix + ".xml");
 
                 using (var input = SecureIoHandler.ReadHandle(InputFile))
                 using (var output = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
@@ -233,7 +235,8 @@ namespace FileDBReader.src
         public int Reinterpret(IEnumerable<String> InputFiles,
             String InterpreterPath,
             bool overwrite,
-            IEnumerable<String> ReplaceOps)
+            IEnumerable<String> ReplaceOps,
+            bool InIsOut)
         {
             int returncode = 0;
 
@@ -251,7 +254,7 @@ namespace FileDBReader.src
 
             foreach (String s in InputFiles)
             {
-                var return_c = Reinterpret(s, Interpr, overwrite);
+                var return_c = Reinterpret(s, Interpr, overwrite, InIsOut);
                 if (return_c != 0)
                     returncode = return_c;
             }
@@ -260,12 +263,13 @@ namespace FileDBReader.src
 
         private int Reinterpret(String InputFile,
             Interpreter Interpr,
-            bool overwrite)
+            bool overwrite,
+            bool InIsOut)
         {
             var inputDoc = new XmlDocument();
             try
             {
-                String FileNameNew = Path.GetFileNameWithoutExtension(InputFile) + ReinterpretedFileSuffix + ".xml";
+                String FileNameNew = Path.Combine(InIsOut ? Path.GetDirectoryName(InputFile)! : "", Path.GetFileNameWithoutExtension(InputFile) + ReinterpretedFileSuffix + ".xml");
                 using (var input = SecureIoHandler.ReadHandle(InputFile))
                 using (var output = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
                 {
@@ -314,7 +318,7 @@ namespace FileDBReader.src
         #endregion
 
         #region FCFileImport
-        public int FcFileImport(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite)
+        public int FcFileImport(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite, bool InIsOut)
         {
             int returncode = 0;
 
@@ -330,16 +334,20 @@ namespace FileDBReader.src
 
             foreach (String s in InputFiles)
             {
-                FcFileImport(s, Interpr, overwrite);
+                FcFileImport(s, Interpr, overwrite, InIsOut);
             }
             return returncode;
         }
 
-        private void FcFileImport(String InputFile, Interpreter? Interpr, bool overwrite)
+        private void FcFileImport(String InputFile, Interpreter? Interpr, bool overwrite, bool InIsOut)
         {
             try
             {
-                String FileNameNew = Path.GetFileNameWithoutExtension(InputFile) + ".xml";
+                if (!InIsOut)
+                {
+                    InputFile = Path.GetFileNameWithoutExtension(InputFile);
+                }
+                var FileNameNew = Path.ChangeExtension(InputFile, ".xml");
 
                 using (var fs = SecureIoHandler.WriteHandle(FileNameNew, overwrite))
                 using (var input = SecureIoHandler.ReadHandle(InputFile))
@@ -361,7 +369,7 @@ namespace FileDBReader.src
         #endregion
 
         #region FcExport
-        public int FcFileExport(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite, String OutputFileExtension)
+        public int FcFileExport(IEnumerable<String> InputFiles, String InterpreterPath, bool overwrite, String OutputFileExtension, bool InIsOut)
         {
             int returncode = 0;
 
@@ -379,16 +387,19 @@ namespace FileDBReader.src
 
             foreach (String s in InputFiles)
             {
-                FcFileExport(s, Interpr, overwrite, ext);
+                FcFileExport(s, Interpr, overwrite, ext, InIsOut);
             }
             return returncode;
         }
 
-        private void FcFileExport(String InputFile, Interpreter? Interpr, bool overwrite, String OutputFileExtension)
+        private void FcFileExport(String InputFile, Interpreter? Interpr, bool overwrite, String OutputFileExtension, bool InIsOut)
         {
             try
             {
-                var path = Path.ChangeExtension(Path.GetFileNameWithoutExtension(InputFile), OutputFileExtension);
+                if (!InIsOut) {
+                    InputFile = Path.GetFileNameWithoutExtension(InputFile);
+                }
+                var path = Path.ChangeExtension(InputFile, OutputFileExtension);
 
                 using (var input = SecureIoHandler.ReadHandle(InputFile))
                 using (var output = SecureIoHandler.WriteHandle(path, overwrite))

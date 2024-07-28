@@ -82,6 +82,9 @@ namespace FileDBReader {
             [Option('o', "outputFileExtension", Required = false, HelpText = OUTPUT_FILEFORMAT_HELP)]
             public String OutputFileExtension { get; set; }
 
+            [Option('d', "in_is_out_dir", Required = false, Default = false, HelpText = "If set, the output directory becomes the input directory. This being an option is purely for backwards compabilities sake.")]
+            public bool InIsOut { get; set; }
+
         }
 
         [Verb("toHex", HelpText = REINTERPRET_EXPL)]
@@ -98,6 +101,9 @@ namespace FileDBReader {
 
             [Option('z', "replace_Names", Required = false, HelpText = "String Tuples of names that should be replaced")]
             public IEnumerable<String> ReplaceOperations { get; set; }
+
+            [Option('d', "in_is_out_dir", Required = false, Default = false, HelpText = "If set, the output directory becomes the input directory. This being an option is purely for backwards compabilities sake.")]
+            public bool InIsOut { get; set; }
 
         }
 
@@ -121,6 +127,8 @@ namespace FileDBReader {
             [Option('y', "overwrite", Required = false, Default = false)]
             public bool overwrite { get; set; }
 
+            [Option('d', "in_is_out_dir", Required = false, Default = false, HelpText = "If set, the output directory becomes the input directory. This being an option is purely for backwards compabilities sake.")]
+            public bool InIsOut { get; set; }
         }
 
         [Verb("hextofc", HelpText = "Reverse operation of fctohex.")]
@@ -138,6 +146,9 @@ namespace FileDBReader {
 
             [Option('o', "outputFileExtension", Required = false, HelpText = OUTPUT_FILEFORMAT_HELP)]
             public String OutputFileExtension { get; set; }
+
+            [Option('d', "in_is_out_dir", Required = false, Default = false, HelpText = "If set, the output directory becomes the input directory. This being an option is purely for backwards compabilities sake.")]
+            public bool InIsOut { get; set; }
 
         }
         #endregion
@@ -173,12 +184,12 @@ namespace FileDBReader {
                 //OPTIONS FOR INTERPRETATION ONLY
                 (InterpretOptions o) =>
                 {
-                    return Functions.Interpret(o.InputFiles, o.Interpreter, o.overwrite, o.ReplaceOperations);
+                    return Functions.Interpret(o.InputFiles, o.Interpreter, o.overwrite, o.ReplaceOperations, o.InIsOut);
                 },
                 //OPTIONS FOR REINTERPRETATION ONLY
                 (toHexOptions o) =>
                 {
-                    return Functions.Reinterpret(o.InputFiles, o.Interpreter, o.overwrite, o.ReplaceOperations);
+                    return Functions.Reinterpret(o.InputFiles, o.Interpreter, o.overwrite, o.ReplaceOperations, o.InIsOut);
                 },
                 //CHECK COMPRESSION VERSION
                 (FileCheck_Options o) =>
@@ -188,12 +199,12 @@ namespace FileDBReader {
                 //OPTIONS FOR FC FILE IMPORT
                 (FcImportOptions o) =>
                 {
-                    return Functions.FcFileImport(o.InputFiles, o.Interpreter, o.overwrite);
+                    return Functions.FcFileImport(o.InputFiles, o.Interpreter, o.overwrite, o.InIsOut);
                 },
                 //OPTIONS FOR FC FILE EXPORT
                 (FcExportOptions o) =>
                 {
-                    return Functions.FcFileExport(o.InputFiles, o.Interpreter, o.overwrite, o.OutputFileExtension);
+                    return Functions.FcFileExport(o.InputFiles, o.Interpreter, o.overwrite, o.OutputFileExtension, o.InIsOut);
                 },
                 e => 1
             ) ;
