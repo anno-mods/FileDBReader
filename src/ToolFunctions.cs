@@ -345,7 +345,7 @@ namespace FileDBReader.src
             {
                 if (!InIsOut)
                 {
-                    InputFile = Path.GetFileNameWithoutExtension(InputFile);
+                    InputFile = Path.GetFileName(InputFile);
                 }
                 var FileNameNew = Path.ChangeExtension(InputFile, ".xml");
 
@@ -397,7 +397,7 @@ namespace FileDBReader.src
             try
             {
                 if (!InIsOut) {
-                    InputFile = Path.GetFileNameWithoutExtension(InputFile);
+                    InputFile = Path.GetFileName(InputFile);
                 }
                 var path = Path.ChangeExtension(InputFile, OutputFileExtension);
 
