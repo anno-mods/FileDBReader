@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Simple example of a conversion file for infotips.
+
+  How to use:
+  Path = xPath
+  Type = Type as it occurs in .Net System - int -> Int32, float = Single, bool = Boolean etc..
+  Encoding = Encoding as it occurs in .Net Encodings
+-->
+<Converts>
+  <Default Type = "Int32"/>
+  <InternalCompression />
+  <Converts>
+    <Convert Path="//*[not(self::InfoElement)]/Text" Type="String" Encoding="UTF-8" />
+    <Convert Path="//TextId" Type="Int64" />
+    <Convert Path="//Condition" Type="String" Encoding="UTF-8"/>
+    <Convert Path="//ValueText" Type="String" />
+    <Convert Path="//IconText" Type="String" />
+    <Convert Path="//ExpectedValueFloat" Type="Single" />
+    <Convert Path="//ExpectedValueBool" Type="Boolean" />
+    <Convert Path="//HeadlineText" Type="String" Encoding="UTF-8" />
+    <Convert Path="//SublineText" Type="String" Encoding="UTF-8" />
+    <Convert Path="//ColorText" Type="String" Encoding="UTF-8" />
+    <Convert Path="//Source" Type="String" Encoding="UTF-8" />
+    <Convert Path="//Name" Type="String" Encoding="UTF-8" />
+    <Convert Path="//IsTemplate" Type="Boolean" />
+    <Convert Path="//IsWarning" Type="Boolean" />
+    <Convert Path="//Indentation" Type="Boolean" />
+    <Convert Path="//IconGUID" Type="Int64" />
+    <Convert Path="//ExpectedValueDataset" Type="String" Encoding="UTF-8" />
+    <Convert Path="//WarningTextSource" Type="String" Encoding="UTF-8" />
+    <Convert Path="//Owner" Type="String" Enconding="UTF-8" />
+  </Converts>
+</Converts>
