@@ -14,8 +14,8 @@
     <Convert Path="//*[not(self::InfoElement)]/Text" Type="String" Encoding="UTF-8" />
     <Convert Path="//TextId" Type="Int64" />
     <Convert Path="//Condition" Type="String" Encoding="UTF-8"/>
-    <Convert Path="//ValueText" Type="String" />
-    <Convert Path="//IconText" Type="String" />
+    <Convert Path="//ValueText" Type="String"  Encoding="UTF-8" />
+    <Convert Path="//IconText" Type="String"  Encoding="UTF-8" />
     <Convert Path="//ExpectedValueFloat" Type="Single" />
     <Convert Path="//ExpectedValueBool" Type="Boolean" />
     <Convert Path="//HeadlineText" Type="String" Encoding="UTF-8" />
@@ -29,6 +29,6 @@
     <Convert Path="//IconGUID" Type="Int64" />
     <Convert Path="//ExpectedValueDataset" Type="String" Encoding="UTF-8" />
     <Convert Path="//WarningTextSource" Type="String" Encoding="UTF-8" />
-    <Convert Path="//Owner" Type="String" Enconding="UTF-8" />
+    <Convert Path="//Owner" Type="String" Encoding="UTF-8" />
   </Converts>
 </Converts>
