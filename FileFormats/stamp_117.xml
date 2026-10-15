@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  1. base64 decode "PipetteData"
+  2. zlib inflate
+  3. decompress/interpret -i stamp_117.xml
+-->
+<Converts>
+  <Default Type ="Int32" />
+  <Converts>
+    <!-- always 1 -->
+    <Convert Path ="//StampVersion" Type="Int32" />
+
+    <!-- -->
+    <Convert Path ="//BuildingInfo/None/Pos" Type="Single" Structure="List" />
+    <Convert Path ="//BuildingInfo/None/Dir/value/None/None" Type="Int32" />
+    <Convert Path ="//BuildingInfo/None/GUID" Type="Int32" />
+    <Convert Path ="//BuildingInfo/None/Skin" Type="UInt32" />
+    <Convert Path ="//BuildingInfo/None/Variation" Type="Int32" />
+    <Convert Path ="//BuildingInfo/None/IsBluePrint" Type="Boolean" />
+    <Convert Path ="//BuildingInfo/None/ComplexOwnerID" Type="UInt64" />
+
+    <!-- -->
+    <Convert Path ="//MeshGraphData/Edges/MeshGraphCount" Type="UInt64" />
+    <Convert Path ="//MeshGraphData/Edges/Edges/None/guid" Type="Int32" />
+    <Convert Path ="//MeshGraphData/Edges/Edges/None/skin" Type="Int32" />
+    <Convert Path ="//MeshGraphData/Edges/Edges/None/PosMin" Type="Int32" Structure="List" />
+    <Convert Path ="//MeshGraphData/Edges/Edges/None/PosMax" Type="Int32" Structure="List" />
+    <Convert Path ="//MeshGraphData/Edges/Edges/None/IsBlueprint" Type="Boolean" />
+    <Convert Path ="//MeshGraphData/TileCount" Type="UInt32" />
+    <Convert Path ="//MeshGraphData/AABB" Type="Int32" Structure="List" />
+    <Convert Path ="//MeshGraphData/DeleteRect/value/Rect/index" Type="UInt64" />
+    <Convert Path ="//MeshGraphData/DeleteRect/value/Rect/value" Type="Int32" Structure="List" />
+    <Convert Path ="//MeshGraphData/IgnoreEdges/None/Min" Type="Int32" Structure="List" />
+    <Convert Path ="//MeshGraphData/IgnoreEdges/None/Max" Type="Int32" Structure="List" />
+
+    <!-- -->
+    <Convert Path ="//Polygons/None/GUID" Type="Int32" />
+    <Convert Path ="//Polygons/None/PreviewType" Type="Int32" />
+    <Convert Path ="//Polygons/None/SubTileGrid/GridOriginWS" Type="Int32" Structure="List" />
+    <Convert Path ="//Polygons/None/SubTileGrid/Grid/grid/x" Type="Int32" />
+    <Convert Path ="//Polygons/None/SubTileGrid/Grid/grid/y" Type="Int32" />
+    <Convert Path ="//Polygons/None/SubTileGrid/Grid/grid/bits" Type="Byte" Structure="List" />
+    <Convert Path ="//Polygons/None/RelativePos" Type="Single" Structure="List" />
+    <Convert Path ="//Polygons/None/IsDiagonal" Type="Boolean" />
+    <Convert Path ="//Polygons/None/ComplexOwnerID" Type="UInt64" />
+    <Convert Path ="//Polygons/None/CreateRect/Rect/index" Type="UInt64" />
+    <Convert Path ="//Polygons/None/CreateRect/Rect/value" Type="Int32" Structure="List" />
+
+    <!-- -->
+    <Convert Path ="//DragRectCenter" Type="Single" Structure="List" />
+  </Converts>
+</Converts>
